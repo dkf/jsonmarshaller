@@ -1,0 +1,32 @@
+<!-- Japex configuration to benchmark releases against each other. -->
+<testSuite name="JSON Marshalling Test Suite" xmlns="http://www.sun.com/japex/testSuite">
+  <param name="libraryDir" value="lib" />
+  <param name="japex.classPath" value="bin" />
+  <param name="japex.classPath" value="lib/japex/japex-1.1.jar" />
+  <param name="japex.classPath" value="lib/google-collections/google-collect-snapshot-20071022.jar" />
+  <param name="japex.classPath" value="lib/asm-2.2.3.jar" />
+  <param name="japex.classPath" value="lib/asm-attrs-2.2.3.jar" />
+  <param name="japex.classPath" value="lib/asm-commons-2.2.3.jar" />
+  <param name="japex.warmupTime" value="10" />
+  <param name="japex.runTime" value="10" />
+  <param name="japex.reportsDirectory" value="doc" />
+
+  <driver name="JsonMarshaller 0.8">
+    <param name="japex.driverClass" value="com.twolattes.json.benchmark.JsonMarshallerMarshallingDriver" />
+    <param name="japex.classPath" value="releases/json-0.8.jar" />
+  </driver>
+  <driver name="JsonMarshaller 0.9">
+    <param name="japex.driverClass" value="com.twolattes.json.benchmark.JsonMarshallerMarshallingDriver" />
+    <param name="japex.classPath" value="releases/json-0.8.jar" />
+  </driver>
+
+  <testCase name="EntityA">
+    <param name="entityClass" value="com.twolattes.json.benchmark.EntityA" />
+  </testCase>
+  <testCase name="EntityB">
+    <param name="entityClass" value="com.twolattes.json.benchmark.EntityB" />
+  </testCase>
+  <testCase name="EntityC">
+    <param name="entityClass" value="com.twolattes.json.benchmark.EntityC" />
+  </testCase>
+</testSuite>

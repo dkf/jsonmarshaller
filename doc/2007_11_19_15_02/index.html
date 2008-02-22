@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns:extrep="http://www.sun.com/japex/extendedTestSuiteReport" xmlns:suite="http://www.sun.com/japex/testSuite" xmlns:rep="http://www.sun.com/japex/testSuiteReport" xmlns="http://www.w3.org/1999/xhtml">
+<link href="report.css" type="text/css" rel="stylesheet"/>
+<body>
+<table border="0" cellpadding="2">
+<tr>
+<td valign="middle" width="90">
+<p>
+<a href="https://japex.dev.java.net">
+<img src="small_japex.gif" align="middle" border="0"/>
+</a>
+</p>
+</td>
+<td valign="middle">
+<h1>Japex Report: JSON Marshalling Test Suite</h1>
+</td>
+</tr>
+</table>
+<h2>Global Parameters</h2>
+<ul>
+<li>configFile: <a href="config.japex.xml">config.japex.xml</a>
+</li>
+<li>chartType: barchart</li>
+<li>classPath: bin
+lib/asm-2.2.3.jar
+lib/asm-attrs-2.2.3.jar
+lib/asm-commons-2.2.3.jar
+lib/google-collections/google-collect-snapshot-20071022.jar
+lib/junit/junit-4.1.jar
+lib/japex/japex-1.1.jar
+lib/flexjson/flexjson-1.6.jar
+lib/sojo/sojo-0.5.0.jar
+lib/xstream/xstream-1.2.2.jar</li>
+<li>dateTime: 19 Nov 2007/15:02:01 PST</li>
+<li>hostName: dhcp-172-19-19-144.corp.google.com</li>
+<li>numberOfCpus: 2</li>
+<li>numberOfThreads: 1</li>
+<li>osArchitecture: i386</li>
+<li>osName: Mac OS X</li>
+<li>plotDrivers: false</li>
+<li>plotGroupSize: 5</li>
+<li>reportsDirectory: reports</li>
+<li>resultAxis: normal</li>
+<li>resultAxisX: normal</li>
+<li>resultUnit: TPS</li>
+<li>runTime: 30</li>
+<li>runsPerDriver: 1</li>
+<li>version: 1.1.0</li>
+<li>vmInfo: Apple Computer, Inc. 1.5.0_07-87</li>
+<li>warmupTime: 10</li>
+<li>warmupsPerDriver: 0</li>
+</ul>
+<h2>Result Summary 
+        (TPS)</h2>
+<table width="80%" border="1">
+<thead>
+<tr>
+<th width="15%">
+<b>driver</b>
+</th>
+<th>
+<b>resultAritMean</b>
+</th>
+<th>
+<b>resultGeomMean</b>
+</th>
+<th>
+<b>resultHarmMean</b>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">JsonMarshaller 0.8</td>
+<td align="right">
+<nobr>62117.709</nobr>
+</td>
+<td align="right">
+<nobr>58594.481</nobr>
+</td>
+<td align="right">
+<nobr>54320.692</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">Flexjson 1.6</td>
+<td align="right">
+<nobr>34063.586</nobr>
+</td>
+<td align="right">
+<nobr>12270.144</nobr>
+</td>
+<td align="right">
+<nobr>1215.100</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">SOJO 0.5</td>
+<td align="right">
+<nobr>11550.617</nobr>
+</td>
+<td align="right">
+<nobr>10749.283</nobr>
+</td>
+<td align="right">
+<nobr>9785.699</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">XStream 1.2.2</td>
+<td align="right">
+<nobr>15404.836</nobr>
+</td>
+<td align="right">
+<nobr>14547.646</nobr>
+</td>
+<td align="right">
+<nobr>13497.946</nobr>
+</td>
+</tr>
+</tbody>
+</table>
+<br/>
+<br/>
+<center>
+<img src="result.jpg"/>
+</center>
+<br/>
+<br/>
+<h2>Driver: JsonMarshaller 0.8</h2>
+<p>
+<ul>
+<li>driverClass: com.twolattes.json.benchmark.JsonMarshallerMarshallingDriver</li>
+</ul>
+</p>
+<table width="80%" border="1">
+<thead>
+<tr>
+<th>
+<b>testCase</b>
+</th>
+<th>
+<b>resultIterations</b>
+</th>
+<th>
+<b>resultTime</b>
+</th>
+<th>
+<b>resultValue</b>
+</th>
+<th>
+<b>entityClass</b>
+</th>
+<th>
+<b>flexjsonIncludes</b>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">EntityA</td>
+<td align="right">
+<nobr>2344659.000</nobr>
+</td>
+<td align="right">
+<nobr>29.965</nobr>
+</td>
+<td align="right">
+<nobr>78247.846</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityA</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityB (deep)</td>
+<td align="right">
+<nobr>2089736.000</nobr>
+</td>
+<td align="right">
+<nobr>29.963</nobr>
+</td>
+<td align="right">
+<nobr>69743.388</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityB</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityB (includes)</td>
+<td align="right">
+<nobr>2076753.000</nobr>
+</td>
+<td align="right">
+<nobr>29.959</nobr>
+</td>
+<td align="right">
+<nobr>69319.872</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityB</nobr>
+</td>
+<td align="left">
+<nobr>doubles</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityC (deep)</td>
+<td align="right">
+<nobr>933658.000</nobr>
+</td>
+<td align="right">
+<nobr>29.964</nobr>
+</td>
+<td align="right">
+<nobr>31159.729</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityC</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+</tbody>
+</table>
+<br/>
+<h2>Driver: Flexjson 1.6</h2>
+<p>
+<ul>
+<li>driverClass: com.twolattes.json.benchmark.FlexjsonMarshallingDriver</li>
+</ul>
+</p>
+<table width="80%" border="1">
+<thead>
+<tr>
+<th>
+<b>testCase</b>
+</th>
+<th>
+<b>resultIterations</b>
+</th>
+<th>
+<b>resultTime</b>
+</th>
+<th>
+<b>resultValue</b>
+</th>
+<th>
+<b>entityClass</b>
+</th>
+<th>
+<b>flexjsonIncludes</b>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">EntityA</td>
+<td align="right">
+<nobr>1697296.000</nobr>
+</td>
+<td align="right">
+<nobr>29.963</nobr>
+</td>
+<td align="right">
+<nobr>56645.610</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityA</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityB (deep)</td>
+<td align="right">
+<nobr>1695127.000</nobr>
+</td>
+<td align="right">
+<nobr>29.963</nobr>
+</td>
+<td align="right">
+<nobr>56574.517</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityB</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityB (includes)</td>
+<td align="right">
+<nobr>9327.000</nobr>
+</td>
+<td align="right">
+<nobr>29.964</nobr>
+</td>
+<td align="right">
+<nobr>311.277</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityB</nobr>
+</td>
+<td align="left">
+<nobr>doubles</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityC (deep)</td>
+<td align="right">
+<nobr>680861.000</nobr>
+</td>
+<td align="right">
+<nobr>29.964</nobr>
+</td>
+<td align="right">
+<nobr>22722.939</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityC</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+</tbody>
+</table>
+<br/>
+<h2>Driver: SOJO 0.5</h2>
+<p>
+<ul>
+<li>driverClass: com.twolattes.json.benchmark.SojoMarshallingDriver</li>
+</ul>
+</p>
+<table width="80%" border="1">
+<thead>
+<tr>
+<th>
+<b>testCase</b>
+</th>
+<th>
+<b>resultIterations</b>
+</th>
+<th>
+<b>resultTime</b>
+</th>
+<th>
+<b>resultValue</b>
+</th>
+<th>
+<b>entityClass</b>
+</th>
+<th>
+<b>flexjsonIncludes</b>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">EntityA</td>
+<td align="right">
+<nobr>463097.000</nobr>
+</td>
+<td align="right">
+<nobr>29.960</nobr>
+</td>
+<td align="right">
+<nobr>15456.983</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityA</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityB (deep)</td>
+<td align="right">
+<nobr>381741.000</nobr>
+</td>
+<td align="right">
+<nobr>29.962</nobr>
+</td>
+<td align="right">
+<nobr>12740.716</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityB</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityB (includes)</td>
+<td align="right">
+<nobr>378795.000</nobr>
+</td>
+<td align="right">
+<nobr>29.963</nobr>
+</td>
+<td align="right">
+<nobr>12642.114</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityB</nobr>
+</td>
+<td align="left">
+<nobr>doubles</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityC (deep)</td>
+<td align="right">
+<nobr>160683.000</nobr>
+</td>
+<td align="right">
+<nobr>29.963</nobr>
+</td>
+<td align="right">
+<nobr>5362.653</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityC</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+</tbody>
+</table>
+<br/>
+<h2>Driver: XStream 1.2.2</h2>
+<p>
+<ul>
+<li>driverClass: com.twolattes.json.benchmark.XStreamMarshallingDriver</li>
+</ul>
+</p>
+<table width="80%" border="1">
+<thead>
+<tr>
+<th>
+<b>testCase</b>
+</th>
+<th>
+<b>resultIterations</b>
+</th>
+<th>
+<b>resultTime</b>
+</th>
+<th>
+<b>resultValue</b>
+</th>
+<th>
+<b>entityClass</b>
+</th>
+<th>
+<b>flexjsonIncludes</b>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">EntityA</td>
+<td align="right">
+<nobr>515267.000</nobr>
+</td>
+<td align="right">
+<nobr>29.959</nobr>
+</td>
+<td align="right">
+<nobr>17199.041</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityA</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityB (deep)</td>
+<td align="right">
+<nobr>549287.000</nobr>
+</td>
+<td align="right">
+<nobr>29.961</nobr>
+</td>
+<td align="right">
+<nobr>18333.553</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityB</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityB (includes)</td>
+<td align="right">
+<nobr>549585.000</nobr>
+</td>
+<td align="right">
+<nobr>29.961</nobr>
+</td>
+<td align="right">
+<nobr>18343.053</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityB</nobr>
+</td>
+<td align="left">
+<nobr>doubles</nobr>
+</td>
+</tr>
+<tr>
+<td align="right">EntityC (deep)</td>
+<td align="right">
+<nobr>232003.000</nobr>
+</td>
+<td align="right">
+<nobr>29.960</nobr>
+</td>
+<td align="right">
+<nobr>7743.699</nobr>
+</td>
+<td align="left">
+<nobr>com.twolattes.json.benchmark.EntityC</nobr>
+</td>
+<td align="left">
+<nobr>n/a</nobr>
+</td>
+</tr>
+</tbody>
+</table>
+<br/>
+<h2>Results Per Test</h2>
+<br/>
+<center>
+<img src="testcase0.jpg"/>
+</center>
+<br/>
+<br/>
+<br/>
+<small>
+<hr/>
+<font size="-2">
+                        Generated using <a href="https://japex.dev.java.net">Japex</a> version 
+                        1.1.0</font>
+</small>
+</body>
+</html>

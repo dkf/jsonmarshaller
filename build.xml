@@ -1,0 +1,89 @@
+<project name="JsonMarshaller" default="dist" basedir=".">
+	<!-- tasks -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="lib/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+  <!-- project properties -->
+  <property name="author" value="Pascal-Louis Perez (pascallouisperez@gmail.com)" />
+  <property name="src" location="src" />
+  <property name="srctest" location="srctest" />
+  <property name="doc" location="doc/javadoc" />
+  <property name="bin" location="bin" />
+  <property name="releases" location="releases" />
+  <property name="version" value="0.10.7" />
+  <path id="src.id">
+    <pathelement location="${src}" />
+  </path>
+  <path id="src_benchmark.id">
+    <pathelement location="${src}" />
+    <pathelement location="${srctest}/com/twolattes/json/benchmark" />
+  </path>
+
+	<!-- initialize the build  -->
+	<target name="init">
+		<antclipse produce="classpath" idcontainer="eclipse.cp" />
+		<property name="cp" refid="eclipse.cp" />
+		<delete dir="${bin}" />
+		<mkdir dir="${bin}" />
+    <mkdir dir="${doc}" />
+    <mkdir dir="${releases}" />
+	</target>
+
+	<!-- documentation -->
+	<target name="doc" depends="init">
+		<javadoc destdir="${doc}" packagenames="*" author="true" version="true"
+			breakiterator="true" classpath="${cp}" sourcepathref="src.id">
+		</javadoc>
+	</target>
+
+  <!-- compile -->
+  <target name="compile" depends="init">
+    <javac destdir="${bin}" classpath="${cp}" source="1.5" target="1.5"
+  	    debug="true" debuglevel="source,lines">
+      <src refid="src.id" />
+    </javac>
+  </target>
+
+  <!-- compile benchmark -->
+  <target name="benchmark" depends="init">
+    <javac destdir="${bin}" classpath="${cp}" source="1.5" debug="true" debuglevel="source,lines">
+      <src refid="src_benchmark.id" />
+    </javac>
+  </target>
+
+	<!-- dist -->
+	<target name="dist" depends="init,compile">
+		<jar destfile="${releases}/json-${version}.jar" basedir="${bin}">
+			<manifest>
+				<attribute name="Built-By" value="${author}" />
+			</manifest>
+		</jar>
+		<zip destfile="${releases}/json-dist-${version}.zip">
+			<zipfileset file="${releases}/json-${version}.jar" />
+            <zipfileset file="build.xml" />
+			<zipfileset file="license.txt" />
+            <zipfileset file="README.txt" />
+            <zipfileset file=".classpath" />
+            <zipfileset dir="lib" prefix="lib" />
+            <zipfileset dir="doc" prefix="doc"/>
+			<zipfileset dir="${src}" prefix="src" />
+			<zipfileset dir="${srctest}" prefix="srctest" />
+		</zip>
+		<tar destfile="${releases}/json-dist-${version}.tar">
+			<tarfileset file="${releases}/json-${version}.jar" />
+            <tarfileset file="license.txt" />
+            <tarfileset file="build.xml" />
+            <tarfileset file="README.txt" />
+            <tarfileset file=".classpath" />
+            <tarfileset dir="lib" prefix="lib" />
+            <tarfileset dir="doc" prefix="doc"/>
+			<tarfileset dir="${src}" prefix="src" />
+			<tarfileset dir="${srctest}" prefix="srctest" />
+		</tar>
+		<gzip zipfile="${releases}/json-dist-${version}.tar.gz" src="${releases}/json-dist-${version}.tar"/>
+		<delete file="${releases}/json-dist-${version}.tar"/>
+	</target>
+</project>

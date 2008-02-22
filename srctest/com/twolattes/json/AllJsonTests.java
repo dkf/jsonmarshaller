@@ -1,0 +1,34 @@
+package com.twolattes.json;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+import com.twolattes.json.inheritance1.Inheritance1Test;
+import com.twolattes.json.inheritance2.Inheritance2Test;
+import com.twolattes.json.inheritance3.Inheritance3Test;
+import com.twolattes.json.inheritanceerror.InheritanceErrorTest;
+import com.twolattes.json.types.TypesTest;
+import com.twolattes.json.types.URLTypeTest;
+import com.twolattes.json.visibility1.Visibility1Test;
+import com.twolattes.json.visibility2.Visibility2Test;
+
+@RunWith(value = Suite.class)
+@SuiteClasses(value = {
+  DescriptorsEqualityTest.class,
+  DescriptorFactoryTest.class,
+  MarshallerTest.class,
+  MarshallingTest.class,
+  UnmarshallingTest.class,
+  EntityClassVisitorTest.class,
+  TypesTest.class,
+  URLTypeTest.class,
+  Inheritance1Test.class,
+  Inheritance2Test.class,
+  Inheritance3Test.class,
+  InheritanceErrorTest.class,
+  Visibility1Test.class,
+  Visibility2Test.class
+})
+public class AllJsonTests {
+}

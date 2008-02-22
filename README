@@ -1,0 +1,57 @@
+JSON 0.2, from TwoLattes - http://code.twolattes.com
+
+* required Jars
+
+  JSON-0.2.jar
+  asm-2.2.3.jar
+  asm-attrs-2.2.3.jar
+  asm-commons-2.2.3.jar
+
+  the other jars are competing libraries used to ensure JsonMarshaller is the fastest library!
+
+* optional Jar
+
+  junit-4.1.jar
+
+CHANGELOG 0.2
+-------------
+- corrected recursive classes parsing bug
++ added support for user defined types
++ added support for java.util.Map
++ added support for JSPON marshalling (unmarshalling not yet supported)
+
+
+* quick help
+
+  To compile your code with JsonMarshaller, sure to add the jars to your
+  classpath. To try out little examples, this line should do
+
+  javac -cp .:lib/JSON-0.1.jar:lib/asm-2.2.3.jar:lib/asm-attrs-2.2.3.jar:lib/asm-commons-2.2.3.jar *.java
+
+  For examples, you can browse the included tests. Look at
+	
+  srctest/com/twolattes/json/User.java
+  srctest/com/twolattes/json/Email.java
+	
+  for instance.
+
+* tests
+
+  To run the tests, you'll need JUnit 4.1 (included).
+
+* questions
+
+  pascal / cs / stanford . edu
+  
+  replace the first / by the typical sign and the second one by a dot.
+
+* ASM website
+
+  http://asm.objectweb.org
+
+* JSON parser
+
+  http://www.json.org
+	
+  Note: we use a modified version that corrects a few minor bugs and adds
+  some functionality required by our JsonMarshaller.
