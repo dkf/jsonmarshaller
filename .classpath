@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="bintest" path="srctest"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/asm-2.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/asm-attrs-2.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/asm-commons-2.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-collections/google-collect-snapshot-20071022.jar" sourcepath="lib/google-collections/google-collect-snapshot-20071022-src.jar"/>
+	<classpathentry kind="lib" path="lib/flexjson/flexjson-1.6.jar" sourcepath="lib/flexjson/flexjson-1.6-src.jar"/>
+	<classpathentry kind="lib" path="lib/japex/japex-1.1.6.jar" sourcepath="lib/japex/japex-1.1.6-src.jar"/>
+	<classpathentry kind="lib" path="lib/xstream/xstream-1.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/sojo/sojo-0.5.0.jar" sourcepath="lib/sojo/sojo-0.5.0-src.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
