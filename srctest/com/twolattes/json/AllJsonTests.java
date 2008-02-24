@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.twolattes.json.gettersetter.GetterSetterTest;
 import com.twolattes.json.inheritance1.Inheritance1Test;
 import com.twolattes.json.inheritance2.Inheritance2Test;
 import com.twolattes.json.inheritance3.Inheritance3Test;
@@ -28,7 +29,8 @@ import com.twolattes.json.visibility2.Visibility2Test;
   Inheritance3Test.class,
   InheritanceErrorTest.class,
   Visibility1Test.class,
-  Visibility2Test.class
+  Visibility2Test.class,
+  GetterSetterTest.class
 })
 public class AllJsonTests {
 }
