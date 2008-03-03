@@ -23,7 +23,7 @@ abstract class FieldDescriptor {
   private Boolean shouldInline = null;
   private boolean optional = false;
   private String jsonName = null;
-  
+
   // fields that MUST be defined before the FieldDescriptor can (un)marshall
   private Descriptor<?, ?> descriptor;
   private Type<?> type;
@@ -31,7 +31,7 @@ abstract class FieldDescriptor {
   FieldDescriptor(String fieldName) {
     this.fieldName = Preconditions.checkNotNull(fieldName);
   }
-  
+
   /**
    * Get the entitiy's field name.
    * @return the entitiy's field name
@@ -98,7 +98,7 @@ abstract class FieldDescriptor {
    * @return <tt>true</tt> if the field is in the view
    */
   final boolean isInView(String view) {
-    if (view == null || views == null) {
+    if (views == null) {
       return true;
     }
     return views.contains(view);
@@ -170,12 +170,12 @@ abstract class FieldDescriptor {
         throw new IllegalStateException("cannot access " + instance.getClass() + " field");
       }
     }
-    
+
     @Override
     public int hashCode() {
       return field.hashCode();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
       if (obj != null && obj.getClass().equals(this.getClass())) {
@@ -186,7 +186,7 @@ abstract class FieldDescriptor {
       }
     }
   }
-  
+
   /**
    * A field descriptor accessing the value via a getter and setter.
    */
@@ -204,14 +204,14 @@ abstract class FieldDescriptor {
             return SETTER.name(m);
           }
         }
-        
+
         @Override
         void store(GetSetFieldDescriptor a, Method m) {
           m.setAccessible(true);
           a.getter = m;
         }
       },
-      
+
       SETTER {
         @Override
         String name(Method m) {
@@ -220,7 +220,7 @@ abstract class FieldDescriptor {
           builder.append(m.getName().substring(4));
           return builder.toString();
         }
-        
+
         @Override
         void store(GetSetFieldDescriptor a, Method m) {
           m.setAccessible(true);
@@ -231,15 +231,15 @@ abstract class FieldDescriptor {
       abstract String name(Method m);
       abstract void store(GetSetFieldDescriptor a, Method m);
     }
-    
+
     private Method getter;
     private Method setter;
-    
+
     GetSetFieldDescriptor(Type t, Method m) {
       super(t.name(m));
       t.store(this, m);
     }
-    
+
     @Override
     Object getFieldValue(Object instance) {
       try {

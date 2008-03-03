@@ -1,7 +1,7 @@
 package com.twolattes.json;
 
 @Entity(inline = true)
-class EmailInline {
+public class EmailInline {
   @Value
-  String email;
+  public String email;
 }

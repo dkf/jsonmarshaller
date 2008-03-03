@@ -117,142 +117,7 @@ public class UnmarshallingTest {
 
     assertNull(user.email);
   }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation1() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class, "{email: \"jack.bauer@ctu.gov\"}", "1");
-    
-    assertEquals("jack.bauer@ctu.gov", user.email.email);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation1WithNull() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class, "{email: null}", "1");
-    
-    assertNull(user.email);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation2() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emails: {foo:\"jack.bauer@ctu.gov\", bar:'not@me.com'}}", "2");
 
-    assertEquals(2, user.emails.size());
-    assertNotNull(user.emails.get("foo"));
-    assertEquals("jack.bauer@ctu.gov", user.emails.get("foo").email);
-    assertNotNull(user.emails.get("bar"));
-    assertEquals("not@me.com", user.emails.get("bar").email);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation2WithNull() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class, "{emails: null}", "2");
-
-    assertNull(user.emails);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation3() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emailNoInline: {email:\"jack.bauer@ctu.gov\"}}", "3");
-
-    assertNotNull(user.emailNoInline);
-    assertNotNull(user.emailNoInline.email);
-    assertEquals("jack.bauer@ctu.gov", user.emailNoInline.email);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation3WithNull1() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emailNoInline: null}", "3");
-
-    assertNull(user.emailNoInline);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation3WithNull2() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emailNoInline: {email: null}}", "3");
-
-    assertNotNull(user.emailNoInline);
-    assertNull(user.emailNoInline.email);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation4() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emailsArray: [\"jack.bauer@ctu.gov\", \"tony@ctu.gov\"]}", "4");
-
-    assertNotNull(user.emailsArray);
-    assertEquals(2, user.emailsArray.length);
-    assertNotNull(user.emailsArray[0]);
-    assertEquals("jack.bauer@ctu.gov", user.emailsArray[0].email);
-    assertNotNull(user.emailsArray[1]);
-    assertEquals("tony@ctu.gov", user.emailsArray[1].email);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation4WithNull1() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emailsArray: null}", "4");
-
-    assertNull(user.emailsArray);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation4WithNull2() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emailsArray: [null]}", "4");
-
-    assertNotNull(user.emailsArray);
-    assertEquals(1, user.emailsArray.length);
-    assertNull(user.emailsArray[0]);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation5() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emailsList: [\"jack.bauer@ctu.gov\", \"tony@ctu.gov\"]}", "5");
-
-    assertNotNull(user.emailsList);
-    assertEquals(2, user.emailsList.size());
-    assertNotNull(user.emailsList.get(0));
-    assertEquals("jack.bauer@ctu.gov", user.emailsList.get(0).email);
-    assertNotNull(user.emailsList.get(1));
-    assertEquals("tony@ctu.gov", user.emailsList.get(1).email);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation5WithNull1() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emailsList: null}", "5");
-
-    assertNull(user.emailsList);
-  }
-  
-  @Test
-  public void testInlinedEntityUsingInlineAnnotation5WithNull2() throws Exception {
-    UserInlinedEmail user =
-        unmarshall(UserInlinedEmail.class,
-        "{emailsList: [null]}", "5");
-
-    assertNotNull(user.emailsList);
-    assertEquals(1, user.emailsList.size());
-    assertNull(user.emailsList.get(0));
-  }
-  
   @Test
   public void testInlinedEntityUsingInlineAnnotation6() throws Exception {
 	List<EmailInline> emails =
@@ -355,77 +220,47 @@ public class UnmarshallingTest {
   }
 
   @Test
-  public void testViews() throws Exception {
-    MultipleViewEntity fullView =
-        unmarshall(MultipleViewEntity.class,
-        "{email:'a',motto:'b',normal:'c',name:\"d\"}", "full");
-
-    assertEquals("a", fullView.getEmail());
-    assertEquals("b", fullView.getMotto());
-    assertEquals("c", fullView.getNormal());
-    assertEquals("d", fullView.getName());
-
-    MultipleViewEntity simpleView =
-        unmarshall(MultipleViewEntity.class,
-        "{user:'b',normal:'c',name:\"d\"}", "simple");
-
-    assertEquals("b", simpleView.getUser());
-    assertEquals("c", simpleView.getNormal());
-    assertEquals("d", simpleView.getName());
-
-    MultipleViewEntity view =
-        unmarshall(MultipleViewEntity.class,
-        "{email:'a',user:'b',motto:'d',normal:'c',name:\"e\"}", "simple");
-
-    assertEquals("b", view.getUser());
-    assertEquals("c", view.getNormal());
-    assertEquals("e", view.getName());
-    assertEquals("a", view.getEmail());
-    assertEquals("d", view.getMotto());
-  }
-  
-  @Test
   public void testInnerClass() throws Exception {
     InnerClass e = unmarshall(InnerClass.class, "{field:'hello world!'}");
-    
+
     assertEquals("hello world!", e.field);
   }
-  
+
   @Test
   public void testGetterSetter1() throws Exception {
     GetterSetterEntity e = unmarshall(GetterSetterEntity.class, "{name:'foo bar'}");
-    
+
     assertEquals("foo bar", e.getName());
   }
-  
+
   @Test
   public void testGetterSetter2() throws Exception {
     EntityInterface e = unmarshall(EntityInterface.class, "{whatever:true}");
-    
+
     assertTrue(e.isWhatever());
   }
-  
+
   @Test
   public void testDoublyInlined1() throws Exception {
 	  DoublyInlined e = unmarshall(DoublyInlined.class, "{foo:'hello there'}");
-    
+
     assertNotNull(e.foo);
     assertNotNull(e.foo.bar);
     assertEquals("hello there", e.foo.bar.hello);
   }
-  
+
   @Test
   public void testDoublyInlined2() throws Exception {
 	  DoublyInlined e = unmarshall(DoublyInlined.class, "{foo:null}");
-    
+
     assertNull(e.foo);
   }
-  
+
   @Test
   public void testPrivateNoArgConstructor() throws Exception {
     PrivateNoArgConstructor e =
         unmarshall(PrivateNoArgConstructor.class, "{foo:'hi'}");
-    
+
     assertNotNull(e);
     assertEquals("hi", e.getFoo());
   }
@@ -444,10 +279,6 @@ public class UnmarshallingTest {
 
   private <T> T unmarshall(Class<T> clazz, String json, boolean cyclic) throws JSONException {
     return unmarshall(clazz, json, cyclic, null);
-  }
-
-  private <T> T unmarshall(Class<T> clazz, String json, String view) throws JSONException {
-    return unmarshall(clazz, json, false, view);
   }
 
   private <T> T unmarshall(Class<T> clazz, String json, boolean cyclic, String view) throws JSONException {

@@ -6,19 +6,19 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-class UserInlinedEmail {
+public class UserInlinedEmail {
   @Value(views = "1")
-  EmailInline email;
-  
+  public EmailInline email;
+
   @Value(views = "2")
-  Map<String, EmailInline> emails = new HashMap<String, EmailInline>();
-  
+  public Map<String, EmailInline> emails = new HashMap<String, EmailInline>();
+
   @Value(views = "3", inline = false)
-  EmailInline emailNoInline;
-  
+  public EmailInline emailNoInline;
+
   @Value(views = "4")
-  EmailInline[] emailsArray;
-  
+  public EmailInline[] emailsArray;
+
   @Value(views = "5")
-  List<EmailInline> emailsList = new ArrayList<EmailInline>();
+  public List<EmailInline> emailsList = new ArrayList<EmailInline>();
 }

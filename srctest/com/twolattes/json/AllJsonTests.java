@@ -11,6 +11,7 @@ import com.twolattes.json.inheritance3.Inheritance3Test;
 import com.twolattes.json.inheritanceerror.InheritanceErrorTest;
 import com.twolattes.json.types.TypesTest;
 import com.twolattes.json.types.URLTypeTest;
+import com.twolattes.json.views.ViewsTest;
 import com.twolattes.json.visibility1.Visibility1Test;
 import com.twolattes.json.visibility2.Visibility2Test;
 
@@ -30,7 +31,8 @@ import com.twolattes.json.visibility2.Visibility2Test;
   InheritanceErrorTest.class,
   Visibility1Test.class,
   Visibility2Test.class,
-  GetterSetterTest.class
+  GetterSetterTest.class,
+  ViewsTest.class
 })
 public class AllJsonTests {
 }

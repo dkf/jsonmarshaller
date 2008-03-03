@@ -49,7 +49,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     this.fieldDescriptors = fieldDescriptors;
     this.shouldInline = shouldInline;
     this.parent = parent;
-    
+
     // implementation of the entity
     Class<?> implementedBy = annotation.implementedBy();
     if (!implementedBy.equals(Object.class)) {
@@ -60,7 +60,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     } else {
       implementedBy = entity;
     }
-    
+
     // getting the no arg constructor and making it accessible
     try {
       this.constructor = (Constructor<T>) implementedBy.getDeclaredConstructor();
@@ -72,7 +72,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
       throw new IllegalArgumentException(
           implementedBy + " does not have a no argument constructor.");
     }
-    
+
     // name conflicts
     Set<String> names = new HashSet<String>();
     parent = this;
@@ -251,7 +251,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
   /**
    * A helper method to populate an entity's fields based on a
    * {@link JSONObject} and its descriptor.
-   * 
+   *
    * This function MUST stay private.
    */
   @SuppressWarnings("unchecked")
@@ -262,21 +262,23 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     }
     for (FieldDescriptor d : getFieldDescriptors()) {
       if (jsonObject.has(d.getJsonName())) {
-        Descriptor descriptor = d.getDescriptor();
-        if (d.getShouldInline() == null) {
-          if (descriptor.shouldInline()) {
+        if (d.isInView(view)) {
+          Descriptor descriptor = d.getDescriptor();
+          if (d.getShouldInline() == null) {
+            if (descriptor.shouldInline()) {
+              d.setFieldValue(entity,
+                  descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), cyclic));
+            } else {
+              d.setFieldValue(entity,
+                  descriptor.unmarshall(jsonObject.get(d.getJsonName()), cyclic));
+            }
+          } else if (d.getShouldInline()) {
             d.setFieldValue(entity,
                 descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), cyclic));
           } else {
             d.setFieldValue(entity,
                 descriptor.unmarshall(jsonObject.get(d.getJsonName()), cyclic));
           }
-        } else if (d.getShouldInline()) {
-          d.setFieldValue(entity,
-              descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), cyclic));
-        } else {
-          d.setFieldValue(entity,
-              descriptor.unmarshall(jsonObject.get(d.getJsonName()), cyclic));
         }
       } else {
         if (d.isInView(view) && !d.isOptional()) {
@@ -349,7 +351,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
   public boolean shouldInline() {
     return shouldInline;
   }
-  
+
   public String getDiscriminator() {
     if (discriminator == null || discriminator.length() == 0) {
       throw new IllegalArgumentException(
