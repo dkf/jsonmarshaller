@@ -1,5 +1,8 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor.Type.GETTER;
+import static com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor.Type.SETTER;
+
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -13,12 +16,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
 import com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor;
-import com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor.Type;
 
 class EntityClassVisitor extends EmptyVisitor {
-  private static final Pattern GETTER = Pattern.compile("^(get|is)[A-Z0-9_].*$");
+  private static final Pattern GETTER_PATTERN = Pattern.compile("^(get|is)[A-Z0-9_].*$");
   private static final Pattern GETTER_SIGNATURE = Pattern.compile("^\\(\\).*$");
-  private static final Pattern SETTER = Pattern.compile("^set[A-Z0-9_].*$");
+  private static final Pattern SETTER_PATTERN = Pattern.compile("^set[A-Z0-9_].*$");
   private static final Pattern SETTER_SIGNATURE = Pattern.compile("^\\([^\\)]+\\)V$");
 
   private Map<String, FieldDescriptor> fieldDescriptors = Maps.newHashMap();
@@ -59,7 +61,7 @@ class EntityClassVisitor extends EmptyVisitor {
       throw new IllegalStateException();
     }
   }
-  
+
   @SuppressWarnings("unchecked")
   @Override
   public MethodVisitor visitMethod(int access, String name, String desc,
@@ -72,7 +74,7 @@ class EntityClassVisitor extends EmptyVisitor {
       Value annotation = getter.getAnnotation(Value.class);
       if (annotation != null) {
         // creating, checking against discovered descriptors
-        GetSetFieldDescriptor descriptor = new GetSetFieldDescriptor(Type.GETTER, getter);
+        GetSetFieldDescriptor descriptor = new GetSetFieldDescriptor(GETTER, getter);
         FieldDescriptor potentialDescriptor = fieldDescriptors.get(descriptor.getFieldName());
         if (potentialDescriptor != null) {
           if (potentialDescriptor instanceof GetSetFieldDescriptor) {
@@ -85,27 +87,27 @@ class EntityClassVisitor extends EmptyVisitor {
         } else {
           fieldDescriptors.put(descriptor.getFieldName(), descriptor);
         }
-        
+
         // type
         if (!annotation.type().equals(com.twolattes.json.types.Type.class)) {
           try {
             descriptor.setDescriptor(
                 new UserTypeDescriptor(annotation.type().newInstance()));
-		  } catch (InstantiationException e) {
-		    throw new IllegalStateException("could not instanciate " + annotation.type());
-		  } catch (IllegalAccessException e) {
-			throw new IllegalStateException("could not access " + annotation.type());
-		  }
-        } else {
+    		  } catch (InstantiationException e) {
+    		    throw new IllegalStateException("could not instanciate " + annotation.type());
+    		  } catch (IllegalAccessException e) {
+    			throw new IllegalStateException("could not access " + annotation.type());
+    		  }
+        } else if (descriptor.getDescriptor() == null) {
           descriptor.setDescriptor(
               new DescriptorFactory().create(signature.substring(2), store));
         }
-        
+
         // using annotation to populate the descriptor
         descriptor.setJsonName(annotation.name());
         descriptor.setOptional(annotation.optional());
         descriptor.setShouldInline(annotation.inline());
-        
+
         for (String view : annotation.views()) {
           descriptor.addView(view);
         }
@@ -117,7 +119,7 @@ class EntityClassVisitor extends EmptyVisitor {
       Value annotation = setter.getAnnotation(Value.class);
       if (annotation != null) {
         // creating, checking against discovered descriptors
-        GetSetFieldDescriptor descriptor = new GetSetFieldDescriptor(Type.SETTER, setter);
+        GetSetFieldDescriptor descriptor = new GetSetFieldDescriptor(SETTER, setter);
         FieldDescriptor potentialDescriptor = fieldDescriptors.get(descriptor.getFieldName());
         if (potentialDescriptor != null) {
           if (potentialDescriptor instanceof GetSetFieldDescriptor) {
@@ -130,27 +132,27 @@ class EntityClassVisitor extends EmptyVisitor {
         } else {
           fieldDescriptors.put(descriptor.getFieldName(), descriptor);
         }
-        
+
         // type
         if (!annotation.type().equals(com.twolattes.json.types.Type.class)) {
           try {
             descriptor.setDescriptor(
                 new UserTypeDescriptor(annotation.type().newInstance()));
-		  } catch (InstantiationException e) {
-		    throw new IllegalStateException("could not instanciate " + annotation.type());
-		  } catch (IllegalAccessException e) {
-			throw new IllegalStateException("could not access " + annotation.type());
-		  }
-        } else {
+    		  } catch (InstantiationException e) {
+    		    throw new IllegalStateException("could not instanciate " + annotation.type());
+    		  } catch (IllegalAccessException e) {
+    			throw new IllegalStateException("could not access " + annotation.type());
+    		  }
+        } else if (descriptor.getDescriptor() == null) {
           descriptor.setDescriptor(
               new DescriptorFactory().create(signature.substring(1, signature.length() - 2), store));
         }
-        
+
         // using annotation to populate the descriptor
         descriptor.setJsonName(annotation.name());
         descriptor.setOptional(annotation.optional());
         descriptor.setShouldInline(annotation.inline());
-        
+
         for (String view : annotation.views()) {
           descriptor.addView(view);
         }
@@ -168,19 +170,19 @@ class EntityClassVisitor extends EmptyVisitor {
     return new ConcreteEntityDescriptor(entityClass,
         Sets.newHashSet(fieldDescriptors.values()), shouldInline, parent);
   }
-  
+
   boolean isGetterName(String name) {
-    return GETTER.matcher(name).matches();
+    return GETTER_PATTERN.matcher(name).matches();
   }
-  
+
   boolean isGetterSignature(String desc) {
     return GETTER_SIGNATURE.matcher(desc).matches();
   }
-  
+
   boolean isSetterName(String name) {
-    return SETTER.matcher(name).matches();
+    return SETTER_PATTERN.matcher(name).matches();
   }
-  
+
   boolean isSetterSignature(String desc) {
     return SETTER_SIGNATURE.matcher(desc).matches();
   }

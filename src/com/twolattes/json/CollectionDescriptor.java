@@ -1,8 +1,8 @@
 package com.twolattes.json;
 
-import java.util.ArrayList;
+import static com.twolattes.json.CollectionType.fromClass;
+
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,35 +19,20 @@ import com.google.common.base.Preconditions;
  */
 @SuppressWarnings("unchecked")
 class CollectionDescriptor extends AbstractDescriptor<Collection, Object> {
-  private boolean isSet;
-  private boolean isSetValid = false;
-  @SuppressWarnings("unchecked")
-  private final Class<? extends Collection> collectionType;
-  final Descriptor<Object, Object> collectionDescriptor;
+  private final CollectionType collectionType;
+  private final Descriptor<Object, Object> collectionDescriptor;
 
   @SuppressWarnings("unchecked")
-  CollectionDescriptor(Class<? extends Collection> collectionType,
+  CollectionDescriptor(Class<? extends Collection> collectionClass,
       Descriptor<? extends Object, ? extends Object> collectionDescriptor) {
     super(Collection.class);
     this.collectionDescriptor = (Descriptor<Object, Object>) collectionDescriptor;
-    this.collectionType = collectionType;
+    this.collectionType = fromClass(collectionClass);
   }
 
   @Override
   public final boolean isInlineable() {
     return collectionDescriptor.isInlineable();
-  }
-
-  private final boolean isSet() {
-    if (!isSetValid) {
-      isSet = Set.class.isAssignableFrom(getCollectionType());
-    }
-    return isSet;
-  }
-
-  @SuppressWarnings("unchecked")
-  Class<? extends Collection> getCollectionType() {
-    return collectionType;
   }
 
   public Object marshall(Collection entity, boolean cyclic) {
@@ -74,12 +59,7 @@ class CollectionDescriptor extends AbstractDescriptor<Collection, Object> {
     } else {
       Preconditions.checkState(object instanceof JSONArray);
       JSONArray jsonArray = (JSONArray) object;
-      Collection<Object> collection;
-      if (isSet()) {
-        collection = new HashSet<Object>();
-      } else {
-        collection = new ArrayList<Object>();
-      }
+      Collection<Object> collection = collectionType.newCollection();
       try {
         if (collectionDescriptor.shouldInline()) {
           for (int i = 0; i < jsonArray.length(); i++) {
@@ -99,11 +79,7 @@ class CollectionDescriptor extends AbstractDescriptor<Collection, Object> {
 
   @Override
   public Class<?> getReturnedClass() {
-    if (isSet()) {
-      return Set.class;
-    } else {
-      return List.class;
-    }
+    return collectionType.toClass();
   }
 
   @Override
