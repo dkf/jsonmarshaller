@@ -189,6 +189,8 @@ class EntitySignatureVisitor implements SignatureVisitor {
   }
 
   public void visitTypeVariable(String type) {
-    throw new IllegalStateException();
+    throw new IllegalArgumentException(
+        "cannot create a marshaller for parametrized types due to erasure");
   }
+
 }

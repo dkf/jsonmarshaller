@@ -21,14 +21,19 @@ public class MarshallerTest {
       }.start();
     }
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testBadEntityBecauseBadType() throws Exception {
     Marshaller.create(BadEntityBecauseBadType.class);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testCollidingValues() throws Exception {
     Marshaller.create(CollidingValues.class);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testParametrizedTypes() throws Exception {
+    Marshaller.create(ParametrizedTypesEntitiy.class);
   }
 }
