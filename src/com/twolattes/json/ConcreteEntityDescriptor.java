@@ -229,7 +229,6 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
       unmarshallFields(jsonObject, entity, cyclic, view);
       if (cyclic) {
         Map<Integer, Object> map = i2o.get();
-        System.out.println(map);
         if (!map.containsKey(jsonObject.getInt(ID))) {
           map.put(jsonObject.getInt(ID), entity);
         }

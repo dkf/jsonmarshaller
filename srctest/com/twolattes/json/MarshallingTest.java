@@ -378,4 +378,22 @@ public class MarshallingTest {
   	assertEquals(1, o.length());
   	assertEquals(10.0, o.get("price"));
   }
+
+  @Test
+  public void nativeArray() throws Exception {
+    Marshaller<EntityWithNativeArray> m = Marshaller.create(EntityWithNativeArray.class);
+
+    EntityWithNativeArray e = new EntityWithNativeArray();
+    e.ids = new int[] { 5, 1, 2 };
+
+    JSONObject o = m.marshall(e);
+
+    assertEquals(1, o.length());
+    JSONArray ids = o.getJSONArray("ids");
+    assertEquals(3, ids.length());
+    assertEquals(5, ids.get(0));
+    assertEquals(1, ids.get(1));
+    assertEquals(2, ids.get(2));
+  }
+
 }

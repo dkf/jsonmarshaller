@@ -273,6 +273,17 @@ public class UnmarshallingTest {
     assertEquals(Sets.immutableSet(n), n.neighbors());
   }
 
+  @Test
+  public void nativeArray() throws Exception {
+    EntityWithNativeArray e = unmarshall(EntityWithNativeArray.class, "{ids:[5,1,3]}");
+
+    assertNotNull(e.ids);
+    assertEquals(3, e.ids.length);
+    assertEquals(5, e.ids[0]);
+    assertEquals(1, e.ids[1]);
+    assertEquals(3, e.ids[2]);
+  }
+
   private <T> T unmarshall(Class<T> clazz, String json) throws JSONException {
     return unmarshall(clazz, json, false, null);
   }

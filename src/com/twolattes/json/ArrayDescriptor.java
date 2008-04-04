@@ -1,12 +1,12 @@
 package com.twolattes.json;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.lang.reflect.Array;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.common.base.Preconditions;
 
 /**
  * A descriptor for arrays.
@@ -31,7 +31,7 @@ class ArrayDescriptor extends AbstractDescriptor<Object, Object> {
     if (entity == null) {
       return JSONArray.NULL;
     }
-    Preconditions.checkState(entity instanceof Object[], "array expected");
+    checkState(entity.getClass().isArray(), "array expected");
     JSONArray jsonArray = new JSONArray();
     int l = Array.getLength(entity);
     if (elementsDescriptor.shouldInline()) {
@@ -50,7 +50,7 @@ class ArrayDescriptor extends AbstractDescriptor<Object, Object> {
     if (JSONObject.NULL.equals(object)) {
       return null;
     }
-    Preconditions.checkState(object instanceof JSONArray);
+    checkState(object instanceof JSONArray);
     JSONArray jsonArray = (JSONArray) object;
     Object[] array = (Object[]) Array.newInstance(elementsDescriptor.getReturnedClass(), jsonArray.length());
     try {
