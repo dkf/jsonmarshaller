@@ -396,4 +396,22 @@ public class MarshallingTest {
     assertEquals(2, ids.get(2));
   }
 
+  @Test
+  public void arrayOfArray() throws Exception {
+    ArrayOfArray arrayOfArray = new ArrayOfArray();
+    arrayOfArray.matrix = new Integer[][] {{56, 57}, {58, 59}};
+
+    JSONObject o = Marshaller.create(ArrayOfArray.class).marshall(arrayOfArray);
+
+    assertEquals(1, o.length());
+    JSONArray matrix = o.getJSONArray("matrix");
+    assertEquals(2, matrix.length());
+    assertEquals(2, matrix.getJSONArray(0).length());
+    assertEquals(56, matrix.getJSONArray(0).get(0));
+    assertEquals(57, matrix.getJSONArray(0).get(1));
+    assertEquals(2, matrix.getJSONArray(1).length());
+    assertEquals(58, matrix.getJSONArray(1).get(0));
+    assertEquals(59, matrix.getJSONArray(1).get(1));
+  }
+
 }
