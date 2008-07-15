@@ -9,14 +9,14 @@ import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
 /**
  * A proxy to an entity descriptor creating lazily the
  * {@link ConcreteEntityDescriptor} it delegates to.
- * 
+ *
  * @author pascallouis
  */
 final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
   private final Class<T> klass;
   private final EntityDescriptorStore store;
   private EntityDescriptor<T> descriptor = null;
-  
+
   ProxyEntityDescriptor(Class<T> klass, EntityDescriptorStore store) {
     this.klass = klass;
     this.store = store;
@@ -42,12 +42,8 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
     return getDescriptor().marshall(entity, cyclic, view);
   }
 
-  public Object marshall(T entity, boolean cyclic) {
-    return getDescriptor().marshall(entity, cyclic);
-  }
-
-  public Object marshallInline(T entity, boolean cyclic) {
-    return getDescriptor().marshallInline(entity, cyclic);
+  public Object marshallInline(T entity, boolean cyclic, String view) {
+    return getDescriptor().marshallInline(entity, cyclic, view);
   }
 
   public boolean shouldInline() {
@@ -58,12 +54,8 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
     return getDescriptor().unmarshall(object, cyclic, view);
   }
 
-  public T unmarshall(Object marshalled, boolean cyclic) {
-    return getDescriptor().unmarshall(marshalled, cyclic);
-  }
-
-  public T unmarshallInline(Object entity, boolean cyclic) {
-    return getDescriptor().unmarshallInline(entity, cyclic);
+  public T unmarshallInline(Object entity, boolean cyclic, String view) {
+    return getDescriptor().unmarshallInline(entity, cyclic, view);
   }
 
   public String getDiscriminator() {

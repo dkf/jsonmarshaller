@@ -105,7 +105,7 @@ public final class Marshaller<T> {
    */
   public JSONObject marshall(T entity, boolean cyclic, String view) {
     descriptor.init(cyclic);
-    return descriptor.marshall(entity, cyclic, view);
+    return (JSONObject) descriptor.marshall(entity, cyclic, view);
   }
 
   /**
@@ -153,7 +153,7 @@ public final class Marshaller<T> {
     JSONArray a = new JSONArray();
     if (descriptor.shouldInline()) {
       for (T entity : entities) {
-        a.put(descriptor.marshallInline(entity, cyclic));
+        a.put(descriptor.marshallInline(entity, cyclic, view));
       }
     } else {
       for (T entity : entities) {
@@ -204,7 +204,7 @@ public final class Marshaller<T> {
     try {
       if (descriptor.shouldInline()) {
         for (int i = 0; i < length; i++) {
-          list.add(descriptor.unmarshallInline(array.get(i), false));
+          list.add(descriptor.unmarshallInline(array.get(i), false, view));
         }
       } else {
         for (int i = 0; i < length; i++) {

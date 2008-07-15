@@ -1,12 +1,12 @@
 package com.twolattes.json;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Descriptor for {@link Map}s.
@@ -39,7 +39,7 @@ final class MapDescriptor extends AbstractDescriptor<Map, Object> {
   }
 
   @SuppressWarnings("unchecked")
-  public Object marshall(Map entity, boolean cyclic) {
+  public Object marshall(Map entity, boolean cyclic, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     } else {
@@ -48,11 +48,11 @@ final class MapDescriptor extends AbstractDescriptor<Map, Object> {
       try {
         if (mapDescriptor.shouldInline()) {
           for (Entry<String, Object> e : map.entrySet()) {
-            o.put(e.getKey(), mapDescriptor.marshallInline(e.getValue(), cyclic));
+            o.put(e.getKey(), mapDescriptor.marshallInline(e.getValue(), cyclic, view));
           }
         } else {
           for (Entry<String, Object> e : map.entrySet()) {
-            o.put(e.getKey(), mapDescriptor.marshall(e.getValue(), cyclic));
+            o.put(e.getKey(), mapDescriptor.marshall(e.getValue(), cyclic, view));
           }
         }
       } catch (JSONException e) {
@@ -63,7 +63,7 @@ final class MapDescriptor extends AbstractDescriptor<Map, Object> {
   }
 
   @SuppressWarnings("unchecked")
-  public Map<String, ?> unmarshall(Object object, boolean cyclic) {
+  public Map<String, ?> unmarshall(Object object, boolean cyclic, String view) {
     if (object.equals(JSONObject.NULL)) {
       return null;
     } else {
@@ -74,12 +74,12 @@ final class MapDescriptor extends AbstractDescriptor<Map, Object> {
         if (mapDescriptor.shouldInline()) {
           while (i.hasNext()) {
             String key = i.next();
-            map.put(key, mapDescriptor.unmarshallInline(o.get(key), cyclic));
+            map.put(key, mapDescriptor.unmarshallInline(o.get(key), cyclic, view));
           }
         } else {
           while (i.hasNext()) {
             String key = i.next();
-            map.put(key, mapDescriptor.unmarshall(o.get(key), cyclic));
+            map.put(key, mapDescriptor.unmarshall(o.get(key), cyclic, view));
           }
         }
       } catch (JSONException e) {

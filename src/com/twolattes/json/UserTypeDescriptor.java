@@ -6,23 +6,23 @@ import com.twolattes.json.types.Type;
 
 /**
  * Descriptor wrapping used defined {@link Type}s.
- * 
+ *
  * @author pascallouis
  */
 class UserTypeDescriptor<T> extends AbstractDescriptor<T, Object> {
   private final Type<T> type;
-  
+
   public UserTypeDescriptor(Type<T> type) {
     super(type.getReturnedClass());
     this.type = type;
   }
-  
+
   @Override
   public boolean isInlineable() {
     return false;
   }
 
-  public Object marshall(T entity, boolean cyclic) {
+  public Object marshall(T entity, boolean cyclic, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     } else {
@@ -30,7 +30,7 @@ class UserTypeDescriptor<T> extends AbstractDescriptor<T, Object> {
     }
   }
 
-  public T unmarshall(Object marshalled, boolean cyclic) {
+  public T unmarshall(Object marshalled, boolean cyclic, String view) {
     if (marshalled.equals(JSONObject.NULL)) {
       return null;
     } else {

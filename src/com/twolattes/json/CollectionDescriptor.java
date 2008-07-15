@@ -35,25 +35,25 @@ class CollectionDescriptor extends AbstractDescriptor<Collection, Object> {
     return collectionDescriptor.isInlineable();
   }
 
-  public Object marshall(Collection entity, boolean cyclic) {
+  public Object marshall(Collection entity, boolean cyclic, String view) {
     if (entity == null) {
       return JSONArray.NULL;
     } else {
       JSONArray jsonArray = new JSONArray();
       if (collectionDescriptor.shouldInline()) {
         for (Object o : entity) {
-          jsonArray.put(collectionDescriptor.marshallInline(o, cyclic));
+          jsonArray.put(collectionDescriptor.marshallInline(o, cyclic, view));
         }
       } else {
         for (Object o : entity) {
-          jsonArray.put(collectionDescriptor.marshall(o, cyclic));
+          jsonArray.put(collectionDescriptor.marshall(o, cyclic, view));
         }
       }
       return jsonArray;
     }
   }
 
-  public Collection<?> unmarshall(Object object, boolean cyclic) {
+  public Collection<?> unmarshall(Object object, boolean cyclic, String view) {
     if (JSONObject.NULL.equals(object)) {
       return null;
     } else {
@@ -63,11 +63,11 @@ class CollectionDescriptor extends AbstractDescriptor<Collection, Object> {
       try {
         if (collectionDescriptor.shouldInline()) {
           for (int i = 0; i < jsonArray.length(); i++) {
-            collection.add(collectionDescriptor.unmarshallInline(jsonArray.get(i), cyclic));
+            collection.add(collectionDescriptor.unmarshallInline(jsonArray.get(i), cyclic, view));
           }
         } else {
           for (int i = 0; i < jsonArray.length(); i++) {
-            collection.add(collectionDescriptor.unmarshall(jsonArray.get(i), cyclic));
+            collection.add(collectionDescriptor.unmarshall(jsonArray.get(i), cyclic, view));
           }
         }
       } catch (JSONException e) {

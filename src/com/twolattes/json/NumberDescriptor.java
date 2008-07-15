@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * Abstract descriptor for subtypes of {@link Number}s.
- * 
+ *
  * @param <N> the type of number
  * @author pascallouis
  */
@@ -17,7 +17,7 @@ abstract class NumberDescriptor<N extends Number>
     super(klass);
   }
 
-  public final Object marshall(N entity, boolean cyclic) {
+  public final Object marshall(N entity, boolean cyclic, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     } else {
@@ -26,7 +26,7 @@ abstract class NumberDescriptor<N extends Number>
     }
   }
 
-  public final N unmarshall(Object entity, boolean cyclic) {
+  public final N unmarshall(Object entity, boolean cyclic, String view) {
     if (entity.equals(JSONObject.NULL)) {
       return null;
     } else {

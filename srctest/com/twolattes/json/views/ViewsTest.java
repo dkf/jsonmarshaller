@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -269,6 +270,59 @@ public class ViewsTest {
     assertNotNull(user.emailsList);
     assertEquals(1, user.emailsList.size());
     assertNull(user.emailsList.get(0));
+  }
+
+  @Test
+  public void setOfNormalOrFullMarshallingEmptyNormal() throws Exception {
+    JSONObject o = Marshaller.create(SetOfNormalOrFull.class)
+        .marshall(new SetOfNormalOrFull());
+
+    assertEquals(1, o.length());
+    JSONArray a = o.getJSONArray("normalOrFulls");
+    assertEquals(0, a.length());
+  }
+
+  @Test
+  public void setOfNormalOrFullMarshallingEmptyFull() throws Exception {
+    JSONObject o = Marshaller.create(SetOfNormalOrFull.class)
+        .marshall(new SetOfNormalOrFull(), "full");
+
+    assertEquals(1, o.length());
+    JSONArray a = o.getJSONArray("normalOrFulls");
+    assertEquals(0, a.length());
+  }
+
+  @Test
+  public void setOfNormalOrFullMarshallingNotEmptyNormal() throws Exception {
+    SetOfNormalOrFull setOfNormalOrFull = new SetOfNormalOrFull();
+    setOfNormalOrFull.normalOrFulls.add(new NormalOrFull());
+    JSONObject o1 = Marshaller.create(SetOfNormalOrFull.class)
+        .marshall(setOfNormalOrFull);
+
+    assertEquals(1, o1.length());
+    JSONArray a = o1.getJSONArray("normalOrFulls");
+    assertEquals(1, a.length());
+    JSONObject o2 = a.getJSONObject(0);
+
+    assertEquals(1, o2.length());
+    assertEquals(89, o2.get("foo"));
+  }
+
+  @Test
+  public void setOfNormalOrFullMarshallingNotEmptyFull() throws Exception {
+    SetOfNormalOrFull setOfNormalOrFull = new SetOfNormalOrFull();
+    setOfNormalOrFull.normalOrFulls.add(new NormalOrFull());
+    JSONObject o1 = Marshaller.create(SetOfNormalOrFull.class)
+        .marshall(setOfNormalOrFull, "full");
+
+    assertEquals(1, o1.length());
+    JSONArray a = o1.getJSONArray("normalOrFulls");
+    assertEquals(1, a.length());
+    JSONObject o2 = a.getJSONObject(0);
+
+    assertEquals(2, o2.length());
+    assertEquals(89, o2.get("foo"));
+    assertEquals(78, o2.get("bar"));
   }
 
   private <T> T unmarshall(Class<T> clazz, String json, String view) throws JSONException {

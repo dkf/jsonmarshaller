@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * Descriptor for the {@link Boolean} type.
- * 
+ *
  * @author pascal
  */
 class BooleanDescriptor extends AbstractDescriptor<Boolean, Object> {
@@ -14,7 +14,7 @@ class BooleanDescriptor extends AbstractDescriptor<Boolean, Object> {
     super(Boolean.class);
   }
 
-  public final Object marshall(Boolean entity, boolean cyclic) {
+  public final Object marshall(Boolean entity, boolean cyclic, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     } else {
@@ -23,7 +23,7 @@ class BooleanDescriptor extends AbstractDescriptor<Boolean, Object> {
     }
   }
 
-  public final Boolean unmarshall(Object marshalled, boolean cyclic) {
+  public final Boolean unmarshall(Object marshalled, boolean cyclic, String view) {
     return (Boolean) marshalled;
   }
 }

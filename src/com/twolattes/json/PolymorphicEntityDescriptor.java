@@ -14,7 +14,7 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
    * entity. The keys are discriminators values.
    */
   private final Map<String, EntityDescriptor<?>> subDescriptorsByDisciminator;
-  
+
   /**
    * Subclasses' descriptors used if the described entity is a polymorphic
    * entity. The keys are discriminators values.
@@ -31,7 +31,7 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
    * The name of the discriminator property.
    */
   private final String discriminatorName;
-  
+
   PolymorphicEntityDescriptor(Class<?> returnedClass,
       String discriminatorName,
       Set<EntityDescriptor<?>> descriptors) {
@@ -45,7 +45,7 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
           descriptor.getDiscriminator(), descriptor);
     }
   }
-  
+
   public String getDiscriminator() {
     throw new UnsupportedOperationException();
   }
@@ -72,16 +72,12 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     return returnedClass;
   }
 
-  public JSONObject marshall(Object entity, boolean cyclic) {
-    return marshall(entity, cyclic, null);
-  }
-
   public JSONObject marshall(Object entity, boolean cyclic, String view) {
     // null
     if (entity == null) {
       return JSONObject.NULL;
     }
-    
+
     // null safe
     EntityDescriptor<?> descriptor =
         subDescriptorsByClass.get(entity.getClass());
@@ -99,12 +95,8 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     return jsonObject;
   }
 
-  public Object marshallInline(Object entity, boolean cyclic) {
+  public Object marshallInline(Object entity, boolean cyclic, String view) {
     throw new UnsupportedOperationException();
-  }
-
-  public T unmarshall(Object marshalled, boolean cyclic) {
-    return unmarshall(marshalled, cyclic, null);
   }
 
   @SuppressWarnings("unchecked")
@@ -113,7 +105,7 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     if (JSONObject.NULL.equals(object)) {
       return null;
     }
-    
+
     // null safe
     JSONObject jsonObject = (JSONObject) object;
     String discriminator;
@@ -124,14 +116,16 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
           "Unmarhsalling polymorphic entity which does not contain the " +
           "discriminator: " + discriminatorName);
     }
-    
+
     // getting the concrete descriptor
     EntityDescriptor<?> descriptor =
         subDescriptorsByDisciminator.get(discriminator);
     return (T) descriptor.unmarshall(object, cyclic, view);
   }
 
-  public T unmarshallInline(Object entity, boolean cyclic) {
+  @Override
+  public T unmarshallInline(Object entity, boolean cyclic, String view) {
     throw new UnsupportedOperationException();
   }
+
 }

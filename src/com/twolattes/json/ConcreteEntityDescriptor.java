@@ -163,14 +163,14 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
         Descriptor descriptor = d.getDescriptor();
         if (d.getShouldInline() == null) {
           if (descriptor.shouldInline()) {
-            jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, cyclic));
+            jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, cyclic, view));
           } else {
-            jsonObject.put(jsonName, descriptor.marshall(fieldValue, cyclic));
+            jsonObject.put(jsonName, descriptor.marshall(fieldValue, cyclic, view));
           }
         } else if (d.getShouldInline()) {
-          jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, cyclic));
+          jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, cyclic, view));
         } else {
-          jsonObject.put(jsonName, descriptor.marshall(fieldValue, cyclic));
+          jsonObject.put(jsonName, descriptor.marshall(fieldValue, cyclic, view));
         }
       }
     }
@@ -190,7 +190,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
 
   @SuppressWarnings("unchecked")
   @Override
-  public Object marshallInline(Object entity, boolean cyclic) {
+  public Object marshallInline(Object entity, boolean cyclic, String view) {
     Preconditions.checkState(isInlineable());
     if (entity == null) {
       return JSONObject.NULL;
@@ -199,14 +199,14 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     Descriptor descriptor = d.getDescriptor();
     if (d.getShouldInline() == null) {
       if (descriptor.shouldInline()) {
-        return descriptor.marshallInline(d.getFieldValue(entity), cyclic);
+        return descriptor.marshallInline(d.getFieldValue(entity), cyclic, view);
       } else {
-        return descriptor.marshall(d.getFieldValue(entity), cyclic);
+        return descriptor.marshall(d.getFieldValue(entity), cyclic, view);
       }
     } else if (d.getShouldInline()) {
-      return descriptor.marshallInline(d.getFieldValue(entity), cyclic);
+      return descriptor.marshallInline(d.getFieldValue(entity), cyclic, view);
     } else {
-      return descriptor.marshall(d.getFieldValue(entity), cyclic);
+      return descriptor.marshall(d.getFieldValue(entity), cyclic, view);
     }
   }
 
@@ -266,17 +266,17 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
           if (d.getShouldInline() == null) {
             if (descriptor.shouldInline()) {
               d.setFieldValue(entity,
-                  descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), cyclic));
+                  descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), cyclic, view));
             } else {
               d.setFieldValue(entity,
-                  descriptor.unmarshall(jsonObject.get(d.getJsonName()), cyclic));
+                  descriptor.unmarshall(jsonObject.get(d.getJsonName()), cyclic, view));
             }
           } else if (d.getShouldInline()) {
             d.setFieldValue(entity,
-                descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), cyclic));
+                descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), cyclic, view));
           } else {
             d.setFieldValue(entity,
-                descriptor.unmarshall(jsonObject.get(d.getJsonName()), cyclic));
+                descriptor.unmarshall(jsonObject.get(d.getJsonName()), cyclic, view));
           }
         }
       } else {
@@ -300,7 +300,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
 
   @SuppressWarnings("unchecked")
   @Override
-  public T unmarshallInline(Object entity, boolean cyclic) {
+  public T unmarshallInline(Object entity, boolean cyclic, String view) {
     Preconditions.checkState(isInlineable());
     if (JSONObject.NULL.equals(entity)) {
       return null;
