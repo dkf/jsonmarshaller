@@ -5,7 +5,7 @@ package org.json;
  * @author JSON.org
  * @version 2
  */
-public class JSONException extends Exception {
+public class JSONException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	private Throwable cause;
@@ -23,6 +23,7 @@ public class JSONException extends Exception {
         this.cause = t;
     }
 
+    @Override
     public Throwable getCause() {
         return this.cause;
     }
