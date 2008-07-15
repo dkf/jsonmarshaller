@@ -123,7 +123,6 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     return (T) descriptor.unmarshall(object, cyclic, view);
   }
 
-  @Override
   public T unmarshallInline(Object entity, boolean cyclic, String view) {
     throw new UnsupportedOperationException();
   }
