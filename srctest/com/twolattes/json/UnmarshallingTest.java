@@ -285,6 +285,20 @@ public class UnmarshallingTest {
     assertEquals(3, e.ids[2]);
   }
 
+  @Test
+  public void nullOptionalObject() throws Exception {
+    NullOptionalValue obj = unmarshall(NullOptionalValue.class, "{}");
+
+    assertNull(obj.getOptional());
+  }
+
+  @Test
+  public void nonNullOptionalObject() throws Exception {
+    NullOptionalValue obj = unmarshall(NullOptionalValue.class, "{optional:yesItIs}");
+
+    assertEquals("yesItIs", obj.getOptional());
+  }
+
   private <T> T unmarshall(Class<T> clazz, String json) throws JSONException {
     return unmarshall(clazz, json, false, null);
   }

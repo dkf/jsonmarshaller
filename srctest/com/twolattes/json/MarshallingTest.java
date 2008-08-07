@@ -414,4 +414,21 @@ public class MarshallingTest {
     assertEquals(59, matrix.getJSONArray(1).get(1));
   }
 
+  @Test
+  public void nullOptionalObject() throws Exception {
+    NullOptionalValue obj = new NullOptionalValue();
+
+    JSONObject o = Marshaller.create(NullOptionalValue.class).marshall(obj);
+    assertEquals(0, o.length());
+  }
+
+  @Test
+  public void nonNullOptionalObject() throws Exception {
+    NullOptionalValue obj = new NullOptionalValue();
+    obj.setOptional("optional");
+
+    JSONObject o = Marshaller.create(NullOptionalValue.class).marshall(obj);
+    assertEquals(1, o.length());
+  }
+
 }

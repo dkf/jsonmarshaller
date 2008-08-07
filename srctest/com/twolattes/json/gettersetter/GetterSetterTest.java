@@ -80,8 +80,7 @@ public class GetterSetterTest {
     JSONObject o = Marshaller.create(GetterSetter3.class).marshall(e);
 
     // assertions
-    assertEquals(1, o.length());
-    assertEquals(JSONObject.NULL, o.get("email"));
+    assertEquals(0, o.length());
   }
 
   @Test

@@ -159,18 +159,20 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     for (FieldDescriptor d : getFieldDescriptors()) {
       if (d.isInView(view)) {
         Object fieldValue = d.getFieldValue(entity);
-        String jsonName = d.getJsonName();
-        Descriptor descriptor = d.getDescriptor();
-        if (d.getShouldInline() == null) {
-          if (descriptor.shouldInline()) {
+        if (!(d.isOptional() && fieldValue == null)) {
+          String jsonName = d.getJsonName();
+          Descriptor descriptor = d.getDescriptor();
+          if (d.getShouldInline() == null) {
+            if (descriptor.shouldInline()) {
+              jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, cyclic, view));
+            } else {
+              jsonObject.put(jsonName, descriptor.marshall(fieldValue, cyclic, view));
+            }
+          } else if (d.getShouldInline()) {
             jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, cyclic, view));
           } else {
             jsonObject.put(jsonName, descriptor.marshall(fieldValue, cyclic, view));
           }
-        } else if (d.getShouldInline()) {
-          jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, cyclic, view));
-        } else {
-          jsonObject.put(jsonName, descriptor.marshall(fieldValue, cyclic, view));
         }
       }
     }
