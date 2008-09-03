@@ -93,4 +93,28 @@ public class GetterSetterTest {
     assertNotNull(e);
     assertNull(e.getEmail());
   }
+
+  @Test
+  public void getterSetter4Marshall() throws Exception {
+    // entity
+    GetterSetter4 e = new GetterSetter4();
+
+    // marshalling
+    JSONObject o = Marshaller.create(GetterSetter4.class).marshall(e);
+
+    // assertions
+    assertEquals("foobar", o.get("email"));
+    assertEquals(1, o.length());
+  }
+
+  @Test
+  public void getterSetter4Unmarshall() throws Exception {
+    // unmarshalling
+    GetterSetter4 e = Marshaller.create(GetterSetter4.class).unmarshall(
+        new JSONObject("{}"));
+
+    // assertions
+    assertNotNull(e);
+    assertNull(e.data);
+  }
 }
