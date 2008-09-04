@@ -27,7 +27,6 @@ SOFTWARE.
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -98,6 +97,7 @@ public class JSONObject {
      * so the clone method returns itself.
      * @return     NULL.
      */
+    @Override
     protected final Object clone() {
       return this;
     }
@@ -109,10 +109,11 @@ public class JSONObject {
      * @return true if the object parameter is the JSONObject.NULL object
      *  or null.
      */
+    @Override
     public boolean equals(Object object) {
       return object == this || object == JSONArray.NULL;
     }
-    
+
     @Override
     public int hashCode() {
       return 78237398;
@@ -123,6 +124,7 @@ public class JSONObject {
      * Get the "null" string value.
      * @return The string "null".
      */
+    @Override
     public String toString() {
       return "null";
     }
@@ -255,7 +257,7 @@ public class JSONObject {
    */
   public JSONObject(Object object, String names[]) {
     this();
-    Class c = object.getClass();
+    Class<?> c = object.getClass();
     for (int i = 0; i < names.length; i += 1) {
       try {
         String name = names[i];
@@ -299,8 +301,8 @@ public class JSONObject {
     testValidity(value);
     Object o = opt(key);
     if (o == null) {
-      put(key, value instanceof JSONArray ? 
-          new JSONArray().put(value) : 
+      put(key, value instanceof JSONArray ?
+          new JSONArray().put(value) :
             value);
     } else if (o instanceof JSONArray) {
       ((JSONArray)o).put(value);
@@ -319,7 +321,7 @@ public class JSONObject {
    * @param key   A key string.
    * @param value An object to be accumulated under the key.
    * @return this.
-   * @throws JSONException If the key is null or if the current value 
+   * @throws JSONException If the key is null or if the current value
    * 	associated with the key is not a JSONArray.
    */
   public JSONObject append(String key, Object value)
@@ -331,7 +333,7 @@ public class JSONObject {
     } else if (o instanceof JSONArray) {
       put(key, ((JSONArray)o).put(value));
     } else {
-      throw new JSONException("JSONObject[" + key + 
+      throw new JSONException("JSONObject[" + key +
       "] is not a JSONArray.");
     }
     return this;
@@ -416,7 +418,7 @@ public class JSONObject {
     Object o = get(key);
     try {
       return o instanceof Number ?
-          ((Number)o).doubleValue() : 
+          ((Number)o).doubleValue() :
             Double.valueOf((String)o).doubleValue();
     } catch (Exception e) {
       throw new JSONException("JSONObject[" + quote(key) +
@@ -555,7 +557,7 @@ public class JSONObject {
    */
   public JSONArray names() {
     JSONArray ja = new JSONArray();
-    Iterator  keys = keys();
+    Iterator<?>  keys = keys();
     while (keys.hasNext()) {
       ja.put(keys.next());
     }
@@ -629,21 +631,6 @@ public class JSONObject {
       return defaultValue;
     }
   }
-
-
-  /**
-   * Put a key/value pair in the JSONObject, where the value will be a
-   * JSONArray which is produced from a Collection.
-   * @param key 	A key string.
-   * @param value	A Collection value.
-   * @return		this.
-   * @throws JSONException
-   */
-  public JSONObject put(String key, Collection<Object> value) throws JSONException {
-    put(key, new JSONArray(value));
-    return this;
-  }
-
 
   /**
    * Get an optional double associated with a key,
@@ -856,21 +843,6 @@ public class JSONObject {
     return this;
   }
 
-
-  /**
-   * Put a key/value pair in the JSONObject, where the value will be a
-   * JSONObject which is produced from a Map.
-   * @param key 	A key string.
-   * @param value	A Map value.
-   * @return this
-   * @throws JSONException
-   */
-  public JSONObject put(String key, Map<String, Object> value) throws JSONException {
-    put(key, new JSONObject(value));
-    return this;
-  }
-
-
   /**
    * Put a key/value pair in the JSONObject. If the value is null,
    * then the key will be removed from the JSONObject if it is present.
@@ -966,7 +938,7 @@ public class JSONObject {
         sb.append("\\r");
         break;
       default:
-        if (c < ' ' || (c >= '\u0080' && c < '\u00a0') || 
+        if (c < ' ' || (c >= '\u0080' && c < '\u00a0') ||
             (c >= '\u2000' && c < '\u2100')) {
           t = "000" + Integer.toHexString(c);
           sb.append("\\u" + t.substring(t.length() - 4));
@@ -1043,9 +1015,10 @@ public class JSONObject {
    *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
    *  with <code>}</code>&nbsp;<small>(right brace)</small>.
    */
+  @Override
   public String toString() {
     try {
-      Iterator     keys = keys();
+      Iterator<?> keys = keys();
       StringBuffer sb = new StringBuffer("{");
 
       while (keys.hasNext()) {
@@ -1101,7 +1074,7 @@ public class JSONObject {
     if (n == 0) {
       return "{}";
     }
-    Iterator     keys = keys();
+    Iterator<?> keys = keys();
     StringBuffer sb = new StringBuffer("{");
     int          newindent = indent + indentFactor;
     Object       o;
@@ -1241,7 +1214,7 @@ public class JSONObject {
   public Writer write(Writer writer) throws JSONException {
     try {
       boolean  b = false;
-      Iterator keys = keys();
+      Iterator<?> keys = keys();
       writer.write('{');
 
       while (keys.hasNext()) {
@@ -1319,7 +1292,7 @@ public class JSONObject {
     if (o1.getClass().equals(o2.getClass())) {
       return o1.equals(o2);
     }
-    
+
     /* Short/Integer/Long/Double/Float
      */
     if (o1.getClass().equals(Float.class) || o2.getClass().equals(Float.class)) {

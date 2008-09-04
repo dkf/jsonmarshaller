@@ -247,21 +247,6 @@ public class MarshallingTest {
   }
 
   @Test
-  public void testCyclicStructureNoWarn() throws Exception {
-    Node n = new Node();
-    n.addNeighbor(n);
-
-    Marshaller<Node> marshaller = Marshaller.create(Node.class);
-
-    JSONObject json = marshaller.marshall(n, true);
-
-    JSONArray array = (JSONArray) json.get("neighbors");
-    JSONObject jsonIded = (JSONObject) array.get(0);
-    assertEquals(json.getInt("id"), jsonIded.get("id"));
-    assertEquals(1, jsonIded.length());
-  }
-
-  @Test
   public void testInnerClass() throws Exception {
     Marshaller<InnerClass> m =  Marshaller.create(OuterClass.InnerClass.class);
 

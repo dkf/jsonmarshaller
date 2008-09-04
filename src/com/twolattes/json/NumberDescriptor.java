@@ -17,7 +17,7 @@ abstract class NumberDescriptor<N extends Number>
     super(klass);
   }
 
-  public final Object marshall(N entity, boolean cyclic, String view) {
+  public final Object marshall(N entity, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     } else {
@@ -26,7 +26,7 @@ abstract class NumberDescriptor<N extends Number>
     }
   }
 
-  public final N unmarshall(Object entity, boolean cyclic, String view) {
+  public final N unmarshall(Object entity, String view) {
     if (entity.equals(JSONObject.NULL)) {
       return null;
     } else {

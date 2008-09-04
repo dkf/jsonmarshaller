@@ -45,9 +45,9 @@ abstract class AbstractDescriptor<T, J> implements Descriptor<T, J> {
    * {@link AbstractDescriptor#marshallInline(Object, boolean)} after
    * verifying that the entity is inlineable.
    */
-  public J marshallInline(T entity, boolean cyclic, String view) {
+  public J marshallInline(T entity, String view) {
     Preconditions.checkState(isInlineable());
-    return marshall(entity, cyclic, view);
+    return marshall(entity, view);
   }
 
   /**
@@ -55,9 +55,9 @@ abstract class AbstractDescriptor<T, J> implements Descriptor<T, J> {
    * {@link AbstractDescriptor#unmarshallInline(Object, boolean)} after
    * verifying that the entity is inlineable.
    */
-  public T unmarshallInline(J entity, boolean cyclic, String view) {
+  public T unmarshallInline(J entity, String view) {
     Preconditions.checkState(isInlineable());
-    return unmarshall(entity, cyclic, view);
+    return unmarshall(entity, view);
   }
 
   @Override

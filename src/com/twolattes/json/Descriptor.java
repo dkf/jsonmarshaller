@@ -34,9 +34,9 @@ interface Descriptor<E, J> {
    *     PJSON, {@code false} otherwise
    * @return the marshalled object
    */
-  J marshall(E entity, boolean cyclic, String view);
+  J marshall(E entity, String view);
 
-  J marshallInline(E entity, boolean cyclic, String view);
+  J marshallInline(E entity, String view);
 
   /**
    * Unmarshall the described object.
@@ -44,7 +44,7 @@ interface Descriptor<E, J> {
    * @param cyclic {@code true} if the marshalled object is represented using
    *     PJSON, {@code false} otherwise
    */
-  E unmarshall(J marshalled, boolean cyclic, String view);
+  E unmarshall(J marshalled, String view);
 
-  E unmarshallInline(J entity, boolean cyclic, String view);
+  E unmarshallInline(J entity, String view);
 }

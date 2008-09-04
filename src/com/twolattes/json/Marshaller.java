@@ -16,7 +16,6 @@ import com.twolattes.json.types.Type;
 
 /**
  * JSON Marshaller.
- * @author Pascal
  */
 public final class Marshaller<T> {
   private final EntityDescriptor<T> descriptor;
@@ -71,7 +70,7 @@ public final class Marshaller<T> {
    * @return a JSON object
    */
   public JSONObject marshall(T entity) {
-    return marshall(entity, false);
+    return marshall(entity, null);
   }
 
   /**
@@ -80,32 +79,7 @@ public final class Marshaller<T> {
    * @return a JSON object
    */
   public JSONObject marshall(T entity, String view) {
-    return marshall(entity, false, view);
-  }
-
-  /**
-   * Marhsall an entity instance to a JSON object.
-   * @param entity the entity's instance
-   * @param cyclic wether the entity ought to be treated as cyclic or not.
-   * If this is a cyclic structure, it will be marshalled using JSPON notation
-   * (<a href="http://www.jspon.org">www.jspon.org</a>) instead of plain JSON
-   * @return a JSON object
-   */
-  public JSONObject marshall(T entity, boolean cyclic) {
-    return marshall(entity, cyclic, null);
-  }
-
-  /**
-   * Marhsall an entity instance to a JSON object.
-   * @param entity the entity's instance
-   * @param cyclic wether the entity ought to be treated as cyclic or not.
-   * If this is a cyclic structure, it will be marshalled using JSPON notation
-   * (<a href="http://www.jspon.org">www.jspon.org</a>) instead of plain JSON
-   * @return a JSON object
-   */
-  public JSONObject marshall(T entity, boolean cyclic, String view) {
-    descriptor.init(cyclic);
-    return (JSONObject) descriptor.marshall(entity, cyclic, view);
+    return (JSONObject) descriptor.marshall(entity, view);
   }
 
   /**
@@ -114,50 +88,23 @@ public final class Marshaller<T> {
    * @return a JSONArray containing the marshalled entities
    */
   public JSONArray marshallList(Collection<? extends T> entities) {
-    return marshallList(entities, false, null);
+    return marshallList(entities, null);
   }
 
   /**
    * Marshall a collection of entities.
    * @param entities the entities to marshall
-   * @param view the view
    * @return a JSONArray containing the marshalled entities
    */
   public JSONArray marshallList(Collection<? extends T> entities, String view) {
-    return marshallList(entities, false, view);
-  }
-
-  /**
-   * Marshall a collection of entities.
-   * @param entities the entities to marshall
-   * @param cyclic wether the entity ought to be treated as cyclic or not.
-   * If this is a cyclic structure, it will be marshalled using JSPON notation
-   * (<a href="http://www.jspon.org">www.jspon.org</a>) instead of plain JSON
-   * @return a JSONArray containing the marshalled entities
-   */
-  public JSONArray marshallList(Collection<? extends T> entities, boolean cyclic) {
-    return marshallList(entities, cyclic, null);
-  }
-
-  /**
-   * Marshall a collection of entities.
-   * @param entities the entities to marshall
-   * @param cyclic wether the entity ought to be treated as cyclic or not.
-   * If this is a cyclic structure, it will be marshalled using JSPON notation
-   * (<a href="http://www.jspon.org">www.jspon.org</a>) instead of plain JSON
-   * @param view the view
-   * @return a JSONArray containing the marshalled entities
-   */
-  public JSONArray marshallList(Collection<? extends T> entities,
-        boolean cyclic, String view) {
     JSONArray a = new JSONArray();
     if (descriptor.shouldInline()) {
       for (T entity : entities) {
-        a.put(descriptor.marshallInline(entity, cyclic, view));
+        a.put(descriptor.marshallInline(entity, view));
       }
     } else {
       for (T entity : entities) {
-        a.put(marshall(entity, cyclic, view));
+        a.put(marshall(entity, view));
       }
     }
     return a;
@@ -179,8 +126,7 @@ public final class Marshaller<T> {
    * @return an entity
    */
   public T unmarshall(JSONObject entity, String view) {
-    descriptor.init(false);
-    return clazz.cast(descriptor.unmarshall(entity, false, view));
+    return clazz.cast(descriptor.unmarshall(entity, view));
   }
 
   /**
@@ -204,7 +150,7 @@ public final class Marshaller<T> {
     try {
       if (descriptor.shouldInline()) {
         for (int i = 0; i < length; i++) {
-          list.add(descriptor.unmarshallInline(array.get(i), false, view));
+          list.add(descriptor.unmarshallInline(array.get(i), view));
         }
       } else {
         for (int i = 0; i < length; i++) {

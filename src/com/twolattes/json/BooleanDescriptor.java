@@ -14,7 +14,7 @@ class BooleanDescriptor extends AbstractDescriptor<Boolean, Object> {
     super(Boolean.class);
   }
 
-  public final Object marshall(Boolean entity, boolean cyclic, String view) {
+  public final Object marshall(Boolean entity, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     } else {
@@ -23,7 +23,7 @@ class BooleanDescriptor extends AbstractDescriptor<Boolean, Object> {
     }
   }
 
-  public final Boolean unmarshall(Object marshalled, boolean cyclic, String view) {
+  public final Boolean unmarshall(Object marshalled, String view) {
     return (Boolean) marshalled;
   }
 }

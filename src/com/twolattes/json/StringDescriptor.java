@@ -14,7 +14,7 @@ class StringDescriptor extends AbstractDescriptor<String, Object> {
     super(String.class);
   }
 
-  public final Object marshall(String entity, boolean cyclic, String view) {
+  public final Object marshall(String entity, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     } else {
@@ -23,7 +23,7 @@ class StringDescriptor extends AbstractDescriptor<String, Object> {
     }
   }
 
-  public final String unmarshall(Object marshalled, boolean cyclic, String view) {
+  public final String unmarshall(Object marshalled, String view) {
     if (JSONObject.NULL.equals(marshalled)) {
       return null;
     } else {

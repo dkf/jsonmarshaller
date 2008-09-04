@@ -14,7 +14,7 @@ class CharacterDescriptor extends AbstractDescriptor<Character, Object> {
     super(Character.class);
   }
 
-  public final Object marshall(Character entity, boolean cyclic, String view) {
+  public final Object marshall(Character entity, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     } else {
@@ -23,7 +23,7 @@ class CharacterDescriptor extends AbstractDescriptor<Character, Object> {
     }
   }
 
-  public final Character unmarshall(Object marshalled, boolean cyclic, String view) {
+  public final Character unmarshall(Object marshalled, String view) {
     String character = (String) marshalled;
     if (character.length() == 1) {
       return character.charAt(0);

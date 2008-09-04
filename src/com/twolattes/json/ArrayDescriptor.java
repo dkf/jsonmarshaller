@@ -27,7 +27,7 @@ class ArrayDescriptor extends AbstractDescriptor<Object, Object> {
     return elementsDescriptor.isInlineable();
   }
 
-  public Object marshall(Object entity, boolean cyclic, String view) {
+  public Object marshall(Object entity, String view) {
     if (entity == null) {
       return JSONArray.NULL;
     }
@@ -36,17 +36,17 @@ class ArrayDescriptor extends AbstractDescriptor<Object, Object> {
     int l = Array.getLength(entity);
     if (elementsDescriptor.shouldInline()) {
       for (int i = 0; i < l; i++) {
-        jsonArray.put(elementsDescriptor.marshallInline(Array.get(entity, i), cyclic, view));
+        jsonArray.put(elementsDescriptor.marshallInline(Array.get(entity, i), view));
       }
     } else {
       for (int i = 0; i < l; i++) {
-        jsonArray.put(elementsDescriptor.marshall(Array.get(entity, i), cyclic, view));
+        jsonArray.put(elementsDescriptor.marshall(Array.get(entity, i), view));
       }
     }
     return jsonArray;
   }
 
-  public Object unmarshall(Object object, boolean cyclic, String view) {
+  public Object unmarshall(Object object, String view) {
     if (JSONObject.NULL.equals(object)) {
       return null;
     }
@@ -56,11 +56,11 @@ class ArrayDescriptor extends AbstractDescriptor<Object, Object> {
     try {
       if (elementsDescriptor.shouldInline()) {
         for (int i = 0; i < array.length; i++) {
-          array[i] = elementsDescriptor.unmarshallInline(jsonArray.get(i), cyclic, view);
+          array[i] = elementsDescriptor.unmarshallInline(jsonArray.get(i), view);
         }
       } else {
         for (int i = 0; i < array.length; i++) {
-          array[i] = elementsDescriptor.unmarshall(jsonArray.get(i), cyclic, view);
+          array[i] = elementsDescriptor.unmarshall(jsonArray.get(i), view);
         }
       }
     } catch (JSONException e) {

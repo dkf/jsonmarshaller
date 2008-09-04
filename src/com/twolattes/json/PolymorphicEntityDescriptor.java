@@ -62,17 +62,11 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     return false;
   }
 
-  public void init(boolean cyclic) {
-    for (EntityDescriptor<?> descriptor : subDescriptorsByClass.values()) {
-      descriptor.init(cyclic);
-    }
-  }
-
   public Class<?> getReturnedClass() {
     return returnedClass;
   }
 
-  public JSONObject marshall(Object entity, boolean cyclic, String view) {
+  public JSONObject marshall(Object entity, String view) {
     // null
     if (entity == null) {
       return JSONObject.NULL;
@@ -86,7 +80,7 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
           "Unmarshalled entity of class " + entity.getClass() + "is not " +
           "a valid subclass entity of " + returnedClass);
     }
-    JSONObject jsonObject = descriptor.marshall(entity, cyclic, view);
+    JSONObject jsonObject = descriptor.marshall(entity, view);
     try {
       jsonObject.put(discriminatorName, descriptor.getDiscriminator());
     } catch (JSONException e) {
@@ -95,12 +89,12 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     return jsonObject;
   }
 
-  public Object marshallInline(Object entity, boolean cyclic, String view) {
+  public Object marshallInline(Object entity, String view) {
     throw new UnsupportedOperationException();
   }
 
   @SuppressWarnings("unchecked")
-  public T unmarshall(Object object, boolean cyclic, String view) {
+  public T unmarshall(Object object, String view) {
     // null
     if (JSONObject.NULL.equals(object)) {
       return null;
@@ -120,10 +114,10 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     // getting the concrete descriptor
     EntityDescriptor<?> descriptor =
         subDescriptorsByDisciminator.get(discriminator);
-    return (T) descriptor.unmarshall(object, cyclic, view);
+    return (T) descriptor.unmarshall(object, view);
   }
 
-  public T unmarshallInline(Object entity, boolean cyclic, String view) {
+  public T unmarshallInline(Object entity, String view) {
     throw new UnsupportedOperationException();
   }
 

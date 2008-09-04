@@ -30,32 +30,28 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
     return getDescriptor().getReturnedClass();
   }
 
-  public void init(boolean cyclic) {
-    getDescriptor().init(cyclic);
-  }
-
   public boolean isInlineable() {
     return getDescriptor().isInlineable();
   }
 
-  public JSONObject marshall(Object entity, boolean cyclic, String view) {
-    return getDescriptor().marshall(entity, cyclic, view);
+  public JSONObject marshall(Object entity, String view) {
+    return getDescriptor().marshall(entity, view);
   }
 
-  public Object marshallInline(T entity, boolean cyclic, String view) {
-    return getDescriptor().marshallInline(entity, cyclic, view);
+  public Object marshallInline(T entity, String view) {
+    return getDescriptor().marshallInline(entity, view);
   }
 
   public boolean shouldInline() {
     return getDescriptor().shouldInline();
   }
 
-  public T unmarshall(Object object, boolean cyclic, String view) {
-    return getDescriptor().unmarshall(object, cyclic, view);
+  public T unmarshall(Object object, String view) {
+    return getDescriptor().unmarshall(object, view);
   }
 
-  public T unmarshallInline(Object entity, boolean cyclic, String view) {
-    return getDescriptor().unmarshallInline(entity, cyclic, view);
+  public T unmarshallInline(Object entity, String view) {
+    return getDescriptor().unmarshallInline(entity, view);
   }
 
   public String getDiscriminator() {

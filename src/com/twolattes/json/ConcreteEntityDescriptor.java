@@ -2,9 +2,7 @@ package com.twolattes.json;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.json.JSONException;
@@ -14,16 +12,9 @@ import com.google.common.base.Preconditions;
 
 /**
  * An entity descriptor.
- *
- * @author pascallouis
  */
 final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     implements EntityDescriptor<T> {
-  private static final String ID = "id";
-  private final static ThreadLocal<Set<Object>> objects = new ThreadLocal<Set<Object>>();
-  private final static ThreadLocal<Integer> counters = new ThreadLocal<Integer>();
-  private final static ThreadLocal<Map<Object, Integer>> o2i = new ThreadLocal<Map<Object, Integer>>();
-  private final static ThreadLocal<Map<Integer, Object>> i2o = new ThreadLocal<Map<Integer, Object>>();
 
   private final Class<T> entity;
   private final Set<FieldDescriptor> fieldDescriptors;
@@ -108,37 +99,20 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     return fieldDescriptors.size() == 1;
   }
 
-  public void init(boolean cyclic) {
-    objects.set(new HashSet<Object>());
-    if (cyclic) {
-      counters.set(0);
-      o2i.set(new HashMap<Object, Integer>());
-      i2o.set(new HashMap<Integer, Object>());
-    }
-  }
-
-  public JSONObject marshall(Object entity, boolean cyclic) {
-    return marshall(entity, cyclic, null);
+  public JSONObject marshall(Object entity) {
+    return marshall(entity, null);
   }
 
   @SuppressWarnings("unchecked")
-  public JSONObject marshall(Object entity, boolean cyclic, String view) {
+  public JSONObject marshall(Object entity, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     }
 
     // entity is not null
     JSONObject jsonObject = new JSONObject();
-    boolean alreadyMarshalled = !objects.get().add(entity);
     try {
-      if (cyclic) {
-        Integer id = id(entity);
-        jsonObject.put(ID, id);
-        if (alreadyMarshalled) {
-          return jsonObject;
-        }
-      }
-      marshallFields(entity, cyclic, view, jsonObject);
+      marshallFields(entity, view, jsonObject);
       return jsonObject;
     } catch (JSONException e) {
       throw new IllegalStateException(e);
@@ -151,10 +125,10 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
    */
   @SuppressWarnings("unchecked")
   private void marshallFields(
-      Object entity, boolean cyclic, String view, JSONObject jsonObject)
+      Object entity, String view, JSONObject jsonObject)
       throws JSONException {
     if (parent != null) {
-      parent.marshallFields(entity, cyclic, view, jsonObject);
+      parent.marshallFields(entity, view, jsonObject);
     }
     for (FieldDescriptor d : getFieldDescriptors()) {
       if (d.isInView(view)) {
@@ -164,35 +138,23 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
           Descriptor descriptor = d.getDescriptor();
           if (d.getShouldInline() == null) {
             if (descriptor.shouldInline()) {
-              jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, cyclic, view));
+              jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, view));
             } else {
-              jsonObject.put(jsonName, descriptor.marshall(fieldValue, cyclic, view));
+              jsonObject.put(jsonName, descriptor.marshall(fieldValue, view));
             }
           } else if (d.getShouldInline()) {
-            jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, cyclic, view));
+            jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, view));
           } else {
-            jsonObject.put(jsonName, descriptor.marshall(fieldValue, cyclic, view));
+            jsonObject.put(jsonName, descriptor.marshall(fieldValue, view));
           }
         }
       }
     }
   }
 
-  private Integer id(Object entity) {
-    Map<Object, Integer> map = o2i.get();
-    if (map.containsKey(entity)) {
-      return map.get(entity);
-    } else {
-      Integer id = counters.get();
-      counters.set(id + 1);
-      map.put(entity, id);
-      return id;
-    }
-  }
-
-  @SuppressWarnings("unchecked")
   @Override
-  public Object marshallInline(Object entity, boolean cyclic, String view) {
+  @SuppressWarnings("unchecked")
+  public Object marshallInline(Object entity, String view) {
     Preconditions.checkState(isInlineable());
     if (entity == null) {
       return JSONObject.NULL;
@@ -201,40 +163,31 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     Descriptor descriptor = d.getDescriptor();
     if (d.getShouldInline() == null) {
       if (descriptor.shouldInline()) {
-        return descriptor.marshallInline(d.getFieldValue(entity), cyclic, view);
+        return descriptor.marshallInline(d.getFieldValue(entity), view);
       } else {
-        return descriptor.marshall(d.getFieldValue(entity), cyclic, view);
+        return descriptor.marshall(d.getFieldValue(entity), view);
       }
     } else if (d.getShouldInline()) {
-      return descriptor.marshallInline(d.getFieldValue(entity), cyclic, view);
+      return descriptor.marshallInline(d.getFieldValue(entity), view);
     } else {
-      return descriptor.marshall(d.getFieldValue(entity), cyclic, view);
+      return descriptor.marshall(d.getFieldValue(entity), view);
     }
   }
 
-  public T unmarshall(Object object, boolean cyclic) {
-    return unmarshall(object, cyclic, null);
+  public T unmarshall(Object object) {
+    return unmarshall(object, null);
   }
 
   @SuppressWarnings("unchecked")
-  public T unmarshall(Object object, boolean cyclic, String view) {
+  public T unmarshall(Object object, String view) {
     if (JSONObject.NULL.equals(object)) {
       return null;
     }
     try {
       JSONObject jsonObject = (JSONObject) object;
-      if (cyclic && jsonObject.length() == 1 && jsonObject.has(ID)) {
-        return (T) i2o.get().get(jsonObject.getInt(ID));
-      }
       // is this a polymorphic entity?
       Object entity = constructor.newInstance();
-      unmarshallFields(jsonObject, entity, cyclic, view);
-      if (cyclic) {
-        Map<Integer, Object> map = i2o.get();
-        if (!map.containsKey(jsonObject.getInt(ID))) {
-          map.put(jsonObject.getInt(ID), entity);
-        }
-      }
+      unmarshallFields(jsonObject, entity, view);
       return (T) entity;
     } catch (InstantiationException e) {
       throw new IllegalStateException(e);
@@ -256,10 +209,9 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
    * This function MUST stay private.
    */
   @SuppressWarnings("unchecked")
-  private void unmarshallFields(JSONObject jsonObject, Object entity,
-      boolean cyclic, String view) throws JSONException {
+  private void unmarshallFields(JSONObject jsonObject, Object entity, String view) throws JSONException {
     if (parent != null) {
-      parent.unmarshallFields(jsonObject, entity, cyclic, view);
+      parent.unmarshallFields(jsonObject, entity, view);
     }
     for (FieldDescriptor d : getFieldDescriptors()) {
       if (jsonObject.has(d.getJsonName())) {
@@ -268,17 +220,17 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
           if (d.getShouldInline() == null) {
             if (descriptor.shouldInline()) {
               d.setFieldValue(entity,
-                  descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), cyclic, view));
+                  descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), view));
             } else {
               d.setFieldValue(entity,
-                  descriptor.unmarshall(jsonObject.get(d.getJsonName()), cyclic, view));
+                  descriptor.unmarshall(jsonObject.get(d.getJsonName()), view));
             }
           } else if (d.getShouldInline()) {
             d.setFieldValue(entity,
-                descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), cyclic, view));
+                descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), view));
           } else {
             d.setFieldValue(entity,
-                descriptor.unmarshall(jsonObject.get(d.getJsonName()), cyclic, view));
+                descriptor.unmarshall(jsonObject.get(d.getJsonName()), view));
           }
         }
       } else {
@@ -302,7 +254,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
 
   @SuppressWarnings("unchecked")
   @Override
-  public T unmarshallInline(Object entity, boolean cyclic, String view) {
+  public T unmarshallInline(Object entity, String view) {
     Preconditions.checkState(isInlineable());
     if (JSONObject.NULL.equals(entity)) {
       return null;
@@ -311,7 +263,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
       try {
     	FieldDescriptor d = fieldDescriptors.iterator().next();
         jsonObject.put(d.getJsonName(), entity);
-        return unmarshall(jsonObject, cyclic);
+        return unmarshall(jsonObject);
       } catch (JSONException e) {
         throw new IllegalStateException(e);
       }
@@ -362,4 +314,5 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
       return discriminator;
     }
   }
+
 }

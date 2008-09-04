@@ -22,7 +22,7 @@ class UserTypeDescriptor<T> extends AbstractDescriptor<T, Object> {
     return false;
   }
 
-  public Object marshall(T entity, boolean cyclic, String view) {
+  public Object marshall(T entity, String view) {
     if (entity == null) {
       return JSONObject.NULL;
     } else {
@@ -30,7 +30,7 @@ class UserTypeDescriptor<T> extends AbstractDescriptor<T, Object> {
     }
   }
 
-  public T unmarshall(Object marshalled, boolean cyclic, String view) {
+  public T unmarshall(Object marshalled, String view) {
     if (marshalled.equals(JSONObject.NULL)) {
       return null;
     } else {
