@@ -12,6 +12,9 @@ import com.twolattes.json.inheritance3.Inheritance3Test;
 import com.twolattes.json.inheritanceerror.InheritanceErrorTest;
 import com.twolattes.json.types.TypesTest;
 import com.twolattes.json.types.URLTypeTest;
+import com.twolattes.json.values.JsonTest;
+import com.twolattes.json.values.OrgJsonAssert;
+import com.twolattes.json.values.WriteVisitorTest;
 import com.twolattes.json.views.ViewsTest;
 import com.twolattes.json.visibility1.Visibility1Test;
 import com.twolattes.json.visibility2.Visibility2Test;
@@ -35,7 +38,12 @@ import com.twolattes.json.visibility2.Visibility2Test;
   GetterSetterTest.class,
   ViewsTest.class,
   CollectionTest.class,
-  CollectionTypeTest.class
+  CollectionTypeTest.class,
+
+  // Json
+  JsonTest.class,
+  OrgJsonAssert.class,
+  WriteVisitorTest.class
 })
 public class AllJsonTests {
 }
