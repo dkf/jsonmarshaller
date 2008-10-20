@@ -1,4 +1,4 @@
-package com.twolattes.json.values;
+package com.twolattes.json;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -12,10 +12,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import com.twolattes.json.values.Json.Array;
-import com.twolattes.json.values.Json.Boolean;
-import com.twolattes.json.values.Json.Number;
-import com.twolattes.json.values.Json.String;
+import com.twolattes.json.Json;
+import com.twolattes.json.Json.Array;
+import com.twolattes.json.Json.Boolean;
+import com.twolattes.json.Json.Number;
+import com.twolattes.json.Json.String;
 
 public class OrgJsonAssert {
 
