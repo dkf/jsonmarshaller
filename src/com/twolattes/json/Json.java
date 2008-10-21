@@ -379,7 +379,6 @@ public abstract class Json {
       return visitor.caseString(this);
     }
 
-    @Override
     public int compareTo(Json.String that) {
       return this.string.compareTo(that.string);
     }
