@@ -12,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import com.twolattes.json.Json;
 import com.twolattes.json.Json.Array;
 import com.twolattes.json.Json.Boolean;
 import com.twolattes.json.Json.Number;
@@ -22,7 +21,6 @@ public class OrgJsonAssert {
 
   public static void assertJsonEquals(Json json1, final Object json2) {
     json1.visit(new JsonVisitor<Void>() {
-      @Override
       public Void caseArray(Array array) {
         assertTrue(json2 instanceof JSONArray);
         JSONArray jsonArray = (JSONArray) json2;
@@ -33,27 +31,23 @@ public class OrgJsonAssert {
         return null;
       }
 
-      @Override
       public Void caseBoolean(Boolean b) {
         assertTrue(json2 instanceof java.lang.Boolean);
         assertFalse(b.get() ^ ((java.lang.Boolean) json2));
         return null;
       }
 
-      @Override
       public Void caseNull() {
         assertTrue(json2.equals(JSONObject.NULL) || json2.equals(JSONArray.NULL));
         return null;
       }
 
-      @Override
       public Void caseNumber(Number number) {
         assertTrue(json2 instanceof java.lang.Number);
         assertEquals(number.get().doubleValue(), ((java.lang.Number) json2).doubleValue());
         return null;
       }
 
-      @Override
       public Void caseObject(Json.Object jsonObject1) {
         JSONObject jsonObject2 = (JSONObject) json2;
         assertEquals("size", jsonObject1.size(), jsonObject2.length());
@@ -64,7 +58,6 @@ public class OrgJsonAssert {
         return null;
       }
 
-      @Override
       public Void caseString(String string) {
         assertTrue(json2 instanceof java.lang.String);
         assertEquals(string.get(), json2);
