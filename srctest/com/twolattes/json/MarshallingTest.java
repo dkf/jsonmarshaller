@@ -13,13 +13,12 @@ import org.json.JSONObject;
 import org.junit.Test;
 
 import com.twolattes.json.OuterClass.InnerClass;
-import com.twolattes.json.types.URLType;
 
 
 public class MarshallingTest {
   @Test
   public void testBaseTypeEntity() throws JSONException {
-    Marshaller<BaseTypeEntity> marshaller = Marshaller.create(BaseTypeEntity.class);
+    Marshaller<BaseTypeEntity> marshaller = TwoLattes.createMarshaller(BaseTypeEntity.class);
 
     BaseTypeEntity base = new BaseTypeEntity.Factory().create(5, 'h', 89L, 3.2f, (short) 16, "ya", true, 6218.687231);
 
@@ -41,7 +40,7 @@ public class MarshallingTest {
     Email e = new Email();
     e.email = null;
 
-    Marshaller<Email> m = Marshaller.create(Email.class);
+    Marshaller<Email> m = TwoLattes.createMarshaller(Email.class);
 
     JSONObject o = m.marshall(e);
 
@@ -50,7 +49,7 @@ public class MarshallingTest {
 
   @Test
   public void testCollectionEntity() throws JSONException {
-    Marshaller<CollectionEntity> marshaller = Marshaller.create(CollectionEntity.class);
+    Marshaller<CollectionEntity> marshaller = TwoLattes.createMarshaller(CollectionEntity.class);
 
     List<String> friends = new ArrayList<String>();
     friends.add("Jack");
@@ -66,7 +65,7 @@ public class MarshallingTest {
 
   @Test
   public void testInlinedEntityUsingValueOption() throws JSONException {
-    Marshaller<User> marshaller = Marshaller.create(User.class);
+    Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
 
     Email e = new Email(); e.email = "plperez@stanford.edu";
     User u = new User(); u.email = e;
@@ -77,7 +76,7 @@ public class MarshallingTest {
 
   @Test
   public void testInlinedEntityUsingInlineAnnotation1() throws JSONException {
-    Marshaller<UserInlinedEmail> marshaller = Marshaller.create(UserInlinedEmail.class);
+    Marshaller<UserInlinedEmail> marshaller = TwoLattes.createMarshaller(UserInlinedEmail.class);
 
     EmailInline e = new EmailInline(); e.email = "plperez@stanford.edu";
     UserInlinedEmail u = new UserInlinedEmail(); u.email = e;
@@ -88,7 +87,7 @@ public class MarshallingTest {
 
   @Test
   public void testInlinedEntityUsingInlineAnnotation2() throws JSONException {
-    Marshaller<UserInlinedEmail> marshaller = Marshaller.create(UserInlinedEmail.class);
+    Marshaller<UserInlinedEmail> marshaller = TwoLattes.createMarshaller(UserInlinedEmail.class);
 
     EmailInline e1 = new EmailInline(); e1.email = "plperez@stanford.edu";
     EmailInline e2 = new EmailInline(); e2.email = "pascal@cs.stanford.edu";
@@ -106,7 +105,7 @@ public class MarshallingTest {
 
   @Test
   public void testInlinedEntityUsingInlineAnnotation3() throws JSONException {
-    Marshaller<UserInlinedEmail> marshaller = Marshaller.create(UserInlinedEmail.class);
+    Marshaller<UserInlinedEmail> marshaller = TwoLattes.createMarshaller(UserInlinedEmail.class);
 
     EmailInline e = new EmailInline(); e.email = "plperez@stanford.edu";
     UserInlinedEmail u = new UserInlinedEmail(); u.emailNoInline = e;
@@ -119,7 +118,7 @@ public class MarshallingTest {
 
   @Test
   public void testInlinedEntityUsingInlineAnnotation4() throws JSONException {
-    Marshaller<UserInlinedEmail> marshaller = Marshaller.create(UserInlinedEmail.class);
+    Marshaller<UserInlinedEmail> marshaller = TwoLattes.createMarshaller(UserInlinedEmail.class);
 
     EmailInline e = new EmailInline(); e.email = "plperez@stanford.edu";
     UserInlinedEmail u = new UserInlinedEmail(); u.emailsArray = new EmailInline[] { e };
@@ -132,7 +131,7 @@ public class MarshallingTest {
 
   @Test
   public void testInlinedEntityUsingInlineAnnotation5() throws JSONException {
-    Marshaller<UserInlinedEmail> marshaller = Marshaller.create(UserInlinedEmail.class);
+    Marshaller<UserInlinedEmail> marshaller = TwoLattes.createMarshaller(UserInlinedEmail.class);
 
     EmailInline e = new EmailInline(); e.email = "plperez@stanford.edu";
     UserInlinedEmail u = new UserInlinedEmail(); u.emailsList.add(e);
@@ -145,7 +144,7 @@ public class MarshallingTest {
 
   @Test
   public void testInlinedEntityUsingInlineAnnotation6() throws JSONException {
-    Marshaller<EmailInline> marshaller = Marshaller.create(EmailInline.class);
+    Marshaller<EmailInline> marshaller = TwoLattes.createMarshaller(EmailInline.class);
 
     EmailInline e = new EmailInline(); e.email = "plperez@stanford.edu";
     ArrayList<EmailInline> list = new ArrayList<EmailInline>();
@@ -158,7 +157,7 @@ public class MarshallingTest {
 
   @Test
   public void testListOfEntities() throws JSONException {
-    Marshaller<User> marshaller = Marshaller.create(User.class);
+    Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
 
     Email e1 = new Email(); e1.email = "plperez@stanford.edu";
     User u1 = new User(); u1.email = e1;
@@ -175,7 +174,7 @@ public class MarshallingTest {
 
   @Test
   public void testMapOfEntities() throws Exception {
-    Marshaller<EntityMap> marshaller = Marshaller.create(EntityMap.class);
+    Marshaller<EntityMap> marshaller = TwoLattes.createMarshaller(EntityMap.class);
 
     EntityMap em = new EntityMap();
     Email e1 = new Email(); e1.email = "plperez@stanford.edu";
@@ -193,7 +192,7 @@ public class MarshallingTest {
 
   @Test
   public void testNullArray() throws Exception {
-    Marshaller<ArrayEntity> marshaller = Marshaller.create(ArrayEntity.class);
+    Marshaller<ArrayEntity> marshaller = TwoLattes.createMarshaller(ArrayEntity.class);
 
     JSONObject o = marshaller.marshall(new ArrayEntity());
 
@@ -202,7 +201,7 @@ public class MarshallingTest {
 
   @Test
   public void testArray() throws Exception {
-    Marshaller<ArrayEntity> marshaller = Marshaller.create(ArrayEntity.class);
+    Marshaller<ArrayEntity> marshaller = TwoLattes.createMarshaller(ArrayEntity.class);
 
     ArrayEntity arrayEntity = new ArrayEntity();
     arrayEntity.values = new String[] {"ya", "yo", "yi"};
@@ -220,14 +219,14 @@ public class MarshallingTest {
     Node n = new Node();
     n.addNeighbor(n);
 
-    Marshaller<Node> marshaller = Marshaller.create(Node.class);
+    Marshaller<Node> marshaller = TwoLattes.createMarshaller(Node.class);
 
     marshaller.marshall(n);
   }
 
   @Test
   public void testUserType() throws Exception {
-    Marshaller<EntityWithURL> m = Marshaller.create(EntityWithURL.class);
+    Marshaller<EntityWithURL> m = TwoLattes.createMarshaller(EntityWithURL.class);
 
     EntityWithURL entity = new EntityWithURL();
     entity.setUrl(new URL("http://www.twolattes.com"));
@@ -236,19 +235,8 @@ public class MarshallingTest {
   }
 
   @Test
-  public void testUserTypeWithRegistration() throws Exception {
-    Marshaller.register(new URLType());
-    Marshaller<EntityWithURLNotDeclared> m = Marshaller.create(EntityWithURLNotDeclared.class);
-
-    EntityWithURLNotDeclared entity = new EntityWithURLNotDeclared();
-    entity.setUrl(new URL("http://www.twolattes.com"));
-
-    assertEquals("http://www.twolattes.com", m.marshall(entity).get("url"));
-  }
-
-  @Test
   public void testInnerClass() throws Exception {
-    Marshaller<InnerClass> m =  Marshaller.create(OuterClass.InnerClass.class);
+    Marshaller<InnerClass> m =  TwoLattes.createMarshaller(OuterClass.InnerClass.class);
 
     InnerClass e = new InnerClass();
     e.field = "hello";
@@ -260,7 +248,7 @@ public class MarshallingTest {
 
   @Test
   public void testGetterSetter1() throws Exception {
-    Marshaller<GetterSetterEntity> m = Marshaller.create(GetterSetterEntity.class);
+    Marshaller<GetterSetterEntity> m = TwoLattes.createMarshaller(GetterSetterEntity.class);
 
     GetterSetterEntity e = new GetterSetterEntity();
     e.setName("Jack");
@@ -272,7 +260,7 @@ public class MarshallingTest {
 
   @Test
   public void testGetterSetter2() throws Exception {
-    Marshaller<EntityInterface> m = Marshaller.create(EntityInterface.class);
+    Marshaller<EntityInterface> m = TwoLattes.createMarshaller(EntityInterface.class);
 
     EntityInterface e = new EntityInterfaceImpl();
     e.setWhatever(false);
@@ -284,7 +272,7 @@ public class MarshallingTest {
 
   @Test
   public void testDoublyInlined1() throws Exception {
-  	Marshaller<DoublyInlined> m = Marshaller.create(DoublyInlined.class);
+  	Marshaller<DoublyInlined> m = TwoLattes.createMarshaller(DoublyInlined.class);
 
   	// entity
   	DoublyInlined entity = new DoublyInlined();
@@ -301,7 +289,7 @@ public class MarshallingTest {
 
   @Test
   public void testDoublyInlined2() throws Exception {
-  	Marshaller<DoublyInlined> m = Marshaller.create(DoublyInlined.class);
+  	Marshaller<DoublyInlined> m = TwoLattes.createMarshaller(DoublyInlined.class);
 
   	// entity
   	DoublyInlined entity = new DoublyInlined();
@@ -316,7 +304,7 @@ public class MarshallingTest {
 
   @Test
   public void testDoublyInlined3() throws Exception {
-  	Marshaller<DoublyInlined> m = Marshaller.create(DoublyInlined.class);
+  	Marshaller<DoublyInlined> m = TwoLattes.createMarshaller(DoublyInlined.class);
 
   	// entity
   	DoublyInlined entity = new DoublyInlined();
@@ -330,7 +318,7 @@ public class MarshallingTest {
   @Test
   public void testPrivateNoArgConstructor() throws Exception {
     Marshaller<PrivateNoArgConstructor> m =
-        Marshaller.create(PrivateNoArgConstructor.class);
+        TwoLattes.createMarshaller(PrivateNoArgConstructor.class);
     PrivateNoArgConstructor e = new PrivateNoArgConstructor("hi");
     JSONObject o = m.marshall(e);
 
@@ -348,7 +336,7 @@ public class MarshallingTest {
   	user.email1 = email;
   	user.email2 = email;
 
-  	JSONObject o = Marshaller.create(UserWithTwoInlinedEmail.class).marshall(user);
+  	JSONObject o = TwoLattes.createMarshaller(UserWithTwoInlinedEmail.class).marshall(user);
 
   	assertTrue(o.get("email1") instanceof JSONObject);
   	assertTrue(o.get("email2") instanceof JSONObject);
@@ -358,7 +346,7 @@ public class MarshallingTest {
   public void testTypeOnGetter() throws Exception {
   	TypeOnGetter e = new TypeOnGetter();
 
-  	JSONObject o = Marshaller.create(TypeOnGetter.class).marshall(e);
+  	JSONObject o = TwoLattes.createMarshaller(TypeOnGetter.class).marshall(e);
 
   	assertEquals(1, o.length());
   	assertEquals(10.0, o.get("price"));
@@ -366,7 +354,7 @@ public class MarshallingTest {
 
   @Test
   public void nativeArray() throws Exception {
-    Marshaller<EntityWithNativeArray> m = Marshaller.create(EntityWithNativeArray.class);
+    Marshaller<EntityWithNativeArray> m = TwoLattes.createMarshaller(EntityWithNativeArray.class);
 
     EntityWithNativeArray e = new EntityWithNativeArray();
     e.ids = new int[] { 5, 1, 2 };
@@ -386,7 +374,7 @@ public class MarshallingTest {
     ArrayOfArray arrayOfArray = new ArrayOfArray();
     arrayOfArray.matrix = new Integer[][] {{56, 57}, {58, 59}};
 
-    JSONObject o = Marshaller.create(ArrayOfArray.class).marshall(arrayOfArray);
+    JSONObject o = TwoLattes.createMarshaller(ArrayOfArray.class).marshall(arrayOfArray);
 
     assertEquals(1, o.length());
     JSONArray matrix = o.getJSONArray("matrix");
@@ -403,7 +391,7 @@ public class MarshallingTest {
   public void nullOptionalObject() throws Exception {
     NullOptionalValue obj = new NullOptionalValue();
 
-    JSONObject o = Marshaller.create(NullOptionalValue.class).marshall(obj);
+    JSONObject o = TwoLattes.createMarshaller(NullOptionalValue.class).marshall(obj);
     assertEquals(0, o.length());
   }
 
@@ -412,7 +400,7 @@ public class MarshallingTest {
     NullOptionalValue obj = new NullOptionalValue();
     obj.setOptional("optional");
 
-    JSONObject o = Marshaller.create(NullOptionalValue.class).marshall(obj);
+    JSONObject o = TwoLattes.createMarshaller(NullOptionalValue.class).marshall(obj);
     assertEquals(1, o.length());
   }
 

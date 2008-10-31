@@ -7,19 +7,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.twolattes.json.Marshaller;
+import com.twolattes.json.TwoLattes;
 
 public class Inheritance4Test {
   private Marshaller<Shape> marshaller;
 
   @Before
   public void start() {
-    marshaller =  Marshaller.create(Shape.class);
+    marshaller =  TwoLattes.createMarshaller(Shape.class);
   }
-  
+
   @Test
   public void marshallSquare() throws Exception {
     JSONObject o = marshaller.marshall(new Square());
-    
+
     assertEquals(1, o.length());
     assertEquals(4, o.get("size"));
   }

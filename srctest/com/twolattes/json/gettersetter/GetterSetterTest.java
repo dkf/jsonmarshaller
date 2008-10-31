@@ -9,7 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.twolattes.json.Email;
-import com.twolattes.json.Marshaller;
+import com.twolattes.json.TwoLattes;
 
 public class GetterSetterTest {
   @Test
@@ -21,7 +21,7 @@ public class GetterSetterTest {
     e.setEmail(email);
 
     // marshalling
-    JSONObject o = Marshaller.create(GetterSetter1.class).marshall(e);
+    JSONObject o = TwoLattes.createMarshaller(GetterSetter1.class).marshall(e);
 
     // assertions
     assertEquals(1, o.length());
@@ -31,7 +31,7 @@ public class GetterSetterTest {
   @Test
   public void getterSetter1Unmarshall() throws Exception {
     // unmarshalling
-    GetterSetter1 e = Marshaller.create(GetterSetter1.class).unmarshall(
+    GetterSetter1 e = TwoLattes.createMarshaller(GetterSetter1.class).unmarshall(
         new JSONObject("{email:'any'}"));
 
     // assertions
@@ -50,7 +50,7 @@ public class GetterSetterTest {
     e.setEmail(email);
 
     // marshalling
-    JSONObject o1 = Marshaller.create(GetterSetter2.class).marshall(e);
+    JSONObject o1 = TwoLattes.createMarshaller(GetterSetter2.class).marshall(e);
 
     // assertions
     assertEquals(1, o1.length());
@@ -62,7 +62,7 @@ public class GetterSetterTest {
   @Test
   public void getterSetter2Unmarshall() throws Exception {
     // unmarshalling
-    GetterSetter2 e = Marshaller.create(GetterSetter2.class).unmarshall(
+    GetterSetter2 e = TwoLattes.createMarshaller(GetterSetter2.class).unmarshall(
         new JSONObject("{foobar:{email:'any'}}"));
 
     // assertions
@@ -78,7 +78,7 @@ public class GetterSetterTest {
     GetterSetter3 e = new GetterSetter3();
 
     // marshalling
-    JSONObject o = Marshaller.create(GetterSetter3.class).marshall(e);
+    JSONObject o = TwoLattes.createMarshaller(GetterSetter3.class).marshall(e);
 
     // assertions
     assertEquals(0, o.length());
@@ -87,7 +87,7 @@ public class GetterSetterTest {
   @Test
   public void getterSetter3Unmarshall() throws Exception {
     // unmarshalling
-    GetterSetter3 e = Marshaller.create(GetterSetter3.class).unmarshall(
+    GetterSetter3 e = TwoLattes.createMarshaller(GetterSetter3.class).unmarshall(
         new JSONObject("{}"));
 
     // assertions
@@ -102,7 +102,7 @@ public class GetterSetterTest {
     GetterSetter4 e = new GetterSetter4();
 
     // marshalling
-    JSONObject o = Marshaller.create(GetterSetter4.class).marshall(e);
+    JSONObject o = TwoLattes.createMarshaller(GetterSetter4.class).marshall(e);
 
     // assertions
     assertEquals("foobar", o.get("email"));
@@ -113,7 +113,7 @@ public class GetterSetterTest {
   @Ignore("TODO(pascal): implement.")
   public void getterSetter4Unmarshall() throws Exception {
     // unmarshalling
-    GetterSetter4 e = Marshaller.create(GetterSetter4.class).unmarshall(
+    GetterSetter4 e = TwoLattes.createMarshaller(GetterSetter4.class).unmarshall(
         new JSONObject("{}"));
 
     // assertions

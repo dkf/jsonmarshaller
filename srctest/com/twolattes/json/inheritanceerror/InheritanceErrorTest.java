@@ -2,41 +2,41 @@ package com.twolattes.json.inheritanceerror;
 
 import org.junit.Test;
 
-import com.twolattes.json.Marshaller;
+import com.twolattes.json.TwoLattes;
 
 public class InheritanceErrorTest {
   @Test(expected = IllegalArgumentException.class)
   public void testNoDiscriminatorName() throws Exception {
-    Marshaller.create(NoDiscriminatorName.class);
+    TwoLattes.createMarshaller(NoDiscriminatorName.class);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testNoSubclasses() throws Exception {
-    Marshaller.create(NoSubclasses.class);
+    TwoLattes.createMarshaller(NoSubclasses.class);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testSubclassesAndInlining() throws Exception {
-    Marshaller.create(SubclassesAndInlining.class);
+    TwoLattes.createMarshaller(SubclassesAndInlining.class);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testMentionsNonSubclass() throws Exception {
-    Marshaller.create(MentionsNonSubclass.class);
+    TwoLattes.createMarshaller(MentionsNonSubclass.class);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testNoDiscriminator1() throws Exception {
-    Marshaller.create(NoDiscriminator1.class);
+    TwoLattes.createMarshaller(NoDiscriminator1.class);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testNoDiscriminator2() throws Exception {
-    Marshaller.create(NoDiscriminator2.class);
+    TwoLattes.createMarshaller(NoDiscriminator2.class);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testParentEntity() throws Exception {
-    Marshaller.create(ParentEntity.class);
+    TwoLattes.createMarshaller(ParentEntity.class);
   }
 }

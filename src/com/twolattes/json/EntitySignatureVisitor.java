@@ -10,7 +10,6 @@ import java.util.Map;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
-import com.twolattes.json.types.Type;
 
 /**
  * An entity signature visitor capable of converting a signature (such as
@@ -72,12 +71,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
           if (store.contains(c)) {
             descriptor = new ProxyEntityDescriptor(c, store);
           } else {
-            Type t = Marshaller.getType(c);
-            if (t != null) {
-              descriptor = new UserTypeDescriptor(t);
-            } else {
-              descriptor = new DescriptorFactory().create(c, store);
-            }
+            descriptor = new DescriptorFactory().create(c, store);
           }
         }
       } catch (ClassNotFoundException e) {

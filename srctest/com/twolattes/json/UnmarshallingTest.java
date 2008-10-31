@@ -19,7 +19,6 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.twolattes.json.OuterClass.InnerClass;
-import com.twolattes.json.types.URLType;
 
 public class UnmarshallingTest {
   @Test
@@ -173,15 +172,6 @@ public class UnmarshallingTest {
   }
 
   @Test
-  public void testUserTypeWithRegistration() throws Exception {
-    Marshaller.register(new URLType());
-    EntityWithURLNotDeclared e =
-      unmarshall(EntityWithURLNotDeclared.class, "{url:\"http://code.twolattes.com\"}");
-
-    assertEquals(new URL("http://code.twolattes.com"), e.getUrl());
-  }
-
-  @Test
   public void testUserTypeWithNull() throws Exception {
     EntityWithURL e =
       unmarshall(EntityWithURL.class, "{url:null}");
@@ -308,12 +298,12 @@ public class UnmarshallingTest {
   }
 
   private <T> T unmarshall(Class<T> clazz, String json, boolean cyclic, String view) throws JSONException {
-    Marshaller<T> marshaller = Marshaller.create(clazz);
+    Marshaller<T> marshaller = TwoLattes.createMarshaller(clazz);
     return marshaller.unmarshall(new JSONObject(json), view);
   }
 
   private <T> List<T> unmarshallList(Class<T> clazz, String json) throws JSONException {
-    Marshaller<T> marshaller = Marshaller.create(clazz);
+    Marshaller<T> marshaller = TwoLattes.createMarshaller(clazz);
     return marshaller.unmarshallList(new JSONArray(json));
   }
 }

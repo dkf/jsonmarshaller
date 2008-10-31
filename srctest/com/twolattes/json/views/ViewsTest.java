@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.twolattes.json.Marshaller;
 import com.twolattes.json.MultipleViewEntity;
+import com.twolattes.json.TwoLattes;
 import com.twolattes.json.UserInlinedEmail;
 
 
@@ -18,7 +19,7 @@ public class ViewsTest {
 
   @Test
   public void MultipleViewEntityMarshalling1() throws Exception {
-    Marshaller<MultipleViewEntity> m = Marshaller.create(MultipleViewEntity.class);
+    Marshaller<MultipleViewEntity> m = TwoLattes.createMarshaller(MultipleViewEntity.class);
 
     MultipleViewEntity view = new MultipleViewEntity();
     view.setEmail("hello@email.com");
@@ -45,7 +46,7 @@ public class ViewsTest {
 
   @Test
   public void MultipleViewEntityMarshalling2() throws Exception {
-    Marshaller<MultipleViewEntity> m = Marshaller.create(MultipleViewEntity.class);
+    Marshaller<MultipleViewEntity> m = TwoLattes.createMarshaller(MultipleViewEntity.class);
 
     MultipleViewEntity view = new MultipleViewEntity();
     view.setEmail("hello@email.com");
@@ -92,7 +93,7 @@ public class ViewsTest {
 
   @Test
   public void testNormalOrFullMarshalling1() throws Exception {
-    Marshaller<NormalOrFull> m = Marshaller.create(NormalOrFull.class);
+    Marshaller<NormalOrFull> m = TwoLattes.createMarshaller(NormalOrFull.class);
 
     JSONObject o = m.marshall(new NormalOrFull());
     assertEquals(1, o.length());
@@ -101,7 +102,7 @@ public class ViewsTest {
 
   @Test
   public void testNormalOrFullMarshalling2() throws Exception {
-    Marshaller<NormalOrFull> m = Marshaller.create(NormalOrFull.class);
+    Marshaller<NormalOrFull> m = TwoLattes.createMarshaller(NormalOrFull.class);
 
     JSONObject o = m.marshall(new NormalOrFull(), "full");
     assertEquals(2, o.length());
@@ -274,7 +275,7 @@ public class ViewsTest {
 
   @Test
   public void setOfNormalOrFullMarshallingEmptyNormal() throws Exception {
-    JSONObject o = Marshaller.create(SetOfNormalOrFull.class)
+    JSONObject o = TwoLattes.createMarshaller(SetOfNormalOrFull.class)
         .marshall(new SetOfNormalOrFull());
 
     assertEquals(1, o.length());
@@ -284,7 +285,7 @@ public class ViewsTest {
 
   @Test
   public void setOfNormalOrFullMarshallingEmptyFull() throws Exception {
-    JSONObject o = Marshaller.create(SetOfNormalOrFull.class)
+    JSONObject o = TwoLattes.createMarshaller(SetOfNormalOrFull.class)
         .marshall(new SetOfNormalOrFull(), "full");
 
     assertEquals(1, o.length());
@@ -296,7 +297,7 @@ public class ViewsTest {
   public void setOfNormalOrFullMarshallingNotEmptyNormal() throws Exception {
     SetOfNormalOrFull setOfNormalOrFull = new SetOfNormalOrFull();
     setOfNormalOrFull.normalOrFulls.add(new NormalOrFull());
-    JSONObject o1 = Marshaller.create(SetOfNormalOrFull.class)
+    JSONObject o1 = TwoLattes.createMarshaller(SetOfNormalOrFull.class)
         .marshall(setOfNormalOrFull);
 
     assertEquals(1, o1.length());
@@ -312,7 +313,7 @@ public class ViewsTest {
   public void setOfNormalOrFullMarshallingNotEmptyFull() throws Exception {
     SetOfNormalOrFull setOfNormalOrFull = new SetOfNormalOrFull();
     setOfNormalOrFull.normalOrFulls.add(new NormalOrFull());
-    JSONObject o1 = Marshaller.create(SetOfNormalOrFull.class)
+    JSONObject o1 = TwoLattes.createMarshaller(SetOfNormalOrFull.class)
         .marshall(setOfNormalOrFull, "full");
 
     assertEquals(1, o1.length());
@@ -326,7 +327,7 @@ public class ViewsTest {
   }
 
   private <T> T unmarshall(Class<T> clazz, String json, String view) throws JSONException {
-    return Marshaller.create(clazz).unmarshall(new JSONObject(json), view);
+    return TwoLattes.createMarshaller(clazz).unmarshall(new JSONObject(json), view);
   }
 
 }

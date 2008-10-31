@@ -1,179 +1,72 @@
 package com.twolattes.json;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.twolattes.json.types.Type;
 
 /**
  * JSON Marshaller.
  */
-public final class Marshaller<T> {
-
-  private final static Map<Class<?>, Class<? extends Type<?>>> types;
-  static {
-    types = new HashMap<Class<?>, Class<? extends Type<?>>>();
-  }
-
-  private final EntityDescriptor<T> descriptor;
-  private final Class<T> clazz;
-
-
-  @SuppressWarnings("unchecked")
-  private Marshaller(Class<T> clazz) {
-    try {
-      this.clazz = clazz;
-      this.descriptor = new DescriptorFactory().create(
-          clazz, new DescriptorFactory.EntityDescriptorStore());
-    } catch (IOException e) {
-      throw new IllegalArgumentException(clazz + " unreadable");
-    }
-  }
-
-  /**
-   * Create a JSON Marshaller for the specific entitiy. The entity should be
-   * annonated with the {@link Entity} annotation.
-   * @param <E> the entitie's type
-   * @param c the entities's class
-   * @return a JSON Marshaller for the specific entity
-   */
-  @SuppressWarnings("unchecked")
-  public static <E> Marshaller<E> create(Class<E> c) {
-    return new Marshaller<E>(c);
-  }
+public interface Marshaller<T> {
 
   /**
    * Marhsall an entity instance to a JSON object.
    * @param entity the entity's instance
    * @return a JSON object
    */
-  public JSONObject marshall(T entity) {
-    return marshall(entity, null);
-  }
+  JSONObject marshall(T entity);
 
   /**
    * Marhsall an entity instance to a JSON object.
    * @param entity the entity's instance
    * @return a JSON object
    */
-  public JSONObject marshall(T entity, String view) {
-    return (JSONObject) descriptor.marshall(entity, view);
-  }
+  JSONObject marshall(T entity, String view);
 
   /**
    * Marshall a collection of entities.
    * @param entities the entities to marshall
    * @return a JSONArray containing the marshalled entities
    */
-  public JSONArray marshallList(Collection<? extends T> entities) {
-    return marshallList(entities, null);
-  }
+  JSONArray marshallList(Collection<? extends T> entities);
 
   /**
    * Marshall a collection of entities.
    * @param entities the entities to marshall
    * @return a JSONArray containing the marshalled entities
    */
-  public JSONArray marshallList(Collection<? extends T> entities, String view) {
-    JSONArray a = new JSONArray();
-    if (descriptor.shouldInline()) {
-      for (T entity : entities) {
-        a.put(descriptor.marshallInline(entity, view));
-      }
-    } else {
-      for (T entity : entities) {
-        a.put(marshall(entity, view));
-      }
-    }
-    return a;
-  }
+  JSONArray marshallList(Collection<? extends T> entities, String view);
 
   /**
    * Unmarshalls a JSON object into a entity.
    * @param entity the JSON object
    * @return an entity
    */
-  public T unmarshall(JSONObject entity) {
-    return unmarshall(entity, null);
-  }
+  T unmarshall(JSONObject entity);
 
   /**
-   * Unmarshall an entity's view.
+   * Unmarshalls an entity's view.
    * @param entity the entity
    * @param view the view
    * @return an entity
    */
-  public T unmarshall(JSONObject entity, String view) {
-    return clazz.cast(descriptor.unmarshall(entity, view));
-  }
+  T unmarshall(JSONObject entity, String view);
 
   /**
-   * Unmarshall a list of entities.
+   * Unmarshalls a list of entities.
    * @param array the JSON array containing the entitties
    * @return the list of entities unmarshalled. The order is preserved
    */
-  public List<T> unmarshallList(JSONArray array) {
-    return unmarshallList(array, null);
-  }
+  List<T> unmarshallList(JSONArray array);
 
   /**
-   * Unmarshall a list of entities.
+   * Unmarshalls a list of entities.
    * @param array the JSON array containing the entitties
    * @return the list of entities unmarshalled. The order is preserved
    * @param view the view
    */
-  public List<T> unmarshallList(JSONArray array, String view) {
-    int length = array.length();
-    List<T> list = new ArrayList<T>(length);
-    try {
-      if (descriptor.shouldInline()) {
-        for (int i = 0; i < length; i++) {
-          list.add(descriptor.unmarshallInline(array.get(i), view));
-        }
-      } else {
-        for (int i = 0; i < length; i++) {
-          list.add(unmarshall(array.getJSONObject(i), view));
-        }
-      }
-    } catch (JSONException e) {
-      throw new IllegalStateException(e);
-    }
-    return list;
-  }
+  List<T> unmarshallList(JSONArray array, String view);
 
-  /**
-   * Register a user type instead of annotating each use in the {@link Value} annotation.
-   * @param type the user type being registered
-   */
-  @SuppressWarnings("unchecked")
-  public static <T> void register(Type<?> type) {
-    types.put(type.getReturnedClass(), (Class<? extends Type<?>>) type.getClass());
-  }
-
-  /**
-   * Get a type based on the returned class of the type.
-   * @param returnedClass the type's returned class
-   * @return an instance of a type of <tt>null</null>
-   */
-  static Type<?> getType(Class<?> returnedClass) {
-    Class<? extends Type<?>> type = types.get(returnedClass);
-    if (type != null) {
-      try {
-        return type.newInstance();
-      } catch (InstantiationException e) {
-        // ignore
-      } catch (IllegalAccessException e) {
-        // ignore
-      }
-    }
-    return null;
-  }
 }

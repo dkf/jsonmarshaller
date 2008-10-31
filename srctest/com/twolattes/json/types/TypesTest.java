@@ -13,13 +13,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.twolattes.json.Marshaller;
+import com.twolattes.json.TwoLattes;
 
 public class TypesTest {
   private Marshaller<E> marshaller;
 
   @Before
   public void start() {
-    marshaller =  Marshaller.create(E.class);
+    marshaller =  TwoLattes.createMarshaller(E.class);
   }
 
   @Test

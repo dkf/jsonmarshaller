@@ -11,13 +11,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import com.twolattes.json.Marshaller;
+import com.twolattes.json.TwoLattes;
 
 public class CollectionTest {
 
   @Test
   public void sortedSet1() throws Exception {
-    EntityWithSortedSet1 e = Marshaller.create(EntityWithSortedSet1.class)
+    EntityWithSortedSet1 e = TwoLattes.createMarshaller(EntityWithSortedSet1.class)
         .unmarshall(new JSONObject("{names:['a','c','b']}"));
 
     assertNotNull(e.names);
@@ -35,7 +35,7 @@ public class CollectionTest {
     entityWithSortedSet2.entities = new TreeSet<PolymorphicEntity>();
     entityWithSortedSet2.entities.add(new ChildPolymorphicEntity());
 
-    JSONObject o = Marshaller.create(EntityWithSortedSet2.class)
+    JSONObject o = TwoLattes.createMarshaller(EntityWithSortedSet2.class)
         .marshall(entityWithSortedSet2);
 
     assertEquals(1, o.length());
@@ -50,7 +50,7 @@ public class CollectionTest {
     entityWithSortedSet3.entities = new TreeSet<PolymorphicEntity>();
     entityWithSortedSet3.entities.add(new ChildPolymorphicEntity());
 
-    JSONObject o = Marshaller.create(EntityWithSortedSet3.class)
+    JSONObject o = TwoLattes.createMarshaller(EntityWithSortedSet3.class)
         .marshall(entityWithSortedSet3);
 
     assertEquals(1, o.length());
