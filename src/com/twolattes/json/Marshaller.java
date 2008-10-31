@@ -1,7 +1,6 @@
 package com.twolattes.json;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,19 +17,15 @@ import com.twolattes.json.types.Type;
  * JSON Marshaller.
  */
 public final class Marshaller<T> {
-  private final EntityDescriptor<T> descriptor;
-  private final Class<T> clazz;
-  private final static ThreadLocal<Map<Class<?>, WeakReference<Marshaller<?>>>> marhsallers =
-    new ThreadLocal<Map<Class<?>, WeakReference<Marshaller<?>>>>() {
-    @Override
-    protected Map<Class<?>, WeakReference<Marshaller<?>>> initialValue() {
-      return new HashMap<Class<?>, WeakReference<Marshaller<?>>>();
-    }
-  };
+
   private final static Map<Class<?>, Class<? extends Type<?>>> types;
   static {
     types = new HashMap<Class<?>, Class<? extends Type<?>>>();
   }
+
+  private final EntityDescriptor<T> descriptor;
+  private final Class<T> clazz;
+
 
   @SuppressWarnings("unchecked")
   private Marshaller(Class<T> clazz) {
@@ -52,16 +47,7 @@ public final class Marshaller<T> {
    */
   @SuppressWarnings("unchecked")
   public static <E> Marshaller<E> create(Class<E> c) {
-    WeakReference<Marshaller<?>> ref = marhsallers.get().get(c);
-    Marshaller<E> m = null;
-    if (ref != null) {
-      m = (Marshaller<E>) ref.get();
-    }
-    if (m == null) {
-      m = new Marshaller<E>(c);
-      marhsallers.get().put(c, new WeakReference<Marshaller<?>>(m));
-    }
-    return m;
+    return new Marshaller<E>(c);
   }
 
   /**
