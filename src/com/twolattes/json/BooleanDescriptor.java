@@ -24,6 +24,11 @@ class BooleanDescriptor extends AbstractDescriptor<Boolean, Object> {
   }
 
   public final Boolean unmarshall(Object marshalled, String view) {
-    return (Boolean) marshalled;
+    if (marshalled.equals(JSONObject.NULL)) {
+      return null;
+    } else {
+      return (Boolean) marshalled;
+    }
   }
+
 }

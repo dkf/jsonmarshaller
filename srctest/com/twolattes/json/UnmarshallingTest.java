@@ -276,8 +276,15 @@ public class UnmarshallingTest {
   }
 
   @Test
-  public void nullOptionalObject() throws Exception {
+  public void nullOptionalObject1() throws Exception {
     NullOptionalValue obj = unmarshall(NullOptionalValue.class, "{}");
+
+    assertNull(obj.getOptional());
+  }
+
+  @Test
+  public void nullOptionalObject2() throws Exception {
+    NullOptionalValue obj = unmarshall(NullOptionalValue.class, "{\"optionalBoolean\":null}");
 
     assertNull(obj.getOptional());
   }
