@@ -125,7 +125,6 @@ public final class Json {
 
     private final Map<Json.String, Json.Value> delegate = new TreeMap<Json.String, Json.Value>();
 
-    @Override
     public void write(Writer writer) throws IOException {
       writer.append('{');
       java.lang.String separator = "";
@@ -139,7 +138,6 @@ public final class Json {
       writer.append('}');
     }
 
-    @Override
     public <T> T visit(JsonVisitor<T> visitor) {
       return visitor.caseObject(this);
     }
@@ -181,7 +179,6 @@ public final class Json {
       return delegate.keySet();
     }
 
-    @Override
     public Set<Entry<String, Value>> entrySet() {
       return delegate.entrySet();
     }
@@ -210,7 +207,6 @@ public final class Json {
       }
     }
 
-    @Override
     public void write(Writer writer) throws IOException {
       writer.append('[');
       java.lang.String separator = "";
@@ -222,12 +218,10 @@ public final class Json {
       writer.append(']');
     }
 
-    @Override
     public <T> T visit(JsonVisitor<T> visitor) {
       return visitor.caseArray(this);
     }
 
-    @Override
     public List<Value> values() {
       return delegate;
     }
@@ -279,12 +273,10 @@ public final class Json {
       this.b = b;
     }
 
-    @Override
     public void write(Writer writer) throws IOException {
       writer.append(java.lang.Boolean.toString(b));
     }
 
-    @Override
     public <T> T visit(JsonVisitor<T> visitor) {
       return visitor.caseBoolean(this);
     }
@@ -325,12 +317,10 @@ public final class Json {
       this.number = number;
     }
 
-    @Override
     public void write(Writer writer) throws IOException {
       writer.append(number.toPlainString());
     }
 
-    @Override
     public <T> T visit(JsonVisitor<T> visitor) {
       return visitor.caseNumber(this);
     }
@@ -363,7 +353,6 @@ public final class Json {
       this.string = string;
     }
 
-    @Override
     public void write(Writer writer) throws IOException {
       writer.append('"');
       int length = string.length();
@@ -394,7 +383,6 @@ public final class Json {
       writer.append('"');
     }
 
-    @Override
     public <T> T visit(JsonVisitor<T> visitor) {
       return visitor.caseString(this);
     }
@@ -425,12 +413,10 @@ public final class Json {
 
   private static class NullImpl extends BaseValue implements Json.Null {
 
-    @Override
     public void write(Writer writer) throws IOException {
       writer.append("null");
     }
 
-    @Override
     public <T> T visit(JsonVisitor<T> visitor) {
       return visitor.caseNull();
     }
@@ -445,72 +431,58 @@ public final class Json {
       return 900772187;
     }
 
-    @Override
     public boolean getBoolean() {
       throw new NullPointerException();
     }
 
-    @Override
     public BigDecimal getNumber() {
       throw new NullPointerException();
     }
 
-    @Override
     public java.lang.String getString() {
       throw new NullPointerException();
     }
 
-    @Override
     public int compareTo(Json.String o) {
       throw new NullPointerException();
     }
 
-    @Override
     public Value get(String key) {
       throw new NullPointerException();
     }
 
-    @Override
     public boolean isEmpty() {
       throw new NullPointerException();
     }
 
-    @Override
     public Set<String> keySet() {
       throw new NullPointerException();
     }
 
-    @Override
     public Set<Entry<String, Value>> entrySet() {
       throw new NullPointerException();
     }
 
-    @Override
     public Value put(String key, Value value) {
       throw new NullPointerException();
     }
 
-    @Override
     public int size() {
       throw new NullPointerException();
     }
 
-    @Override
     public List<Value> values() {
       throw new NullPointerException();
     }
 
-    @Override
     public void add(int index, Value element) {
       throw new NullPointerException();
     }
 
-    @Override
     public boolean add(Value element) {
       throw new NullPointerException();
     }
 
-    @Override
     public Value get(int index) {
       throw new NullPointerException();
     }
