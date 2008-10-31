@@ -140,7 +140,7 @@ public class ProfilingHarness {
     JSON_WRITE {
       @Override
       void work() throws IOException {
-        Json o = Json.fromString(input);
+        Json.Value o = Json.fromString(input);
 
         for (int i = 0; i < 50000; i++) {
           o.write(new StringWriter());

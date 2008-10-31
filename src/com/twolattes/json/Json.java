@@ -10,24 +10,120 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 /**
- * JSON value.
+ * JSON values.
  *
  * @see http://www.json.org
  */
-public abstract class Json {
+public final class Json {
+
+  /** A JSON value.
+   */
+  public interface Value {
+
+    void write(Writer writer) throws IOException;
+
+    <T> T visit(JsonVisitor<T> visitor);
+
+  }
 
   /**
    * An object, i.e. {@code {"hello":"world"}}.
    */
-  public static class Object extends Json implements Map<String, Json> {
+  public interface Object extends Value {
 
-    private final Map<Json.String, Json> delegate = new TreeMap<String, Json>();
+    Json.Value put(Json.String key, Json.Value value);
+
+    Json.Value get(Json.String key);
+
+    Set<Json.String> keySet();
+
+    Set<Map.Entry<Json.String, Json.Value>> entrySet();
+
+    Collection<Json.Value> values();
+
+    boolean isEmpty();
+
+    int size();
+
+  }
+
+  /**
+   * An array, i.e {@code [0, 1, 2, 3, 4, 5]}.
+   */
+  public interface Array extends Value, Iterable<Value> {
+
+    void add(int index, Json.Value element);
+
+    boolean add(Json.Value element);
+
+    Json.Value get(int index);
+
+    boolean isEmpty();
+
+    int size();
+
+    List<Json.Value> values();
+
+  }
+
+  /**
+   * A string, i.e. {@code "hello"}.
+   */
+  public interface String extends Value, Comparable<Json.String> {
+
+    java.lang.String getString();
+
+  }
+
+  /**
+   * A number, i.e. {@code 5}, {@code 78.90} or {@code 12728971932}.
+   */
+  public interface Number extends Value {
+
+    BigDecimal getNumber();
+
+  }
+
+  /**
+   * A boolean, i.e {@code true} or {@code false}.
+   */
+  public interface Boolean extends Value {
+
+    boolean getBoolean();
+
+  }
+
+  /**
+   * Null, i.e. {@code null}.
+   */
+  public interface Null extends Json.Array, Json.Boolean, Json.Number, Json.Object, Json.String {
+  }
+
+  private static abstract class BaseValue implements Json.Value {
+
+    @Override
+    public final java.lang.String toString() {
+      StringWriter writer = new StringWriter();
+      try {
+        write(writer);
+      } catch (IOException e) {
+        // unreachable
+        throw new RuntimeException(e);
+      }
+      return writer.toString();
+    }
+
+  }
+
+  private static class ObjectImpl extends BaseValue implements Json.Object {
+
+    private final Map<Json.String, Json.Value> delegate = new TreeMap<Json.String, Json.Value>();
 
     @Override
     public void write(Writer writer) throws IOException {
@@ -60,16 +156,15 @@ public abstract class Json {
       return delegate.containsValue(value);
     }
 
-    public Set<Entry<String, Json>> entrySet() {
-      return delegate.entrySet();
-    }
-
     @Override
     public boolean equals(java.lang.Object o) {
-      return delegate.equals(o);
+      if (!(o instanceof Json.Object)) {
+        return false;
+      }
+      return delegate.entrySet().equals(((Json.Object) o).entrySet());
     }
 
-    public Json get(java.lang.Object key) {
+    public Json.Value get(Json.String key) {
       return delegate.get(key);
     }
 
@@ -82,41 +177,35 @@ public abstract class Json {
       return delegate.isEmpty();
     }
 
-    public Set<String> keySet() {
+    public Set<Json.String> keySet() {
       return delegate.keySet();
     }
 
-    public Json put(String key, Json value) {
+    @Override
+    public Set<Entry<String, Value>> entrySet() {
+      return delegate.entrySet();
+    }
+
+    public Json.Value put(Json.String key, Json.Value value) {
       return delegate.put(key, value);
-    }
-
-    public void putAll(Map<? extends String, ? extends Json> m) {
-      delegate.putAll(m);
-    }
-
-    public Json remove(java.lang.Object key) {
-      return delegate.remove(key);
     }
 
     public int size() {
       return delegate.size();
     }
 
-    public Collection<Json> values() {
+    public Collection<Json.Value> values() {
       return delegate.values();
     }
 
   }
 
-  /**
-   * An array, i.e {@code [0, 1, 2, 3, 4, 5]}.
-   */
-  public static class Array extends Json implements List<Json> {
+  private static class ArrayImpl extends BaseValue implements Json.Array {
 
-    private final List<Json> delegate = new LinkedList<Json>();
+    private final List<Json.Value> delegate = new LinkedList<Json.Value>();
 
-    public Array(Json... values) {
-      for (Json value : values) {
+    public ArrayImpl(Json.Value... values) {
+      for (Json.Value value : values) {
         delegate.add(value);
       }
     }
@@ -125,7 +214,7 @@ public abstract class Json {
     public void write(Writer writer) throws IOException {
       writer.append('[');
       java.lang.String separator = "";
-      for (Json value : delegate) {
+      for (Json.Value value : delegate) {
         writer.append(separator);
         separator = ",";
         value.write(writer);
@@ -138,40 +227,28 @@ public abstract class Json {
       return visitor.caseArray(this);
     }
 
-    public void add(int index, Json element) {
+    @Override
+    public List<Value> values() {
+      return delegate;
+    }
+
+    public void add(int index, Json.Value element) {
       delegate.add(index, element);
     }
 
-    public boolean add(Json e) {
+    public boolean add(Json.Value e) {
       return delegate.add(e);
-    }
-
-    public boolean addAll(Collection<? extends Json> c) {
-      return delegate.addAll(c);
-    }
-
-    public boolean addAll(int index, Collection<? extends Json> c) {
-      return delegate.addAll(index, c);
-    }
-
-    public void clear() {
-      delegate.clear();
-    }
-
-    public boolean contains(java.lang.Object o) {
-      return delegate.contains(o);
-    }
-
-    public boolean containsAll(Collection<?> c) {
-      return delegate.containsAll(c);
     }
 
     @Override
     public boolean equals(java.lang.Object o) {
-      return delegate.equals(o);
+      if (!(o instanceof Json.Array)) {
+        return false;
+      }
+      return delegate.equals(((Json.Array) o).values());
     }
 
-    public Json get(int index) {
+    public Json.Value get(int index) {
       return delegate.get(index);
     }
 
@@ -180,76 +257,25 @@ public abstract class Json {
       return delegate.hashCode();
     }
 
-    public int indexOf(java.lang.Object o) {
-      return delegate.indexOf(o);
-    }
-
     public boolean isEmpty() {
       return delegate.isEmpty();
-    }
-
-    public Iterator<Json> iterator() {
-      return delegate.iterator();
-    }
-
-    public int lastIndexOf(java.lang.Object o) {
-      return delegate.lastIndexOf(o);
-    }
-
-    public ListIterator<Json> listIterator() {
-      return delegate.listIterator();
-    }
-
-    public ListIterator<Json> listIterator(int index) {
-      return delegate.listIterator(index);
-    }
-
-    public Json remove(int index) {
-      return delegate.remove(index);
-    }
-
-    public boolean remove(java.lang.Object o) {
-      return delegate.remove(o);
-    }
-
-    public boolean removeAll(Collection<?> c) {
-      return delegate.removeAll(c);
-    }
-
-    public boolean retainAll(Collection<?> c) {
-      return delegate.retainAll(c);
-    }
-
-    public Json set(int index, Json element) {
-      return delegate.set(index, element);
     }
 
     public int size() {
       return delegate.size();
     }
 
-    public List<Json> subList(int fromIndex, int toIndex) {
-      return delegate.subList(fromIndex, toIndex);
-    }
-
-    public java.lang.Object[] toArray() {
-      return delegate.toArray();
-    }
-
-    public <T> T[] toArray(T[] a) {
-      return delegate.toArray(a);
+    public Iterator<Value> iterator() {
+      return delegate.iterator();
     }
 
   }
 
-  /**
-   * A boolean, i.e {@code true} or {@code false}.
-   */
-  public static class Boolean extends Json {
+  private static class BooleanImpl extends BaseValue implements Json.Boolean {
 
     private final boolean b;
 
-    public Boolean(boolean b) {
+    public BooleanImpl(boolean b) {
       this.b = b;
     }
 
@@ -265,10 +291,10 @@ public abstract class Json {
 
     @Override
     public boolean equals(java.lang.Object obj) {
-      if (!(obj instanceof Boolean)) {
+      if (!(obj instanceof BooleanImpl)) {
         return false;
       } else {
-        return !(this.b ^ ((Boolean) obj).b);
+        return !(this.b ^ ((BooleanImpl) obj).b);
       }
     }
 
@@ -281,24 +307,21 @@ public abstract class Json {
       }
     }
 
-    public boolean get() {
+    public boolean getBoolean() {
       return b;
     }
 
   }
 
-  /**
-   * A number, i.e. {@code 5}, {@code 78.90} or {@code 12728971932}.
-   */
-  public static class Number extends Json {
+  private static class NumberImpl extends BaseValue implements Json.Number {
 
     private final BigDecimal number;
 
-    public Number(double number) {
+    public NumberImpl(double number) {
       this.number = BigDecimal.valueOf(number);
     }
 
-    public Number(BigDecimal number) {
+    public NumberImpl(BigDecimal number) {
       this.number = number;
     }
 
@@ -314,10 +337,10 @@ public abstract class Json {
 
     @Override
     public boolean equals(java.lang.Object obj) {
-      if (!(obj instanceof Number)) {
+      if (!(obj instanceof NumberImpl)) {
         return false;
       } else {
-        return this.number.compareTo(((Number) obj).number) == 0;
+        return this.number.compareTo(((NumberImpl) obj).number) == 0;
       }
     }
 
@@ -326,20 +349,17 @@ public abstract class Json {
       return (int) number.doubleValue();
     }
 
-    public BigDecimal get() {
+    public BigDecimal getNumber() {
       return number;
     }
 
   }
 
-  /**
-   * A string, i.e. {@code "hello"}.
-   */
-  public static class String extends Json implements Comparable<Json.String> {
+  private static class StringImpl extends BaseValue implements Json.String {
 
     private final java.lang.String string;
 
-    public String(java.lang.String string) {
+    public StringImpl(java.lang.String string) {
       this.string = string;
     }
 
@@ -380,7 +400,7 @@ public abstract class Json {
     }
 
     public int compareTo(Json.String that) {
-      return this.string.compareTo(that.string);
+      return this.string.compareTo(that.getString());
     }
 
     @Override
@@ -388,7 +408,7 @@ public abstract class Json {
       if (!(obj instanceof Json.String)) {
         return false;
       } else {
-        return this.string.equals(((Json.String) obj).string);
+        return this.getString().equals(((Json.String) obj).getString());
       }
     }
 
@@ -397,16 +417,13 @@ public abstract class Json {
       return string.hashCode();
     }
 
-    public java.lang.String get() {
+    public java.lang.String getString() {
       return string;
     }
 
   }
 
-  /**
-   * Null, i.e. {@code null}.
-   */
-  public static class Null extends Json {
+  private static class NullImpl extends BaseValue implements Json.Null {
 
     @Override
     public void write(Writer writer) throws IOException {
@@ -420,7 +437,7 @@ public abstract class Json {
 
     @Override
     public boolean equals(java.lang.Object obj) {
-      return obj instanceof Json.Null;
+      return obj instanceof Json.NullImpl;
     }
 
     @Override
@@ -428,44 +445,101 @@ public abstract class Json {
       return 900772187;
     }
 
+    @Override
+    public boolean getBoolean() {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public BigDecimal getNumber() {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public java.lang.String getString() {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public int compareTo(Json.String o) {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public Value get(String key) {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public boolean isEmpty() {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public Set<String> keySet() {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public Set<Entry<String, Value>> entrySet() {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public Value put(String key, Value value) {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public int size() {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public List<Value> values() {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public void add(int index, Value element) {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public boolean add(Value element) {
+      throw new NullPointerException();
+    }
+
+    @Override
+    public Value get(int index) {
+      throw new NullPointerException();
+    }
+
+    public Iterator<Value> iterator() {
+      throw new NullPointerException();
+    }
+
   }
 
   /**
    * {@code new Json.Null()}.
    */
-  public static final Json.Null NULL = new Json.Null();
+  public static final Json.Null NULL = new Json.NullImpl();
 
   /**
    * {@code new Json.Boolean(true)}.
    */
-  public static final Json.Boolean TRUE = new Json.Boolean(true);
+  public static final Json.Boolean TRUE = new Json.BooleanImpl(true);
 
   /**
    * {@code new Json.Boolean(false)}.
    */
-  public static final Json.Boolean FALSE = new Json.Boolean(false);
-
-  @Override
-  public java.lang.String toString() {
-    StringWriter writer = new StringWriter();
-    try {
-      write(writer);
-    } catch (IOException e) {
-      // unreachable
-      throw new RuntimeException(e);
-    }
-    return writer.toString();
-  }
-
-  /**
-   * Write this value to a writer.
-   */
-  public abstract void write(Writer writer) throws IOException;
+  public static final Json.Boolean FALSE = new Json.BooleanImpl(false);
 
   /**
    * Read a JSON value from a reader.
    */
-  public static Json read(Reader reader) throws IOException {
+  public static Json.Value read(Reader reader) throws IOException {
     CharStream stream = new CharStream(reader);
     return read(stream, skip(stream));
   }
@@ -477,7 +551,7 @@ public abstract class Json {
     return c;
   }
 
-  private static Json read(CharStream reader, int c) throws IOException {
+  private static Json.Value read(CharStream reader, int c) throws IOException {
     StringBuilder sb;
     switch (c) {
       // null
@@ -512,14 +586,14 @@ public abstract class Json {
 
       // object
       case '{':
-        Json.Object object = new Json.Object();
+        Json.ObjectImpl object = new Json.ObjectImpl();
         // Unrolling to avoid state, note that the first time around we must not
         // skip when reading the key of the object.
         c = skip(reader);
         if (c == '}') {
           return object;
         }
-        Json.String key = (Json.String) read(reader, c);
+        Json.StringImpl key = (Json.StringImpl) read(reader, c);
         if (skip(reader) != ':') {
           throw new IllegalArgumentException(": expected");
         }
@@ -529,7 +603,7 @@ public abstract class Json {
           if (c == '}') {
             return object;
           }
-          key = (Json.String) read(reader, skip(reader));
+          key = (Json.StringImpl) read(reader, skip(reader));
           if (skip(reader) != ':') {
             throw new IllegalArgumentException(": expected");
           }
@@ -539,7 +613,7 @@ public abstract class Json {
 
       // array
       case '[':
-        Json.Array array = new Json.Array();
+        Json.ArrayImpl array = new Json.ArrayImpl();
         // Unrolling to avoid state, note that the first time around we must not
         // skip when reading the value added to the array.
         c = skip(reader);
@@ -562,7 +636,7 @@ public abstract class Json {
         do {
           switch (c = reader.read()) {
             case '"':
-              return new Json.String(sb.toString());
+              return new Json.StringImpl(sb.toString());
             case '\\':
               switch (c = reader.read()) {
                 case '"':
@@ -629,20 +703,20 @@ public abstract class Json {
           case 'E':
             if (c != 'e' && c != 'E') {
               reader.unread(c);
-              return new Json.Number(new BigDecimal(sb.toString()));
+              return new Json.NumberImpl(new BigDecimal(sb.toString()));
             }
             sb.append((char) c);
             c = reader.read();
             if (c != '+' && c != '-' && c < '0' && '9' < c) {
               reader.unread(c);
-              return new Json.Number(new BigDecimal(sb.toString()));
+              return new Json.NumberImpl(new BigDecimal(sb.toString()));
             }
             do {
               sb.append((char) c);
             } while ((c = reader.read()) <= '9' && '0' <= c);
           default:
             reader.unread(c);
-            return new Json.Number(new BigDecimal(sb.toString()));
+            return new Json.NumberImpl(new BigDecimal(sb.toString()));
         }
 
       // error
@@ -651,6 +725,7 @@ public abstract class Json {
     }
   }
 
+  /* Visible for testing. */
   static int fromHex(int codePoint) {
     // '9' = 57, 'F' = 70, 'f' = 102
     return (codePoint <= '9') ? codePoint - '0' :
@@ -660,7 +735,7 @@ public abstract class Json {
   /**
    * Create a JSON value from a string.
    */
-  public static Json fromString(java.lang.String input) {
+  public static Json.Value fromString(java.lang.String input) {
     try {
       return read(new StringReader(input));
     } catch (IOException e) {
@@ -668,9 +743,32 @@ public abstract class Json {
     }
   }
 
-  /**
-   * Visit this value.
-   */
-  public abstract <T> T visit(JsonVisitor<T> visitor);
+  public static Json.Array array(Json.Value... values) {
+    return new Json.ArrayImpl(values);
+  }
+
+  public static Json.Object object() {
+    return new Json.ObjectImpl();
+  }
+
+  public static Json.Number number(double number) {
+    return new Json.NumberImpl(number);
+  }
+
+  public static Json.Number number(BigDecimal number) {
+    return new Json.NumberImpl(number);
+  }
+
+  public static Json.String string(java.lang.String string) {
+    return new Json.StringImpl(string);
+  }
+
+  static Json.Boolean booleanValue(boolean b) {
+    return new Json.BooleanImpl(b);
+  }
+
+  static Json.Null nullValue() {
+    return new Json.NullImpl();
+  }
 
 }
