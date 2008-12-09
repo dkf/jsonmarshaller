@@ -1,8 +1,10 @@
 package com.twolattes.json;
 
+import java.math.BigDecimal;
+
 /**
  * Descriptor for the {@link Integer} type.
- * 
+ *
  * @author pascal
  */
 class IntegerDescriptor extends NumberDescriptor<Integer> {
@@ -11,7 +13,7 @@ class IntegerDescriptor extends NumberDescriptor<Integer> {
   }
 
   @Override
-  Integer convert(Number entity) {
+  Integer convert(BigDecimal entity) {
     return entity.intValue();
   }
 }

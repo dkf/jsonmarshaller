@@ -41,6 +41,8 @@ public final class Json {
 
     Json.Value get(Json.String key);
 
+    boolean containsKey(Json.String key);
+
     Set<Json.String> keySet();
 
     Set<Map.Entry<Json.String, Json.Value>> entrySet();
@@ -158,12 +160,19 @@ public final class Json {
     public boolean equals(java.lang.Object o) {
       if (!(o instanceof Json.Object)) {
         return false;
+      } else if (NULL.equals(o)) {
+        return false;
+      } else {
+        return delegate.entrySet().equals(((Json.Object) o).entrySet());
       }
-      return delegate.entrySet().equals(((Json.Object) o).entrySet());
     }
 
     public Json.Value get(Json.String key) {
       return delegate.get(key);
+    }
+
+    public boolean containsKey(String key) {
+      return delegate.containsKey(key);
     }
 
     @Override
@@ -238,8 +247,11 @@ public final class Json {
     public boolean equals(java.lang.Object o) {
       if (!(o instanceof Json.Array)) {
         return false;
+      } else if (NULL.equals(o)) {
+        return false;
+      } else {
+        return delegate.equals(((Json.Array) o).values());
       }
-      return delegate.equals(((Json.Array) o).values());
     }
 
     public Json.Value get(int index) {
@@ -310,7 +322,7 @@ public final class Json {
     private final BigDecimal number;
 
     public NumberImpl(double number) {
-      this.number = BigDecimal.valueOf(number);
+      this(BigDecimal.valueOf(number));
     }
 
     public NumberImpl(BigDecimal number) {
@@ -395,6 +407,8 @@ public final class Json {
     public boolean equals(java.lang.Object obj) {
       if (!(obj instanceof Json.String)) {
         return false;
+      } else if (NULL.equals(obj)) {
+        return false;
       } else {
         return this.getString().equals(((Json.String) obj).getString());
       }
@@ -448,6 +462,10 @@ public final class Json {
     }
 
     public Value get(String key) {
+      throw new NullPointerException();
+    }
+
+    public boolean containsKey(String key) {
       throw new NullPointerException();
     }
 

@@ -6,27 +6,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.google.common.base.Preconditions;
-
 /**
  * Descriptor for {@link Set}s or {@link List}s.
  *
  * @author pascallouis
  */
 @SuppressWarnings("unchecked")
-class CollectionDescriptor extends AbstractDescriptor<Collection, Object> {
+class CollectionDescriptor extends AbstractDescriptor<Collection, Json.Array> {
   private final CollectionType collectionType;
-  private final Descriptor<Object, Object> collectionDescriptor;
+  private final Descriptor<Object, Json.Value> collectionDescriptor;
 
   @SuppressWarnings("unchecked")
   CollectionDescriptor(Class<? extends Collection> collectionClass,
       Descriptor<? extends Object, ? extends Object> collectionDescriptor) {
     super(Collection.class);
-    this.collectionDescriptor = (Descriptor<Object, Object>) collectionDescriptor;
+    this.collectionDescriptor = (Descriptor<Object, Json.Value>) collectionDescriptor;
     this.collectionType = fromClass(collectionClass);
   }
 
@@ -35,43 +29,37 @@ class CollectionDescriptor extends AbstractDescriptor<Collection, Object> {
     return collectionDescriptor.isInlineable();
   }
 
-  public Object marshall(Collection entity, String view) {
+  public Json.Array marshall(Collection entity, String view) {
     if (entity == null) {
-      return JSONArray.NULL;
+      return Json.NULL;
     } else {
-      JSONArray jsonArray = new JSONArray();
+      Json.Array jsonArray = Json.array();
       if (collectionDescriptor.shouldInline()) {
         for (Object o : entity) {
-          jsonArray.put(collectionDescriptor.marshallInline(o, view));
+          jsonArray.add(collectionDescriptor.marshallInline(o, view));
         }
       } else {
         for (Object o : entity) {
-          jsonArray.put(collectionDescriptor.marshall(o, view));
+          jsonArray.add(collectionDescriptor.marshall(o, view));
         }
       }
       return jsonArray;
     }
   }
 
-  public Collection<?> unmarshall(Object object, String view) {
-    if (JSONObject.NULL.equals(object)) {
+  public Collection<?> unmarshall(Json.Array jsonArray, String view) {
+    if (Json.NULL.equals(jsonArray)) {
       return null;
     } else {
-      Preconditions.checkState(object instanceof JSONArray);
-      JSONArray jsonArray = (JSONArray) object;
       Collection<Object> collection = collectionType.newCollection();
-      try {
-        if (collectionDescriptor.shouldInline()) {
-          for (int i = 0; i < jsonArray.length(); i++) {
-            collection.add(collectionDescriptor.unmarshallInline(jsonArray.get(i), view));
-          }
-        } else {
-          for (int i = 0; i < jsonArray.length(); i++) {
-            collection.add(collectionDescriptor.unmarshall(jsonArray.get(i), view));
-          }
+      if (collectionDescriptor.shouldInline()) {
+        for (int i = 0; i < jsonArray.size(); i++) {
+          collection.add(collectionDescriptor.unmarshallInline(jsonArray.get(i), view));
         }
-      } catch (JSONException e) {
-        throw new IllegalStateException(e);
+      } else {
+        for (int i = 0; i < jsonArray.size(); i++) {
+          collection.add(collectionDescriptor.unmarshall(jsonArray.get(i), view));
+        }
       }
       return collection;
     }

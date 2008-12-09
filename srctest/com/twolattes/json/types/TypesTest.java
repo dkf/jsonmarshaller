@@ -1,5 +1,8 @@
 package com.twolattes.json.types;
 
+import static com.twolattes.json.Json.NULL;
+import static com.twolattes.json.Json.number;
+import static com.twolattes.json.Json.string;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -8,10 +11,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.twolattes.json.Json;
 import com.twolattes.json.Marshaller;
 import com.twolattes.json.TwoLattes;
 
@@ -27,31 +30,31 @@ public class TypesTest {
   public void testMarshallURL() throws Exception {
     E e = new E();
     e.url = new  URL("http://whatever.com");
-    JSONObject o = marshaller.marshall(e, "url");
+    Json.Object o = marshaller.marshall(e, "url");
 
-    assertEquals(1, o.length());
-    assertEquals("http://whatever.com", o.get("url"));
+    assertEquals(1, o.size());
+    assertEquals(string("http://whatever.com"), o.get(string("url")));
   }
 
   @Test
   public void testMarshallURLNull() throws Exception {
-    JSONObject o = marshaller.marshall(new E(), "url");
+    Json.Object o = marshaller.marshall(new E(), "url");
 
-    assertEquals(1, o.length());
-    assertEquals(JSONObject.NULL, o.get("url"));
+    assertEquals(1, o.size());
+    assertEquals(NULL, o.get(string("url")));
   }
 
   @Test
   public void testUnmarshallURL() throws Exception {
     E e = marshaller.unmarshall(
-        new JSONObject("{url:'http://whatever.com'}"), "url");
+        (Json.Object) Json.fromString("{\"url\":\"http://whatever.com\"}"), "url");
 
     assertEquals(new URL("http://whatever.com"), e.url);
   }
 
   @Test
   public void testUnnarshallURLNull() throws Exception {
-    E e = marshaller.unmarshall(new JSONObject("{url:null}"), "url");
+    E e = marshaller.unmarshall((Json.Object) Json.fromString("{\"url\":null}"), "url");
 
     assertNull(e.url);
   }
@@ -60,45 +63,48 @@ public class TypesTest {
   public void testMarshallBigDecimal() throws Exception {
     E e = new E();
     e.bigDecimal = BigDecimal.valueOf(8.398741);
-    JSONObject o = marshaller.marshall(e, "bigDecimal");
+    Json.Object o = marshaller.marshall(e, "bigDecimal");
 
-    assertEquals(1, o.length());
-    assertEquals(8.398741, o.get("bigDecimal"));
+    assertEquals(1, o.size());
+    assertEquals(number(8.398741), o.get(string("bigDecimal")));
   }
 
   @Test
   public void testMarshallBigDecimalNull() throws Exception {
-    JSONObject o = marshaller.marshall(new E(), "bigDecimal");
+    Json.Object o = marshaller.marshall(new E(), "bigDecimal");
 
-    assertEquals(1, o.length());
-    assertEquals(JSONObject.NULL, o.get("bigDecimal"));
+    assertEquals(1, o.size());
+    assertEquals(NULL, o.get(string("bigDecimal")));
   }
 
   @Test
   public void testUnmarshallBigDecimal1() throws Exception {
     E e = marshaller.unmarshall(
-        new JSONObject("{bigDecimal:78945.13245}"), "bigDecimal");
+        (Json.Object) Json.fromString("{\"bigDecimal\":78945.13245}"), "bigDecimal");
 
     assertEquals(BigDecimal.valueOf(78945.13245), e.bigDecimal);
   }
 
   @Test
   public void testUnmarshallBigDecimal2() throws Exception {
-    E e = marshaller.unmarshall(new JSONObject("{bigDecimal:7}"), "bigDecimal");
+    E e = marshaller.unmarshall(
+        (Json.Object) Json.fromString("{\"bigDecimal\":7}"), "bigDecimal");
 
     assertEquals(BigDecimal.valueOf(7), e.bigDecimal);
   }
 
   @Test
   public void testUnmarshallBigDecimal3() throws Exception {
-    E e = marshaller.unmarshall(new JSONObject("{bigDecimal:7777777777777777}"), "bigDecimal");
+    E e = marshaller.unmarshall(
+        (Json.Object) Json.fromString("{\"bigDecimal\":7777777777777777}"), "bigDecimal");
 
     assertEquals(BigDecimal.valueOf(7777777777777777L), e.bigDecimal);
   }
 
   @Test
   public void testUnmarshallBigDecimalNull() throws Exception {
-    E e = marshaller.unmarshall(new JSONObject("{bigDecimal:null}"), "bigDecimal");
+    E e = marshaller.unmarshall(
+        (Json.Object) Json.fromString("{\"bigDecimal\":null}"), "bigDecimal");
 
     assertNull(e.bigDecimal);
   }
@@ -106,7 +112,7 @@ public class TypesTest {
   @Test
   public void testUnmarshallBigInteger1() throws Exception {
     E e = marshaller.unmarshall(
-        new JSONObject("{bigInteger:null}"), "bigInteger");
+        (Json.Object) Json.fromString("{\"bigInteger\":null}"), "bigInteger");
 
     assertNull(e.bigInteger);
   }
@@ -114,7 +120,7 @@ public class TypesTest {
   @Test
   public void testUnmarshallBigInteger2() throws Exception {
     E e = marshaller.unmarshall(
-        new JSONObject("{bigInteger:78945}"), "bigInteger");
+        (Json.Object) Json.fromString("{\"bigInteger\":78945}"), "bigInteger");
 
     assertTrue(
         BigInteger.valueOf(78945).compareTo(e.bigInteger) == 0);
@@ -123,7 +129,7 @@ public class TypesTest {
   @Test
   public void testUnmarshallBigInteger3() throws Exception {
     E e = marshaller.unmarshall(
-        new JSONObject("{bigInteger:789451111111111111}"), "bigInteger");
+        (Json.Object) Json.fromString("{\"bigInteger\":789451111111111111}"), "bigInteger");
 
     assertTrue(
         BigInteger.valueOf(789451111111111111L).compareTo(e.bigInteger) == 0);

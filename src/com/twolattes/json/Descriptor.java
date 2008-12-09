@@ -8,7 +8,7 @@ package com.twolattes.json;
  * @param <J> the type of the marsahlled entity
  * @author pascal
  */
-interface Descriptor<E, J> {
+interface Descriptor<E, J extends Json.Value> {
   /**
    * Returns the {@link Class} of the object described.
    */

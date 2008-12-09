@@ -1,5 +1,12 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.FALSE;
+import static com.twolattes.json.Json.NULL;
+import static com.twolattes.json.Json.TRUE;
+import static com.twolattes.json.Json.array;
+import static com.twolattes.json.Json.number;
+import static com.twolattes.json.Json.object;
+import static com.twolattes.json.Json.string;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -7,11 +14,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Test;
 
+import com.twolattes.json.Json.Array;
 import com.twolattes.json.OuterClass.InnerClass;
 
 
@@ -22,15 +28,15 @@ public class MarshallingTest {
 
     BaseTypeEntity base = new BaseTypeEntity.Factory().create(5, 'h', 89L, 3.2f, (short) 16, "ya", true, 6218.687231);
 
-    JSONObject o = new JSONObject();
-    o.put("_0", 5);
-    o.put("_1", new Character('h'));
-    o.put("_2", 89);
-    o.put("_3", 3.2);
-    o.put("_4", 16);
-    o.put("_5", "ya");
-    o.put("_6", true);
-    o.put("_7", 6218.687231);
+    Json.Object o = object();
+    o.put(string("_0"), number(5));
+    o.put(string("_1"), string("h"));
+    o.put(string("_2"), number(89));
+    o.put(string("_3"), number(3.2));
+    o.put(string("_4"), number(16));
+    o.put(string("_5"), string("ya"));
+    o.put(string("_6"), TRUE);
+    o.put(string("_7"), number(6218.687231));
 
     assertEquals(o, marshaller.marshall(base));
   }
@@ -42,9 +48,7 @@ public class MarshallingTest {
 
     Marshaller<Email> m = TwoLattes.createMarshaller(Email.class);
 
-    JSONObject o = m.marshall(e);
-
-    assertEquals(JSONObject.NULL, o.get("email"));
+    assertEquals(NULL, m.marshall(e).get(string("email")));
   }
 
   @Test
@@ -55,12 +59,10 @@ public class MarshallingTest {
     friends.add("Jack");
     friends.add("Monica");
     CollectionEntity base = new CollectionEntity.Factory().create(friends);
-    JSONObject jsonObject = marshaller.marshall(base);
-    JSONArray array = new JSONArray();
-    array.put("Jack");
-    array.put("Monica");
 
-    assertEquals(array, jsonObject.get("friends"));
+    assertEquals(
+        array(string("Jack"), string("Monica")),
+        marshaller.marshall(base).get(string("friends")));
   }
 
   @Test
@@ -70,8 +72,9 @@ public class MarshallingTest {
     Email e = new Email(); e.email = "plperez@stanford.edu";
     User u = new User(); u.email = e;
 
-    JSONObject o = marshaller.marshall(u);
-    assertEquals("plperez@stanford.edu", o.get("email"));
+    assertEquals(
+        string("plperez@stanford.edu"),
+        marshaller.marshall(u).get(string("email")));
   }
 
   @Test
@@ -81,8 +84,9 @@ public class MarshallingTest {
     EmailInline e = new EmailInline(); e.email = "plperez@stanford.edu";
     UserInlinedEmail u = new UserInlinedEmail(); u.email = e;
 
-    JSONObject o = marshaller.marshall(u, "1");
-    assertEquals("plperez@stanford.edu", o.get("email"));
+    assertEquals(
+        string("plperez@stanford.edu"),
+        marshaller.marshall(u, "1").get(string("email")));
   }
 
   @Test
@@ -95,12 +99,12 @@ public class MarshallingTest {
     u.emails.put("foo", e1);
     u.emails.put("bar", e2);
 
-    JSONObject o1 = marshaller.marshall(u, "2");
-    Object emails = o1.get("emails");
-    assertTrue(emails instanceof JSONObject);
-    JSONObject o2 = (JSONObject) emails;
-    assertEquals("plperez@stanford.edu", o2.get("foo"));
-    assertEquals("pascal@cs.stanford.edu", o2.get("bar"));
+    Json.Object o1 = marshaller.marshall(u, "2");
+    Object emails = o1.get(string("emails"));
+    assertTrue(emails instanceof Json.Object);
+    Json.Object o2 = (Json.Object) emails;
+    assertEquals(string("plperez@stanford.edu"), o2.get(string("foo")));
+    assertEquals(string("pascal@cs.stanford.edu"), o2.get(string("bar")));
   }
 
   @Test
@@ -110,10 +114,10 @@ public class MarshallingTest {
     EmailInline e = new EmailInline(); e.email = "plperez@stanford.edu";
     UserInlinedEmail u = new UserInlinedEmail(); u.emailNoInline = e;
 
-    JSONObject o = marshaller.marshall(u, "3");
-    assertTrue(o.get("emailNoInline") instanceof JSONObject);
-    JSONObject oe = (JSONObject) o.get("emailNoInline");
-    assertEquals("plperez@stanford.edu", oe.get("email"));
+    Json.Object o = marshaller.marshall(u, "3");
+    assertTrue(o.get(string("emailNoInline")) instanceof Json.Object);
+    Json.Object oe = (Json.Object) o.get(string("emailNoInline"));
+    assertEquals(string("plperez@stanford.edu"), oe.get(string("email")));
   }
 
   @Test
@@ -123,10 +127,10 @@ public class MarshallingTest {
     EmailInline e = new EmailInline(); e.email = "plperez@stanford.edu";
     UserInlinedEmail u = new UserInlinedEmail(); u.emailsArray = new EmailInline[] { e };
 
-    JSONObject o = marshaller.marshall(u, "4");
-    assertTrue(o.get("emailsArray") instanceof JSONArray);
-    JSONArray oe = (JSONArray) o.get("emailsArray");
-    assertEquals("plperez@stanford.edu", oe.get(0));
+    Json.Object o = marshaller.marshall(u, "4");
+    assertTrue(o.get(string("emailsArray")) instanceof Json.Array);
+    Json.Array oe = (Json.Array) o.get(string("emailsArray"));
+    assertEquals(string("plperez@stanford.edu"), oe.get(0));
   }
 
   @Test
@@ -136,10 +140,10 @@ public class MarshallingTest {
     EmailInline e = new EmailInline(); e.email = "plperez@stanford.edu";
     UserInlinedEmail u = new UserInlinedEmail(); u.emailsList.add(e);
 
-    JSONObject o = marshaller.marshall(u, "5");
-    assertTrue(o.get("emailsList") instanceof JSONArray);
-    JSONArray oe = (JSONArray) o.get("emailsList");
-    assertEquals("plperez@stanford.edu", oe.get(0));
+    Json.Object o = marshaller.marshall(u, "5");
+    assertTrue(o.get(string("emailsList")) instanceof Json.Array);
+    Json.Array oe = (Json.Array) o.get(string("emailsList"));
+    assertEquals(string("plperez@stanford.edu"), oe.get(0));
   }
 
   @Test
@@ -150,9 +154,9 @@ public class MarshallingTest {
     ArrayList<EmailInline> list = new ArrayList<EmailInline>();
     list.add(e);
 
-    JSONArray a = marshaller.marshallList(list);
-    assertEquals(1, a.length());
-    assertEquals("plperez@stanford.edu", a.get(0));
+    Json.Array a = marshaller.marshallList(list);
+    assertEquals(1, a.size());
+    assertEquals(string("plperez@stanford.edu"), a.get(0));
   }
 
   @Test
@@ -167,9 +171,13 @@ public class MarshallingTest {
     List<User> users = new ArrayList<User>(2);
     users.add(u1); users.add(u2);
 
-    JSONArray array = marshaller.marshallList(users);
-    assertEquals("plperez@stanford.edu", array.getJSONObject(0).get("email"));
-    assertEquals("dalia_ma@hotmail.com", array.getJSONObject(1).get("email"));
+    Json.Array array = marshaller.marshallList(users);
+    assertEquals(
+        string("plperez@stanford.edu"),
+        ((Json.Object) array.get(0)).get(string("email")));
+    assertEquals(
+        string("dalia_ma@hotmail.com"),
+        ((Json.Object) array.get(1)).get(string("email")));
   }
 
   @Test
@@ -180,12 +188,12 @@ public class MarshallingTest {
     Email e1 = new Email(); e1.email = "plperez@stanford.edu";
     em.addEmail("Jack", e1);
 
-    JSONObject jsonEmails = new JSONObject();
-    JSONObject jsonPlperez = new JSONObject();
-    JSONObject jsonEm = new JSONObject();
-    jsonPlperez.put("email", "plperez@stanford.edu");
-    jsonEmails.put("Jack", jsonPlperez);
-    jsonEm.put("emails", jsonEmails);
+    Json.Object jsonEmails = object();
+    Json.Object jsonPlperez = object();
+    Json.Object jsonEm = object();
+    jsonPlperez.put(string("email"), string("plperez@stanford.edu"));
+    jsonEmails.put(string("Jack"), jsonPlperez);
+    jsonEm.put(string("emails"), jsonEmails);
 
     assertEquals(jsonEm, marshaller.marshall(em));
   }
@@ -194,9 +202,9 @@ public class MarshallingTest {
   public void testNullArray() throws Exception {
     Marshaller<ArrayEntity> marshaller = TwoLattes.createMarshaller(ArrayEntity.class);
 
-    JSONObject o = marshaller.marshall(new ArrayEntity());
-
-    assertEquals(JSONArray.NULL, o.get("values"));
+    assertEquals(
+        NULL,
+        marshaller.marshall(new ArrayEntity()).get(string("values")));
   }
 
   @Test
@@ -205,13 +213,14 @@ public class MarshallingTest {
 
     ArrayEntity arrayEntity = new ArrayEntity();
     arrayEntity.values = new String[] {"ya", "yo", "yi"};
-    JSONObject o = marshaller.marshall(arrayEntity);
+    Json.Object o = marshaller.marshall(arrayEntity);
 
-    assertTrue(o.get("values") instanceof JSONArray);
-    assertEquals(3, o.getJSONArray("values").length());
-    assertEquals("ya", o.getJSONArray("values").get(0));
-    assertEquals("yo", o.getJSONArray("values").get(1));
-    assertEquals("yi", o.getJSONArray("values").get(2));
+    assertTrue(o.get(string("values")) instanceof Json.Array);
+    Json.Array array = (Json.Array) o.get(string("values"));
+    assertEquals(3, (array).size());
+    assertEquals(string("ya"), array.get(0));
+    assertEquals(string("yo"), array.get(1));
+    assertEquals(string("yi"), array.get(2));
   }
 
   @Test(expected = StackOverflowError.class)
@@ -231,7 +240,9 @@ public class MarshallingTest {
     EntityWithURL entity = new EntityWithURL();
     entity.setUrl(new URL("http://www.twolattes.com"));
 
-    assertEquals("http://www.twolattes.com", m.marshall(entity).get("url"));
+    assertEquals(
+        string("http://www.twolattes.com"),
+        m.marshall(entity).get(string("url")));
   }
 
   @Test
@@ -241,9 +252,9 @@ public class MarshallingTest {
     InnerClass e = new InnerClass();
     e.field = "hello";
 
-    JSONObject o = m.marshall(e);
-    assertEquals(1, o.length());
-    assertEquals("hello", o.getString("field"));
+    Json.Object o = m.marshall(e);
+    assertEquals(1, o.size());
+    assertEquals(string("hello"), o.get(string("field")));
   }
 
   @Test
@@ -253,9 +264,9 @@ public class MarshallingTest {
     GetterSetterEntity e = new GetterSetterEntity();
     e.setName("Jack");
 
-    JSONObject o = m.marshall(e);
-    assertEquals(1, o.length());
-    assertEquals("Jack", o.get("name"));
+    Json.Object o = m.marshall(e);
+    assertEquals(1, o.size());
+    assertEquals(string("Jack"), o.get(string("name")));
   }
 
   @Test
@@ -265,9 +276,9 @@ public class MarshallingTest {
     EntityInterface e = new EntityInterfaceImpl();
     e.setWhatever(false);
 
-    JSONObject o = m.marshall(e);
-    assertEquals(1, o.length());
-    assertEquals(false, o.get("whatever"));
+    Json.Object o = m.marshall(e);
+    assertEquals(1, o.size());
+    assertEquals(FALSE, o.get(string("whatever")));
   }
 
   @Test
@@ -282,9 +293,9 @@ public class MarshallingTest {
   	foo.bar = bar;
   	entity.foo = foo;
 
-  	JSONObject o = m.marshall(entity);
-  	assertEquals(1, o.length());
-  	assertEquals("hello", o.getString("foo"));
+  	Json.Object o = m.marshall(entity);
+  	assertEquals(1, o.size());
+  	assertEquals(string("hello"), o.get(string("foo")));
   }
 
   @Test
@@ -297,9 +308,9 @@ public class MarshallingTest {
   	foo.bar = null;
   	entity.foo = foo;
 
-  	JSONObject o = m.marshall(entity);
-  	assertEquals(1, o.length());
-  	assertEquals(JSONObject.NULL, o.get("foo"));
+  	Json.Object o = m.marshall(entity);
+  	assertEquals(1, o.size());
+  	assertEquals(NULL, o.get(string("foo")));
   }
 
   @Test
@@ -310,9 +321,9 @@ public class MarshallingTest {
   	DoublyInlined entity = new DoublyInlined();
   	entity.foo = null;
 
-  	JSONObject o = m.marshall(entity);
-  	assertEquals(1, o.length());
-  	assertEquals(JSONObject.NULL, o.get("foo"));
+  	Json.Object o = m.marshall(entity);
+  	assertEquals(1, o.size());
+  	assertEquals(NULL, o.get(string("foo")));
   }
 
   @Test
@@ -320,10 +331,10 @@ public class MarshallingTest {
     Marshaller<PrivateNoArgConstructor> m =
         TwoLattes.createMarshaller(PrivateNoArgConstructor.class);
     PrivateNoArgConstructor e = new PrivateNoArgConstructor("hi");
-    JSONObject o = m.marshall(e);
+    Json.Object o = m.marshall(e);
 
-    assertEquals(1, o.length());
-    assertEquals("hi", o.get("foo"));
+    assertEquals(1, o.size());
+    assertEquals(string("hi"), o.get(string("foo")));
   }
 
   @Test
@@ -336,20 +347,20 @@ public class MarshallingTest {
   	user.email1 = email;
   	user.email2 = email;
 
-  	JSONObject o = TwoLattes.createMarshaller(UserWithTwoInlinedEmail.class).marshall(user);
+  	Json.Object o = TwoLattes.createMarshaller(UserWithTwoInlinedEmail.class).marshall(user);
 
-  	assertTrue(o.get("email1") instanceof JSONObject);
-  	assertTrue(o.get("email2") instanceof JSONObject);
+  	assertTrue(o.get(string("email1")) instanceof Json.Object);
+  	assertTrue(o.get(string("email2")) instanceof Json.Object);
   }
 
   @Test
   public void testTypeOnGetter() throws Exception {
   	TypeOnGetter e = new TypeOnGetter();
 
-  	JSONObject o = TwoLattes.createMarshaller(TypeOnGetter.class).marshall(e);
+  	Json.Object o = TwoLattes.createMarshaller(TypeOnGetter.class).marshall(e);
 
-  	assertEquals(1, o.length());
-  	assertEquals(10.0, o.get("price"));
+  	assertEquals(1, o.size());
+  	assertEquals(number(10.0), o.get(string("price")));
   }
 
   @Test
@@ -359,14 +370,14 @@ public class MarshallingTest {
     EntityWithNativeArray e = new EntityWithNativeArray();
     e.ids = new int[] { 5, 1, 2 };
 
-    JSONObject o = m.marshall(e);
+    Json.Object o = m.marshall(e);
 
-    assertEquals(1, o.length());
-    JSONArray ids = o.getJSONArray("ids");
-    assertEquals(3, ids.length());
-    assertEquals(5, ids.get(0));
-    assertEquals(1, ids.get(1));
-    assertEquals(2, ids.get(2));
+    assertEquals(1, o.size());
+    Json.Array ids = (Array) o.get(string("ids"));
+    assertEquals(3, ids.size());
+    assertEquals(number(5), ids.get(0));
+    assertEquals(number(1), ids.get(1));
+    assertEquals(number(2), ids.get(2));
   }
 
   @Test
@@ -374,25 +385,27 @@ public class MarshallingTest {
     ArrayOfArray arrayOfArray = new ArrayOfArray();
     arrayOfArray.matrix = new Integer[][] {{56, 57}, {58, 59}};
 
-    JSONObject o = TwoLattes.createMarshaller(ArrayOfArray.class).marshall(arrayOfArray);
+    Json.Object o = TwoLattes.createMarshaller(ArrayOfArray.class).marshall(arrayOfArray);
 
-    assertEquals(1, o.length());
-    JSONArray matrix = o.getJSONArray("matrix");
-    assertEquals(2, matrix.length());
-    assertEquals(2, matrix.getJSONArray(0).length());
-    assertEquals(56, matrix.getJSONArray(0).get(0));
-    assertEquals(57, matrix.getJSONArray(0).get(1));
-    assertEquals(2, matrix.getJSONArray(1).length());
-    assertEquals(58, matrix.getJSONArray(1).get(0));
-    assertEquals(59, matrix.getJSONArray(1).get(1));
+    assertEquals(1, o.size());
+    Json.Array matrix = (Array) o.get(string("matrix"));
+    assertEquals(2, matrix.size());
+    Json.Array a0 = (Array) matrix.get(0);
+    assertEquals(2, a0.size());
+    assertEquals(number(56), a0.get(0));
+    assertEquals(number(57), a0.get(1));
+    Json.Array a1 = (Array) matrix.get(1);
+    assertEquals(2, a1.size());
+    assertEquals(number(58), a1.get(0));
+    assertEquals(number(59), a1.get(1));
   }
 
   @Test
   public void nullOptionalObject() throws Exception {
     NullOptionalValue obj = new NullOptionalValue();
 
-    JSONObject o = TwoLattes.createMarshaller(NullOptionalValue.class).marshall(obj);
-    assertEquals(0, o.length());
+    Json.Object o = TwoLattes.createMarshaller(NullOptionalValue.class).marshall(obj);
+    assertEquals(0, o.size());
   }
 
   @Test
@@ -400,8 +413,8 @@ public class MarshallingTest {
     NullOptionalValue obj = new NullOptionalValue();
     obj.setOptional("optional");
 
-    JSONObject o = TwoLattes.createMarshaller(NullOptionalValue.class).marshall(obj);
-    assertEquals(1, o.length());
+    Json.Object o = TwoLattes.createMarshaller(NullOptionalValue.class).marshall(obj);
+    assertEquals(1, o.size());
   }
 
 }

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.commons.EmptyVisitor;
 
-import com.twolattes.json.types.Type;
+import com.twolattes.json.types.JsonType;
 
 class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
   // TODO: reflect on the Value annotation to find those values... instead of copying them!
@@ -19,7 +19,7 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
   private final FieldDescriptor descriptor;
   private boolean visitingViews = false;
   private Set<String> views = null;
-  
+
   ValueAnnotationVisitor(FieldDescriptor descriptor) {
     this.descriptor = descriptor;
   }
@@ -45,7 +45,7 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
       }
     }
   }
-  
+
   @Override
   public AnnotationVisitor visitArray(String name) {
     if (VALUE_ANNOTATION_VIEWS.equals(name)) {
@@ -56,7 +56,7 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
       return super.visitArray(name);
     }
   }
-  
+
   @Override
   public void visitEnd() {
     if (visitingViews) {
@@ -66,10 +66,10 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
       visitingViews = false;
     }
   }
-  
-  Type<?> getType(Class<?> typeClass) {
+
+  JsonType<?, ?> getType(Class<?> typeClass) {
     try {
-      return (Type<?>) typeClass.newInstance();
+      return (JsonType<?, ?>) typeClass.newInstance();
     } catch (InstantiationException e) {
       throw new IllegalArgumentException(
           "Cannot instantiate the type " + typeClass + ". Types must have a public no" +

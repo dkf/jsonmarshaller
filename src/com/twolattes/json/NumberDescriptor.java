@@ -1,42 +1,40 @@
 package com.twolattes.json;
 
-import org.json.JSONObject;
+import static com.twolattes.json.Json.NULL;
+import static com.twolattes.json.Json.number;
 
-import com.google.common.base.Preconditions;
+import java.math.BigDecimal;
 
 /**
  * Abstract descriptor for subtypes of {@link Number}s.
  *
  * @param <N> the type of number
- * @author pascallouis
  */
 abstract class NumberDescriptor<N extends Number>
-    extends AbstractDescriptor<N, Object> {
+    extends AbstractDescriptor<N, Json.Number> {
 
   public NumberDescriptor(Class<? extends N> klass) {
     super(klass);
   }
 
-  public final Object marshall(N entity, String view) {
-    if (entity == null) {
-      return JSONObject.NULL;
-    } else {
-      Preconditions.checkState(getReturnedClass().isAssignableFrom(entity.getClass()));
-      return entity;
-    }
+  public final Json.Number marshall(N entity, String view) {
+    return entity == null ? NULL : number(convert(entity));
   }
 
-  public final N unmarshall(Object entity, String view) {
-    if (entity.equals(JSONObject.NULL)) {
-      return null;
-    } else {
-      Preconditions.checkState(entity instanceof Number);
-      return convert((Number) entity);
-    }
+  public final N unmarshall(Json.Number entity, String view) {
+    return NULL.equals(entity) ? null : convert(entity.getNumber());
   }
 
   /**
-   * Convert a {@link Number} to a {@code N}.
+   * Converts an {@code N} into a {@link BigDecimal}. The default implementation
+   * uses {@link Number#doubleValue()}.
    */
-  abstract N convert(Number entity);
+  protected BigDecimal convert(N entity) {
+    return BigDecimal.valueOf(entity.doubleValue());
+  }
+
+  /**
+   * Convert a {@link BigDecimal} into an {@code N}.
+   */
+  abstract N convert(BigDecimal entity);
 }

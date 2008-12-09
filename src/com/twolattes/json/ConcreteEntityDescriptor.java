@@ -1,19 +1,18 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.NULL;
+import static com.twolattes.json.Json.object;
+import static com.twolattes.json.Json.string;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.google.common.base.Preconditions;
-
 /**
  * An entity descriptor.
  */
-final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
+final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value>
     implements EntityDescriptor<T> {
 
   private final Class<T> entity;
@@ -99,34 +98,25 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     return fieldDescriptors.size() == 1;
   }
 
-  public JSONObject marshall(Object entity) {
+  public Json.Object marshall(Object entity) {
     return marshall(entity, null);
   }
 
   @SuppressWarnings("unchecked")
-  public JSONObject marshall(Object entity, String view) {
+  public Json.Object marshall(Object entity, String view) {
     if (entity == null) {
-      return JSONObject.NULL;
+      return Json.NULL;
     }
 
     // entity is not null
-    JSONObject jsonObject = new JSONObject();
-    try {
-      marshallFields(entity, view, jsonObject);
-      return jsonObject;
-    } catch (JSONException e) {
-      throw new IllegalStateException(e);
-    }
+    Json.Object jsonObject = Json.object();
+    marshallFields(entity, view, jsonObject);
+    return jsonObject;
   }
 
-  /**
-   * A helper method to place an entities fields in a {@link JSONObject} based
-   * on its descriptor.
-   */
   @SuppressWarnings("unchecked")
   private void marshallFields(
-      Object entity, String view, JSONObject jsonObject)
-      throws JSONException {
+      Object entity, String view, Json.Object jsonObject) {
     if (parent != null) {
       parent.marshallFields(entity, view, jsonObject);
     }
@@ -134,11 +124,12 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
       if (d.isInView(view)) {
         Object fieldValue = d.getFieldValue(entity);
         if (!(d.isOptional() && fieldValue == null)) {
-          String jsonName = d.getJsonName();
+          Json.String jsonName = Json.string(d.getJsonName());
           Descriptor descriptor = d.getDescriptor();
           if (d.getShouldInline() == null) {
             if (descriptor.shouldInline()) {
-              jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, view));
+              jsonObject.put(
+                  jsonName, descriptor.marshallInline(fieldValue, view));
             } else {
               jsonObject.put(jsonName, descriptor.marshall(fieldValue, view));
             }
@@ -154,10 +145,9 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
 
   @Override
   @SuppressWarnings("unchecked")
-  public Object marshallInline(Object entity, String view) {
-    Preconditions.checkState(isInlineable());
+  public Json.Value marshallInline(Object entity, String view) {
     if (entity == null) {
-      return JSONObject.NULL;
+      return Json.NULL;
     }
     FieldDescriptor d = fieldDescriptors.iterator().next();
     Descriptor descriptor = d.getDescriptor();
@@ -174,26 +164,23 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     }
   }
 
-  public T unmarshall(Object object) {
+  public T unmarshall(Json.Value object) {
     return unmarshall(object, null);
   }
 
   @SuppressWarnings("unchecked")
-  public T unmarshall(Object object, String view) {
-    if (JSONObject.NULL.equals(object)) {
+  public T unmarshall(Json.Value object, String view) {
+    if (Json.NULL.equals(object)) {
       return null;
     }
     try {
-      JSONObject jsonObject = (JSONObject) object;
       // is this a polymorphic entity?
       Object entity = constructor.newInstance();
-      unmarshallFields(jsonObject, entity, view);
+      unmarshallFields((Json.Object) object, entity, view);
       return (T) entity;
     } catch (InstantiationException e) {
       throw new IllegalStateException(e);
     } catch (IllegalAccessException e) {
-      throw new IllegalStateException(e);
-    } catch (JSONException e) {
       throw new IllegalStateException(e);
     } catch (SecurityException e) {
       throw new IllegalStateException(e);
@@ -202,48 +189,43 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
     }
   }
 
-  /**
-   * A helper method to populate an entity's fields based on a
-   * {@link JSONObject} and its descriptor.
-   *
-   * This function MUST stay private.
-   */
   @SuppressWarnings("unchecked")
-  private void unmarshallFields(JSONObject jsonObject, Object entity, String view) throws JSONException {
+  private void unmarshallFields(Json.Object jsonObject, Object entity, String view) {
     if (parent != null) {
       parent.unmarshallFields(jsonObject, entity, view);
     }
     for (FieldDescriptor d : getFieldDescriptors()) {
-      if (jsonObject.has(d.getJsonName())) {
+      Json.String name = string(d.getJsonName());
+      if (jsonObject.containsKey(name)) {
         if (d.isInView(view)) {
           Descriptor descriptor = d.getDescriptor();
           if (d.getShouldInline() == null) {
             if (descriptor.shouldInline()) {
               d.setFieldValue(entity,
-                  descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), view));
+                  descriptor.unmarshallInline(jsonObject.get(name), view));
             } else {
               d.setFieldValue(entity,
-                  descriptor.unmarshall(jsonObject.get(d.getJsonName()), view));
+                  descriptor.unmarshall(jsonObject.get(name), view));
             }
           } else if (d.getShouldInline()) {
             d.setFieldValue(entity,
-                descriptor.unmarshallInline(jsonObject.get(d.getJsonName()), view));
+                descriptor.unmarshallInline(jsonObject.get(name), view));
           } else {
             d.setFieldValue(entity,
-                descriptor.unmarshall(jsonObject.get(d.getJsonName()), view));
+                descriptor.unmarshall(jsonObject.get(name), view));
           }
         }
       } else {
         if (d.isInView(view) && !d.isOptional()) {
           if (view == null) {
             throw new IllegalStateException("The field " + d.getFieldName() +
-                " whose JSON name is " + d.getJsonName() + " has no value. " +
+                " whose JSON name is " + name + " has no value. " +
                 "If this field is optional, use the @Value(optional = true)" +
                 " annotations.");
           } else {
             throw new IllegalStateException("The field " + d.getFieldName() +
                 " (in the view " + view +") whose JSON" +
-                " name is " + d.getJsonName() + " has no value. If this " +
+                " name is " + name + " has no value. If this " +
                 "field is optional, use the @Value(optional = true) " +
                 "annotations.");
           }
@@ -254,19 +236,14 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Object>
 
   @SuppressWarnings("unchecked")
   @Override
-  public T unmarshallInline(Object entity, String view) {
-    Preconditions.checkState(isInlineable());
-    if (JSONObject.NULL.equals(entity)) {
+  public T unmarshallInline(final Json.Value entity, String view) {
+    if (NULL.equals(entity)) {
       return null;
     } else {
-      JSONObject jsonObject = new JSONObject();
-      try {
+      Json.Object jsonObject = object();
     	FieldDescriptor d = fieldDescriptors.iterator().next();
-        jsonObject.put(d.getJsonName(), entity);
-        return unmarshall(jsonObject);
-      } catch (JSONException e) {
-        throw new IllegalStateException(e);
-      }
+      jsonObject.put(string(d.getJsonName()), entity);
+      return unmarshall(jsonObject);
     }
   }
 

@@ -1,6 +1,5 @@
 package com.twolattes.json;
 
-import com.google.common.base.Preconditions;
 
 /**
  * Abstract implementation of {@link Descriptor} providing common
@@ -8,7 +7,7 @@ import com.google.common.base.Preconditions;
  *
  * @author pascal
  */
-abstract class AbstractDescriptor<T, J> implements Descriptor<T, J> {
+abstract class AbstractDescriptor<T, J extends Json.Value> implements Descriptor<T, J> {
   private final Class<?> klass;
 
   /**
@@ -46,7 +45,6 @@ abstract class AbstractDescriptor<T, J> implements Descriptor<T, J> {
    * verifying that the entity is inlineable.
    */
   public J marshallInline(T entity, String view) {
-    Preconditions.checkState(isInlineable());
     return marshall(entity, view);
   }
 
@@ -56,7 +54,6 @@ abstract class AbstractDescriptor<T, J> implements Descriptor<T, J> {
    * verifying that the entity is inlineable.
    */
   public T unmarshallInline(J entity, String view) {
-    Preconditions.checkState(isInlineable());
     return unmarshall(entity, view);
   }
 

@@ -5,10 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 class MarshallerImpl<T> implements Marshaller<T> {
 
   private final EntityDescriptor<T> descriptor;
@@ -26,59 +22,55 @@ class MarshallerImpl<T> implements Marshaller<T> {
     }
   }
 
-  public JSONObject marshall(T entity) {
+  public Json.Object marshall(T entity) {
     return marshall(entity, null);
   }
 
-  public JSONObject marshall(T entity, String view) {
-    return (JSONObject) descriptor.marshall(entity, view);
+  public Json.Object marshall(T entity, String view) {
+    return (Json.Object) descriptor.marshall(entity, view);
   }
 
-  public JSONArray marshallList(Collection<? extends T> entities) {
+  public Json.Array marshallList(Collection<? extends T> entities) {
     return marshallList(entities, null);
   }
 
-  public JSONArray marshallList(Collection<? extends T> entities, String view) {
-    JSONArray a = new JSONArray();
+  public Json.Array marshallList(Collection<? extends T> entities, String view) {
+    Json.Array a = Json.array();
     if (descriptor.shouldInline()) {
       for (T entity : entities) {
-        a.put(descriptor.marshallInline(entity, view));
+        a.add(descriptor.marshallInline(entity, view));
       }
     } else {
       for (T entity : entities) {
-        a.put(marshall(entity, view));
+        a.add(marshall(entity, view));
       }
     }
     return a;
   }
 
-  public T unmarshall(JSONObject entity) {
+  public T unmarshall(Json.Object entity) {
     return unmarshall(entity, null);
   }
 
-  public T unmarshall(JSONObject entity, String view) {
+  public T unmarshall(Json.Object entity, String view) {
     return clazz.cast(descriptor.unmarshall(entity, view));
   }
 
-  public List<T> unmarshallList(JSONArray array) {
+  public List<T> unmarshallList(Json.Array array) {
     return unmarshallList(array, null);
   }
 
-  public List<T> unmarshallList(JSONArray array, String view) {
-    int length = array.length();
+  public List<T> unmarshallList(Json.Array array, String view) {
+    int length = array.size();
     List<T> list = new ArrayList<T>(length);
-    try {
-      if (descriptor.shouldInline()) {
-        for (int i = 0; i < length; i++) {
-          list.add(descriptor.unmarshallInline(array.get(i), view));
-        }
-      } else {
-        for (int i = 0; i < length; i++) {
-          list.add(unmarshall(array.getJSONObject(i), view));
-        }
+    if (descriptor.shouldInline()) {
+      for (int i = 0; i < length; i++) {
+        list.add(descriptor.unmarshallInline(array.get(i), view));
       }
-    } catch (JSONException e) {
-      throw new IllegalStateException(e);
+    } else {
+      for (int i = 0; i < length; i++) {
+        list.add(unmarshall((Json.Object) array.get(i), view));
+      }
     }
     return list;
   }

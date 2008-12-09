@@ -1,18 +1,17 @@
 package com.twolattes.json;
 
-import org.json.JSONObject;
+import static com.twolattes.json.Json.NULL;
 
-import com.twolattes.json.types.Type;
+import com.twolattes.json.types.JsonType;
 
 /**
- * Descriptor wrapping used defined {@link Type}s.
- *
- * @author pascallouis
+ * Descriptor wrapping used defined {@link JsonType}s.
  */
-class UserTypeDescriptor<T> extends AbstractDescriptor<T, Object> {
-  private final Type<T> type;
+class UserTypeDescriptor<E, J extends Json.Value> extends AbstractDescriptor<E, J> {
 
-  public UserTypeDescriptor(Type<T> type) {
+  private final JsonType<E, J> type;
+
+  public UserTypeDescriptor(JsonType<E, J> type) {
     super(type.getReturnedClass());
     this.type = type;
   }
@@ -22,16 +21,18 @@ class UserTypeDescriptor<T> extends AbstractDescriptor<T, Object> {
     return false;
   }
 
-  public Object marshall(T entity, String view) {
+  @SuppressWarnings("unchecked")
+  public J marshall(E entity, String view) {
     if (entity == null) {
-      return JSONObject.NULL;
+      // The Json.Value hierarchy is closed with Null as the bottom type.
+      return (J) NULL;
     } else {
       return type.marshall(type.getReturnedClass().cast(entity));
     }
   }
 
-  public T unmarshall(Object marshalled, String view) {
-    if (marshalled.equals(JSONObject.NULL)) {
+  public E unmarshall(J marshalled, String view) {
+    if (marshalled.equals(NULL)) {
       return null;
     } else {
       return type.unmarshall(marshalled);
@@ -39,7 +40,7 @@ class UserTypeDescriptor<T> extends AbstractDescriptor<T, Object> {
   }
 
   @Override
-  public Class<T> getReturnedClass() {
+  public Class<E> getReturnedClass() {
     return type.getReturnedClass();
   }
 
@@ -47,4 +48,5 @@ class UserTypeDescriptor<T> extends AbstractDescriptor<T, Object> {
   public boolean shouldInline() {
     return false;
   }
+
 }

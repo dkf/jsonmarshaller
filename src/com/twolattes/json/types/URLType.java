@@ -1,26 +1,29 @@
 package com.twolattes.json.types;
 
+import static com.twolattes.json.Json.string;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.twolattes.json.Json;
 import com.twolattes.json.Value;
 
 /**
  * A type converter for {@link URL} objects. This converter may be used with
  * the {@link Value#type()} option.
- * 
+ *
  * @author Pascal
  */
-public class URLType extends NullSafeType<URL> {
+public class URLType extends NullSafeType<URL, Json.String> {
   @Override
-  protected Object nullSafeMarshall(URL entity) {
-    return entity.toString();
+  protected Json.String nullSafeMarshall(URL entity) {
+    return string(entity.toString());
   }
 
   @Override
-  protected URL nullSafeUnmarshall(Object object) {
+  protected URL nullSafeUnmarshall(Json.String object) {
     try {
-      return new URL((String) object);
+      return new URL(object.getString());
     } catch (MalformedURLException e) {
       throw new IllegalStateException();
     }

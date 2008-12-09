@@ -1,5 +1,11 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.FALSE;
+import static com.twolattes.json.Json.NULL;
+import static com.twolattes.json.Json.array;
+import static com.twolattes.json.Json.number;
+import static com.twolattes.json.Json.object;
+import static com.twolattes.json.Json.string;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -388,6 +394,12 @@ public class JsonTest {
     testEqualsAndHashCode(
         Json.nullValue(),
         Json.nullValue());
+
+    testNotEquals(NULL, string("a"));
+    testNotEquals(NULL, number(5));
+    testNotEquals(NULL, FALSE);
+    testNotEquals(NULL, array());
+    testNotEquals(NULL, object());
   }
 
   private void testEqualsAndHashCode(Json.Value v1, Json.Value v2) {

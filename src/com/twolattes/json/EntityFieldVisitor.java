@@ -8,7 +8,7 @@ import org.objectweb.asm.commons.EmptyVisitor;
 
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
 import com.twolattes.json.FieldDescriptor.DirectAccessFieldDescriptor;
-import com.twolattes.json.types.Type;
+import com.twolattes.json.types.JsonType;
 
 class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
   private final static String VALUE_ANNOTATION_DESCRIPTION = "L" + Value.class.getName().replace('.', '/') + ";";
@@ -25,7 +25,7 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
     this.signature = signature;
     this.store = store;
     this.fieldDescriptor = new DirectAccessFieldDescriptor(field);
-    
+
     // accessibility of the field
     if (!field.isAccessible()) {
       field.setAccessible(true);
@@ -47,7 +47,7 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
   public void visitEnd() {
     if (isJsonValue) {
       Descriptor entityDescriptor;
-      Type<?> type = fieldDescriptor.getType();
+      JsonType<?, ?> type = fieldDescriptor.getType();
       if (type == null) {
         entityDescriptor =
             new DescriptorFactory().create(signature, store);

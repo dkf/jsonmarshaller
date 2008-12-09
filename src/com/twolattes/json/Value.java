@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.twolattes.json.types.Type;
+import com.twolattes.json.types.JsonType;
 
 /**
  * A JSON value.
@@ -29,7 +29,7 @@ public @interface Value {
   /** The type used to marshall and unmarshall this value.
    */
   @SuppressWarnings("unchecked")
-  Class<? extends Type> type() default Type.class;
+  Class<? extends JsonType> type() default JsonType.class;
   
   /**
    * Whether the value is optional or not.

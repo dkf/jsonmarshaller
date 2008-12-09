@@ -24,14 +24,7 @@
     <mkdir dir="target/bin" />
     <mkdir dir="target/bintest" />
     <mkdir dir="target/dist" />
-    <mkdir dir="target/doc" />
     <mkdir dir="target/reports" />
-  </target>
-
-  <!-- documentation -->
-  <target name="doc" depends="init">
-    <javadoc destdir="target/doc" packagenames="*" author="true" version="true"
-        breakiterator="true" classpath="${cp}" sourcepath="src" />
   </target>
 
   <!-- compile -->
@@ -80,7 +73,6 @@
       <zipfileset file="README.txt" />
       <zipfileset file=".classpath" />
       <zipfileset dir="lib" prefix="lib" />
-      <zipfileset dir="doc" prefix="doc" />
       <zipfileset dir="src" prefix="src" />
       <zipfileset dir="srctest" prefix="srctest" />
     </zip>
@@ -91,7 +83,6 @@
       <tarfileset file="README.txt" />
       <tarfileset file=".classpath" />
       <tarfileset dir="lib" prefix="lib" />
-      <tarfileset dir="doc" prefix="doc" />
       <tarfileset dir="src" prefix="src" />
       <tarfileset dir="srctest" prefix="srctest" />
     </tar>

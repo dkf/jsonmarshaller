@@ -1,5 +1,6 @@
 package com.twolattes.json.collection;
 
+import static com.twolattes.json.Json.string;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -7,10 +8,9 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Test;
 
+import com.twolattes.json.Json;
 import com.twolattes.json.TwoLattes;
 
 public class CollectionTest {
@@ -18,7 +18,7 @@ public class CollectionTest {
   @Test
   public void sortedSet1() throws Exception {
     EntityWithSortedSet1 e = TwoLattes.createMarshaller(EntityWithSortedSet1.class)
-        .unmarshall(new JSONObject("{names:['a','c','b']}"));
+        .unmarshall((Json.Object) Json.fromString("{\"names\":[\"a\",\"c\",\"b\"]}"));
 
     assertNotNull(e.names);
     assertEquals(3, e.names.size());
@@ -35,13 +35,15 @@ public class CollectionTest {
     entityWithSortedSet2.entities = new TreeSet<PolymorphicEntity>();
     entityWithSortedSet2.entities.add(new ChildPolymorphicEntity());
 
-    JSONObject o = TwoLattes.createMarshaller(EntityWithSortedSet2.class)
+    Json.Object o = TwoLattes.createMarshaller(EntityWithSortedSet2.class)
         .marshall(entityWithSortedSet2);
 
-    assertEquals(1, o.length());
-    JSONArray entities = o.getJSONArray("entities");
-    assertEquals(1, entities.length());
-    assertEquals("child", entities.getJSONObject(0).get("type"));
+    assertEquals(1, o.size());
+    Json.Array entities = (Json.Array) o.get(string("entities"));
+    assertEquals(1, entities.size());
+    assertEquals(
+        string("child"),
+        ((Json.Object) entities.get(0)).get(string("type")));
   }
 
   @Test
@@ -50,13 +52,15 @@ public class CollectionTest {
     entityWithSortedSet3.entities = new TreeSet<PolymorphicEntity>();
     entityWithSortedSet3.entities.add(new ChildPolymorphicEntity());
 
-    JSONObject o = TwoLattes.createMarshaller(EntityWithSortedSet3.class)
+    Json.Object o = TwoLattes.createMarshaller(EntityWithSortedSet3.class)
         .marshall(entityWithSortedSet3);
 
-    assertEquals(1, o.length());
-    JSONArray entities = o.getJSONArray("entities");
-    assertEquals(1, entities.length());
-    assertEquals("child", entities.getJSONObject(0).get("type"));
+    assertEquals(1, o.size());
+    Json.Array entities = (Json.Array) o.get(string("entities"));
+    assertEquals(1, entities.size());
+    assertEquals(
+        string("child"),
+        ((Json.Object) entities.get(0)).get(string("type")));
   }
 
 }

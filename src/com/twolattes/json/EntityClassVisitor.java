@@ -89,7 +89,7 @@ class EntityClassVisitor extends EmptyVisitor {
         }
 
         // type
-        if (!annotation.type().equals(com.twolattes.json.types.Type.class)) {
+        if (!annotation.type().equals(com.twolattes.json.types.JsonType.class)) {
           try {
             descriptor.setDescriptor(
                 new UserTypeDescriptor(annotation.type().newInstance()));
@@ -134,7 +134,7 @@ class EntityClassVisitor extends EmptyVisitor {
         }
 
         // type
-        if (!annotation.type().equals(com.twolattes.json.types.Type.class)) {
+        if (!annotation.type().equals(com.twolattes.json.types.JsonType.class)) {
           try {
             descriptor.setDescriptor(
                 new UserTypeDescriptor(annotation.type().newInstance()));

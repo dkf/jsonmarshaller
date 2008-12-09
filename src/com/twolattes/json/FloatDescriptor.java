@@ -1,8 +1,10 @@
 package com.twolattes.json;
 
+import java.math.BigDecimal;
+
 /**
  * Descriptor for the {@link Float} type.
- * 
+ *
  * @author pascal
  */
 class FloatDescriptor extends NumberDescriptor<Float> {
@@ -11,7 +13,12 @@ class FloatDescriptor extends NumberDescriptor<Float> {
   }
 
   @Override
-  Float convert(Number entity) {
+  protected BigDecimal convert(Float entity) {
+    return new BigDecimal(entity.toString());
+  }
+
+  @Override
+  Float convert(BigDecimal entity) {
     return entity.floatValue();
   }
 }

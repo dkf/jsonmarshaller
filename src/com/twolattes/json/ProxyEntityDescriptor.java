@@ -2,15 +2,11 @@ package com.twolattes.json;
 
 import java.util.Set;
 
-import org.json.JSONObject;
-
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
 
 /**
  * A proxy to an entity descriptor creating lazily the
  * {@link ConcreteEntityDescriptor} it delegates to.
- *
- * @author pascallouis
  */
 final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
   private final Class<T> klass;
@@ -34,11 +30,11 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
     return getDescriptor().isInlineable();
   }
 
-  public JSONObject marshall(Object entity, String view) {
-    return getDescriptor().marshall(entity, view);
+  public Json.Object marshall(Object entity, String view) {
+    return (Json.Object) getDescriptor().marshall((T) entity, view);
   }
 
-  public Object marshallInline(T entity, String view) {
+  public Json.Value marshallInline(T entity, String view) {
     return getDescriptor().marshallInline(entity, view);
   }
 
@@ -46,11 +42,11 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
     return getDescriptor().shouldInline();
   }
 
-  public T unmarshall(Object object, String view) {
+  public T unmarshall(Json.Value object, String view) {
     return getDescriptor().unmarshall(object, view);
   }
 
-  public T unmarshallInline(Object entity, String view) {
+  public T unmarshallInline(Json.Value entity, String view) {
     return getDescriptor().unmarshallInline(entity, view);
   }
 

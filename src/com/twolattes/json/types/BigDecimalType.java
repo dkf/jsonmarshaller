@@ -1,9 +1,10 @@
 package com.twolattes.json.types;
 
-import static java.math.BigDecimal.valueOf;
+import static com.twolattes.json.Json.number;
 
 import java.math.BigDecimal;
 
+import com.twolattes.json.Json;
 import com.twolattes.json.Value;
 
 /**
@@ -12,21 +13,15 @@ import com.twolattes.json.Value;
  *
  * @author Pascal
  */
-public class BigDecimalType extends NullSafeType<BigDecimal> {
+public class BigDecimalType extends NullSafeType<BigDecimal, Json.Number> {
   @Override
-  protected Object nullSafeMarshall(BigDecimal entity) {
-    return entity.doubleValue();
+  protected Json.Number nullSafeMarshall(BigDecimal entity) {
+    return number(entity);
   }
 
   @Override
-  protected BigDecimal nullSafeUnmarshall(Object object) {
-  	if (object instanceof Integer) {
-      return valueOf((Integer) object);
-  	} else if (object instanceof Long) {
-      return valueOf((Long) object);
-  	} else {
-      return valueOf(((Number) object).doubleValue());
-  	}
+  protected BigDecimal nullSafeUnmarshall(Json.Number number) {
+    return number.getNumber();
   }
 
   public Class<BigDecimal> getReturnedClass() {

@@ -1,5 +1,7 @@
 package com.twolattes.json;
 
+import java.math.BigDecimal;
+
 /**
  * Descriptor for the {@link Double} type.
  *
@@ -11,7 +13,7 @@ class DoubleDescriptor extends NumberDescriptor<Double> {
   }
 
   @Override
-  Double convert(Number number) {
+  Double convert(BigDecimal number) {
     return number.doubleValue();
   }
 }

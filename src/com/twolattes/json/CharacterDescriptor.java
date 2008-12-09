@@ -1,34 +1,29 @@
 package com.twolattes.json;
 
-import org.json.JSONObject;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Descriptor for the {@link Character} type.
  *
  * @author pascal
  */
-class CharacterDescriptor extends AbstractDescriptor<Character, Object> {
+class CharacterDescriptor extends AbstractDescriptor<Character, Json.String> {
   CharacterDescriptor() {
     super(Character.class);
   }
 
-  public final Object marshall(Character entity, String view) {
-    if (entity == null) {
-      return JSONObject.NULL;
-    } else {
-      Preconditions.checkState(getReturnedClass().isAssignableFrom(entity.getClass()));
-      return entity;
-    }
+  public final Json.String marshall(Character entity, String view) {
+    return entity == null ? Json.NULL : Json.string(entity.toString());
   }
 
-  public final Character unmarshall(Object marshalled, String view) {
-    String character = (String) marshalled;
-    if (character.length() == 1) {
-      return character.charAt(0);
+  public final Character unmarshall(Json.String marshalled, String view) {
+    if (marshalled.equals(Json.NULL)) {
+      return null;
     } else {
-      throw new RuntimeException("charcter expected, string found " + character);
+      if (marshalled.getString().length() == 1) {
+        return marshalled.getString().charAt(0);
+      } else {
+        throw new RuntimeException("character expected");
+      }
     }
   }
 }

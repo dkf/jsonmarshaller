@@ -10,9 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -24,7 +22,7 @@ public class UnmarshallingTest {
   @Test
   public void testBaseTypeEntity() throws Exception {
     BaseTypeEntity base = unmarshall(BaseTypeEntity.class,
-        "{_0:5,_1:'h',_2:89,_3:3.2,_4:16,_5:\"ya\",_6:true,_7:6218.687231}");
+        "{\"_0\":5,\"_1\":\"h\",\"_2\":89,\"_3\":3.2,\"_4\":16,\"_5\":\"ya\",\"_6\":true,\"_7\":6218.687231}");
 
     assertEquals(5, base.get_0());
     assertEquals('h', base.get_1());
@@ -66,7 +64,7 @@ public class UnmarshallingTest {
   @Test
   public void testCollectionEntity() throws Exception {
     CollectionEntity base = unmarshall(CollectionEntity.class,
-        "{friends:['Simon',   'David', \"Michael\"]}");
+        "{\"friends\":[\"Simon\",   \"David\", \"Michael\"]}");
 
     Set<String> friends = new HashSet<String>(3);
     friends.add("Simon");
@@ -80,14 +78,14 @@ public class UnmarshallingTest {
   @Test
   public void testCollectionEntityWithNull() throws Exception {
     CollectionEntity base = unmarshall(CollectionEntity.class,
-        "{friends:null}");
+        "{\"friends\":null}");
 
     assertEquals(null, base.getBuddies());
   }
 
   @Test
   public void testBaseTypeWithNull() throws Exception {
-    Email email = unmarshall(Email.class, "{email: null}");
+    Email email = unmarshall(Email.class, "{\"email\": null}");
 
     assertEquals(null, email.email);
   }
@@ -95,7 +93,7 @@ public class UnmarshallingTest {
   @Test
   public void testCollectionInCollection() throws Exception {
     CollectionInCollection base = unmarshall(CollectionInCollection.class,
-        "{data: [[\"C\"], [\"A\", \"B\"], []]}");
+        "{\"data\": [[\"C\"], [\"A\", \"B\"], []]}");
 
     assertEquals(3, base.getData().size());
     assertTrue(base.getData().get(0).containsAll(Sets.immutableSet("C")));
@@ -105,14 +103,14 @@ public class UnmarshallingTest {
 
   @Test
   public void testInlinedEntity() throws Exception {
-    User user = unmarshall(User.class, "{email: \"jack@bauer.net\"}");
+    User user = unmarshall(User.class, "{\"email\": \"jack@bauer.net\"}");
 
     assertEquals("jack@bauer.net", user.email.email);
   }
 
   @Test
   public void testInlinedEntityWithNull() throws Exception {
-    User user = unmarshall(User.class, "{email: null}");
+    User user = unmarshall(User.class, "{\"email\": null}");
 
     assertNull(user.email);
   }
@@ -138,7 +136,7 @@ public class UnmarshallingTest {
   @Test
   public void testCollectionOfEntities() throws Exception {
     List<User> users = unmarshallList(User.class,
-        "[{email: \"jack@bauer.net\"}, {email: \"foo@bar.com\"}]");
+        "[{\"email\": \"jack@bauer.net\"}, {\"email\": \"foo@bar.com\"}]");
 
     assertEquals(2, users.size());
     assertEquals("jack@bauer.net", users.get(0).email.email);
@@ -149,7 +147,7 @@ public class UnmarshallingTest {
   public void testMap() throws Exception {
 
     EntityMap base = unmarshall(EntityMap.class,
-        "{emails: {a: {email: 'plperez@stanford.edu'}, b: {email: 'nonono@yesyesyes.com'}}}");
+        "{\"emails\": {\"a\": {\"email\": \"plperez@stanford.edu\"}, \"b\": {\"email\": \"nonono@yesyesyes.com\"}}}");
 
     assertEquals(2, base.numberOfEmails());
     assertEquals("plperez@stanford.edu", base.get("a").email);
@@ -158,7 +156,7 @@ public class UnmarshallingTest {
 
   @Test
   public void testMapWithNull() throws Exception {
-    EntityMap base = unmarshall(EntityMap.class, "{emails: null}");
+    EntityMap base = unmarshall(EntityMap.class, "{\"emails\": null}");
 
     assertEquals(null, base.getEmails());
   }
@@ -166,7 +164,7 @@ public class UnmarshallingTest {
   @Test
   public void testUserType() throws Exception {
     EntityWithURL e =
-      unmarshall(EntityWithURL.class, "{url:\"http://code.twolattes.com\"}");
+      unmarshall(EntityWithURL.class, "{\"url\":\"http://code.twolattes.com\"}");
 
     assertEquals(new URL("http://code.twolattes.com"), e.getUrl());
   }
@@ -174,7 +172,7 @@ public class UnmarshallingTest {
   @Test
   public void testUserTypeWithNull() throws Exception {
     EntityWithURL e =
-      unmarshall(EntityWithURL.class, "{url:null}");
+      unmarshall(EntityWithURL.class, "{\"url\":null}");
 
     assertEquals(null, e.getUrl());
   }
@@ -182,7 +180,7 @@ public class UnmarshallingTest {
   @Test
   public void testArray() throws Exception {
     ArrayEntity e =
-      unmarshall(ArrayEntity.class, "{values:[\"hello\", \"world\"]}");
+      unmarshall(ArrayEntity.class, "{\"values\":[\"hello\", \"world\"]}");
 
     assertNotNull(e.values);
     assertEquals(2, e.values.length);
@@ -193,14 +191,14 @@ public class UnmarshallingTest {
   @Test
   public void testArrayWithNull() throws Exception {
     ArrayEntity e =
-      unmarshall(ArrayEntity.class, "{values:null}");
+      unmarshall(ArrayEntity.class, "{\"values\":null}");
 
     assertNull(e.values);
   }
 
   @Test
   public void testArrayOfList() throws Exception {
-    ArrayOfList e = unmarshall(ArrayOfList.class, "{weird:[[5.0,6.0,0.9],[2.3],[12.45,78.0]]}");
+    ArrayOfList e = unmarshall(ArrayOfList.class, "{\"weird\":[[5.0,6.0,0.9],[2.3],[12.45,78.0]]}");
 
     assertNotNull(e.weird);
     assertEquals(3, e.weird.length);
@@ -211,28 +209,28 @@ public class UnmarshallingTest {
 
   @Test
   public void testInnerClass() throws Exception {
-    InnerClass e = unmarshall(InnerClass.class, "{field:'hello world!'}");
+    InnerClass e = unmarshall(InnerClass.class, "{\"field\":\"hello world!\"}");
 
     assertEquals("hello world!", e.field);
   }
 
   @Test
   public void testGetterSetter1() throws Exception {
-    GetterSetterEntity e = unmarshall(GetterSetterEntity.class, "{name:'foo bar'}");
+    GetterSetterEntity e = unmarshall(GetterSetterEntity.class, "{\"name\":\"foo bar\"}");
 
     assertEquals("foo bar", e.getName());
   }
 
   @Test
   public void testGetterSetter2() throws Exception {
-    EntityInterface e = unmarshall(EntityInterface.class, "{whatever:true}");
+    EntityInterface e = unmarshall(EntityInterface.class, "{\"whatever\":true}");
 
     assertTrue(e.isWhatever());
   }
 
   @Test
   public void testDoublyInlined1() throws Exception {
-	  DoublyInlined e = unmarshall(DoublyInlined.class, "{foo:'hello there'}");
+	  DoublyInlined e = unmarshall(DoublyInlined.class, "{\"foo\":\"hello there\"}");
 
     assertNotNull(e.foo);
     assertNotNull(e.foo.bar);
@@ -241,7 +239,7 @@ public class UnmarshallingTest {
 
   @Test
   public void testDoublyInlined2() throws Exception {
-	  DoublyInlined e = unmarshall(DoublyInlined.class, "{foo:null}");
+	  DoublyInlined e = unmarshall(DoublyInlined.class, "{\"foo\":null}");
 
     assertNull(e.foo);
   }
@@ -249,7 +247,7 @@ public class UnmarshallingTest {
   @Test
   public void testPrivateNoArgConstructor() throws Exception {
     PrivateNoArgConstructor e =
-        unmarshall(PrivateNoArgConstructor.class, "{foo:'hi'}");
+        unmarshall(PrivateNoArgConstructor.class, "{\"foo\":\"hi\"}");
 
     assertNotNull(e);
     assertEquals("hi", e.getFoo());
@@ -258,7 +256,7 @@ public class UnmarshallingTest {
   @Test
   @Ignore("not yet implemented")
   public void testCyclicStructure() throws Exception {
-    Node n = unmarshall(Node.class, "{neighbors:[{id:0}],id:0}", true);
+    Node n = unmarshall(Node.class, "{\"neighbors\":[{\"id\":0}],\"id\":0}", true);
 
     assertEquals(Sets.immutableSet(n), n.neighbors());
   }
@@ -291,7 +289,7 @@ public class UnmarshallingTest {
 
   @Test
   public void nonNullOptionalObject() throws Exception {
-    NullOptionalValue obj = unmarshall(NullOptionalValue.class, "{optional:yesItIs}");
+    NullOptionalValue obj = unmarshall(NullOptionalValue.class, "{\"optional\":\"yesItIs\"}");
 
     assertEquals("yesItIs", obj.getOptional());
   }
@@ -306,11 +304,11 @@ public class UnmarshallingTest {
 
   private <T> T unmarshall(Class<T> clazz, String json, boolean cyclic, String view) throws JSONException {
     Marshaller<T> marshaller = TwoLattes.createMarshaller(clazz);
-    return marshaller.unmarshall(new JSONObject(json), view);
+    return marshaller.unmarshall((Json.Object) Json.fromString(json), view);
   }
 
   private <T> List<T> unmarshallList(Class<T> clazz, String json) throws JSONException {
     Marshaller<T> marshaller = TwoLattes.createMarshaller(clazz);
-    return marshaller.unmarshallList(new JSONArray(json));
+    return marshaller.unmarshallList((Json.Array) Json.fromString(json));
   }
 }

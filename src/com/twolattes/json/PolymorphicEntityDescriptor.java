@@ -1,19 +1,18 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.string;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
   /**
    * Subclasses' descriptors used if the described entity is a polymorphic
    * entity. The keys are discriminators values.
    */
-  private final Map<String, EntityDescriptor<?>> subDescriptorsByDisciminator;
+  private final Map<Json.String, EntityDescriptor<?>> subDescriptorsByDisciminator;
 
   /**
    * Subclasses' descriptors used if the described entity is a polymorphic
@@ -38,11 +37,11 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     this.returnedClass = returnedClass;
     this.discriminatorName = discriminatorName;
     this.subDescriptorsByClass = new HashMap<Class<?>, EntityDescriptor<?>>();
-    this.subDescriptorsByDisciminator = new HashMap<String, EntityDescriptor<?>>();
+    this.subDescriptorsByDisciminator = new HashMap<Json.String, EntityDescriptor<?>>();
     for (EntityDescriptor<?> descriptor : descriptors) {
       subDescriptorsByClass.put(descriptor.getReturnedClass(), descriptor);
       subDescriptorsByDisciminator.put(
-          descriptor.getDiscriminator(), descriptor);
+          string(descriptor.getDiscriminator()), descriptor);
     }
   }
 
@@ -66,58 +65,54 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     return returnedClass;
   }
 
-  public JSONObject marshall(Object entity, String view) {
+  @SuppressWarnings("unchecked")
+  public Json.Object marshall(T entity, String view) {
     // null
     if (entity == null) {
-      return JSONObject.NULL;
+      return Json.NULL;
     }
 
     // null safe
-    EntityDescriptor<?> descriptor =
-        subDescriptorsByClass.get(entity.getClass());
+    EntityDescriptor<Object> descriptor =
+        (EntityDescriptor<Object>) subDescriptorsByClass.get(entity.getClass());
     if (descriptor == null) {
       throw new IllegalArgumentException(
           "Unmarshalled entity of class " + entity.getClass() + "is not " +
           "a valid subclass entity of " + returnedClass);
     }
-    JSONObject jsonObject = descriptor.marshall(entity, view);
-    try {
-      jsonObject.put(discriminatorName, descriptor.getDiscriminator());
-    } catch (JSONException e) {
-      throw new IllegalStateException();
-    }
+    Json.Object jsonObject = (Json.Object) descriptor.marshall(entity, view);
+    jsonObject.put(
+        string(discriminatorName),
+        string(descriptor.getDiscriminator()));
     return jsonObject;
   }
 
-  public Object marshallInline(Object entity, String view) {
+  public Json.Object marshallInline(T entity, String view) {
     throw new UnsupportedOperationException();
   }
 
   @SuppressWarnings("unchecked")
-  public T unmarshall(Object object, String view) {
-    // null
-    if (JSONObject.NULL.equals(object)) {
-      return null;
-    }
-
-    // null safe
-    JSONObject jsonObject = (JSONObject) object;
-    String discriminator;
-    try {
-      discriminator = jsonObject.getString(discriminatorName);
-    } catch (JSONException e) {
-      throw new IllegalArgumentException(
-          "Unmarhsalling polymorphic entity which does not contain the " +
-          "discriminator: " + discriminatorName);
-    }
-
-    // getting the concrete descriptor
-    EntityDescriptor<?> descriptor =
-        subDescriptorsByDisciminator.get(discriminator);
-    return (T) descriptor.unmarshall(object, view);
+  public T unmarshall(Json.Value value, final String view) {
+    return value.visit(new JsonVisitor.Empty<T>() {
+      @Override
+      public T caseNull() {
+        return null;
+      }
+      @Override
+      public T caseObject(Json.Object object) {
+        if (!object.containsKey(string(discriminatorName))) {
+          throw new IllegalArgumentException(
+              "Unmarhsalling polymorphic entity which does not contain the " +
+              "discriminator: " + discriminatorName);
+        }
+        EntityDescriptor<?> descriptor =
+            subDescriptorsByDisciminator.get(object.get(string(discriminatorName)));
+        return (T) descriptor.unmarshall(object, view);
+      }
+    });
   }
 
-  public T unmarshallInline(Object entity, String view) {
+  public T unmarshallInline(Json.Value entity, String view) {
     throw new UnsupportedOperationException();
   }
 

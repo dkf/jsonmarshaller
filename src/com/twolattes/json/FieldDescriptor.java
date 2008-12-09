@@ -6,8 +6,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
-import com.twolattes.json.types.Type;
+import com.twolattes.json.types.JsonType;
 
 
 /**
@@ -26,10 +25,10 @@ abstract class FieldDescriptor {
 
   // fields that MUST be defined before the FieldDescriptor can (un)marshall
   private Descriptor<?, ?> descriptor;
-  private Type<?> type;
+  private JsonType<?, ?> type;
 
   FieldDescriptor(String fieldName) {
-    this.fieldName = Preconditions.checkNotNull(fieldName);
+    this.fieldName = fieldName;
   }
 
   /**
@@ -79,7 +78,7 @@ abstract class FieldDescriptor {
 
   /** The type of the field.
    */
-  final Type<?> getType() {
+  final JsonType<?, ?> getType() {
     return type;
   }
 
@@ -127,7 +126,7 @@ abstract class FieldDescriptor {
     this.optional = optional;
   }
 
-  void setType(Type<?> type) {
+  void setType(JsonType<?, ?> type) {
     this.type = type;
   }
 

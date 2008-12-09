@@ -1,13 +1,16 @@
 package com.twolattes.json.types;
 
+import com.twolattes.json.Json;
+
+
 /**
  * An abstract implementation dealing with {@code null} and delegating non
  * null cases (null safe) to the concrete implementation.
- * @param <T> the type of object this converter handles
+ * @param <E> the type of object this converter handles
  * @author Pascal
  */
-public abstract class NullSafeType<T> implements Type<T> {
-  public final Object marshall(T entity) {
+public abstract class NullSafeType<E, J extends Json.Value> implements JsonType<E, J> {
+  public final J marshall(E entity) {
     if (entity == null) {
       return null;
     } else {
@@ -15,7 +18,7 @@ public abstract class NullSafeType<T> implements Type<T> {
     }
   }
 
-  public T unmarshall(Object object) {
+  public E unmarshall(J object) {
     if (object == null) {
       return null;
     } else {
@@ -24,13 +27,13 @@ public abstract class NullSafeType<T> implements Type<T> {
   }
 
   /**
-   * Marshalls (see {@link Type#marshall(Object)}) objects which are not null.
+   * Marshalls (see {@link JsonType#marshall(Object)}) objects which are not null.
    */
-  protected abstract Object nullSafeMarshall(T entity);
+  protected abstract J nullSafeMarshall(E entity);
 
   /**
-   * Unmarshalls (see {@link Type#unmarshall(Object)}) objects which are not
+   * Unmarshalls (see {@link JsonType#unmarshall(Object)}) objects which are not
    * null.
    */
-  protected abstract T nullSafeUnmarshall(Object object);
+  protected abstract E nullSafeUnmarshall(J object);
 }

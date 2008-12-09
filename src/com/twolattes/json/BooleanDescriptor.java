@@ -1,33 +1,25 @@
 package com.twolattes.json;
 
-import org.json.JSONObject;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Descriptor for the {@link Boolean} type.
  *
  * @author pascal
  */
-class BooleanDescriptor extends AbstractDescriptor<Boolean, Object> {
+class BooleanDescriptor extends AbstractDescriptor<Boolean, Json.Boolean> {
   BooleanDescriptor() {
     super(Boolean.class);
   }
 
-  public final Object marshall(Boolean entity, String view) {
-    if (entity == null) {
-      return JSONObject.NULL;
-    } else {
-      Preconditions.checkState(getReturnedClass().isAssignableFrom(entity.getClass()));
-      return entity;
-    }
+  public final Json.Boolean marshall(Boolean entity, String view) {
+    return entity == null ? Json.NULL : entity ? Json.TRUE : Json.FALSE;
   }
 
-  public final Boolean unmarshall(Object marshalled, String view) {
-    if (marshalled.equals(JSONObject.NULL)) {
+  public final Boolean unmarshall(Json.Boolean marshalled, String view) {
+    if (marshalled.equals(Json.NULL)) {
       return null;
     } else {
-      return (Boolean) marshalled;
+      return marshalled.getBoolean();
     }
   }
 
