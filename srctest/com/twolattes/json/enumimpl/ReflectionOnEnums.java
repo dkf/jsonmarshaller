@@ -9,8 +9,6 @@ import org.junit.Test;
 
 public class ReflectionOnEnums {
 
-  enum Abc { A, B, C };
-
   @Test
   public void cannotInstantiateNewEnumValue() throws Exception {
     Constructor<?>[] constructors = Abc.class.getDeclaredConstructors();

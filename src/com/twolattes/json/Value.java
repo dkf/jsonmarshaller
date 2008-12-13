@@ -9,8 +9,6 @@ import com.twolattes.json.types.JsonType;
 
 /**
  * A JSON value.
- * @author Pascal
- * @version $Id$
  */
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.FIELD, ElementType.METHOD})
@@ -19,10 +17,10 @@ public @interface Value {
    * The JSON name. By default, the field name is chosen.
    */
   String name() default "";
-  
+
   /**
    * Whether to inline the value or not. Only base types and single valued
-   * entities can be inlided.
+   * entities can be inlined.
    */
   boolean inline() default false;
 
@@ -30,14 +28,21 @@ public @interface Value {
    */
   @SuppressWarnings("unchecked")
   Class<? extends JsonType> type() default JsonType.class;
-  
+
   /**
    * Whether the value is optional or not.
    */
   boolean optional() default false;
-  
+
   /**
    * Views in which this value should be included.
    */
   String[] views() default {};
+
+  /**
+   * Whether or not to use the {@link Enum#ordinal()} value to represent
+   * enum constants. Using an enum's ordinal produces terser JSON, but
+   * is vulnerable to constant reordering.
+   */
+  boolean ordinal() default false;
 }
