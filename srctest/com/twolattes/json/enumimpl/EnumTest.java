@@ -20,7 +20,6 @@ import com.twolattes.json.TwoLattes;
 public class EnumTest {
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnum1Marshall() throws Exception {
     // entity
     HasEnum1 e = new HasEnum1();
@@ -35,7 +34,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnum1Unmarshall() throws Exception {
     // unmarshalling
     HasEnum1 e = TwoLattes.createMarshaller(HasEnum1.class).unmarshall(
@@ -108,7 +106,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnum1NullMarshall() throws Exception {
     // entity
     HasEnum1 e = new HasEnum1();
@@ -122,7 +119,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnum1NullUnmarshall() throws Exception {
     // unmarshalling
     HasEnum1 e = TwoLattes.createMarshaller(HasEnum1.class).unmarshall(
@@ -215,7 +211,6 @@ public class EnumTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  @Ignore("TODO: implement.")
   public void testInvalidConstantUnmarshall() throws Exception {
     // unmarshalling
     TwoLattes.createMarshaller(HasEnum1.class).unmarshall(

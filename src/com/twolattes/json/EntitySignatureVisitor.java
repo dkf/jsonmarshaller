@@ -81,10 +81,14 @@ class EntitySignatureVisitor implements SignatureVisitor {
     Descriptor<?, ?> d = baseObjectTypes.get(className);
     if (d != null) {
       descriptor = d;
-    } else {
+    }
+    else {
       try {
         Class<?> c = Class.forName(className.replace('/', '.'));
-        if (Collection.class.isAssignableFrom(c)) {
+        if (Enum.class.isAssignableFrom(c)) {
+          state = State.base;
+          descriptor = new EnumDescriptor(c);
+        } else if (Collection.class.isAssignableFrom(c)) {
           state = State.collection;
           collectionType = (Class<? extends Collection<?>>) c;
         } else if (Map.class.isAssignableFrom(c)) {
