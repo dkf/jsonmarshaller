@@ -8,7 +8,7 @@ import com.twolattes.json.Entity;
 import com.twolattes.json.Value;
 
 @Entity
-public class E {
+public class EntityWithType {
   @Value(type = URLType.class, views = "url")
   URL url;
 

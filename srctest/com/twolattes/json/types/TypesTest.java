@@ -19,16 +19,16 @@ import com.twolattes.json.Marshaller;
 import com.twolattes.json.TwoLattes;
 
 public class TypesTest {
-  private Marshaller<E> marshaller;
+  private Marshaller<EntityWithType> marshaller;
 
   @Before
   public void start() {
-    marshaller =  TwoLattes.createMarshaller(E.class);
+    marshaller =  TwoLattes.createMarshaller(EntityWithType.class);
   }
 
   @Test
   public void testMarshallURL() throws Exception {
-    E e = new E();
+    EntityWithType e = new EntityWithType();
     e.url = new  URL("http://whatever.com");
     Json.Object o = marshaller.marshall(e, "url");
 
@@ -38,7 +38,7 @@ public class TypesTest {
 
   @Test
   public void testMarshallURLNull() throws Exception {
-    Json.Object o = marshaller.marshall(new E(), "url");
+    Json.Object o = marshaller.marshall(new EntityWithType(), "url");
 
     assertEquals(1, o.size());
     assertEquals(NULL, o.get(string("url")));
@@ -46,7 +46,7 @@ public class TypesTest {
 
   @Test
   public void testUnmarshallURL() throws Exception {
-    E e = marshaller.unmarshall(
+    EntityWithType e = marshaller.unmarshall(
         (Json.Object) Json.fromString("{\"url\":\"http://whatever.com\"}"), "url");
 
     assertEquals(new URL("http://whatever.com"), e.url);
@@ -54,14 +54,14 @@ public class TypesTest {
 
   @Test
   public void testUnnarshallURLNull() throws Exception {
-    E e = marshaller.unmarshall((Json.Object) Json.fromString("{\"url\":null}"), "url");
+    EntityWithType e = marshaller.unmarshall((Json.Object) Json.fromString("{\"url\":null}"), "url");
 
     assertNull(e.url);
   }
 
   @Test
   public void testMarshallBigDecimal() throws Exception {
-    E e = new E();
+    EntityWithType e = new EntityWithType();
     e.bigDecimal = BigDecimal.valueOf(8.398741);
     Json.Object o = marshaller.marshall(e, "bigDecimal");
 
@@ -71,7 +71,7 @@ public class TypesTest {
 
   @Test
   public void testMarshallBigDecimalNull() throws Exception {
-    Json.Object o = marshaller.marshall(new E(), "bigDecimal");
+    Json.Object o = marshaller.marshall(new EntityWithType(), "bigDecimal");
 
     assertEquals(1, o.size());
     assertEquals(NULL, o.get(string("bigDecimal")));
@@ -79,7 +79,7 @@ public class TypesTest {
 
   @Test
   public void testUnmarshallBigDecimal1() throws Exception {
-    E e = marshaller.unmarshall(
+    EntityWithType e = marshaller.unmarshall(
         (Json.Object) Json.fromString("{\"bigDecimal\":78945.13245}"), "bigDecimal");
 
     assertEquals(BigDecimal.valueOf(78945.13245), e.bigDecimal);
@@ -87,7 +87,7 @@ public class TypesTest {
 
   @Test
   public void testUnmarshallBigDecimal2() throws Exception {
-    E e = marshaller.unmarshall(
+    EntityWithType e = marshaller.unmarshall(
         (Json.Object) Json.fromString("{\"bigDecimal\":7}"), "bigDecimal");
 
     assertEquals(BigDecimal.valueOf(7), e.bigDecimal);
@@ -95,7 +95,7 @@ public class TypesTest {
 
   @Test
   public void testUnmarshallBigDecimal3() throws Exception {
-    E e = marshaller.unmarshall(
+    EntityWithType e = marshaller.unmarshall(
         (Json.Object) Json.fromString("{\"bigDecimal\":7777777777777777}"), "bigDecimal");
 
     assertEquals(BigDecimal.valueOf(7777777777777777L), e.bigDecimal);
@@ -103,7 +103,7 @@ public class TypesTest {
 
   @Test
   public void testUnmarshallBigDecimalNull() throws Exception {
-    E e = marshaller.unmarshall(
+    EntityWithType e = marshaller.unmarshall(
         (Json.Object) Json.fromString("{\"bigDecimal\":null}"), "bigDecimal");
 
     assertNull(e.bigDecimal);
@@ -111,7 +111,7 @@ public class TypesTest {
 
   @Test
   public void testUnmarshallBigInteger1() throws Exception {
-    E e = marshaller.unmarshall(
+    EntityWithType e = marshaller.unmarshall(
         (Json.Object) Json.fromString("{\"bigInteger\":null}"), "bigInteger");
 
     assertNull(e.bigInteger);
@@ -119,7 +119,7 @@ public class TypesTest {
 
   @Test
   public void testUnmarshallBigInteger2() throws Exception {
-    E e = marshaller.unmarshall(
+    EntityWithType e = marshaller.unmarshall(
         (Json.Object) Json.fromString("{\"bigInteger\":78945}"), "bigInteger");
 
     assertTrue(
@@ -128,7 +128,7 @@ public class TypesTest {
 
   @Test
   public void testUnmarshallBigInteger3() throws Exception {
-    E e = marshaller.unmarshall(
+    EntityWithType e = marshaller.unmarshall(
         (Json.Object) Json.fromString("{\"bigInteger\":789451111111111111}"), "bigInteger");
 
     assertTrue(

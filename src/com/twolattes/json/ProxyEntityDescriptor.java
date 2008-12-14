@@ -30,6 +30,7 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
     return getDescriptor().isInlineable();
   }
 
+  @SuppressWarnings("unchecked")
   public Json.Object marshall(Object entity, String view) {
     return (Json.Object) getDescriptor().marshall((T) entity, view);
   }
