@@ -4,16 +4,19 @@ import java.math.BigDecimal;
 
 /**
  * Descriptor for the {@link Long} type.
- *
- * @author pascal
  */
 class LongDescriptor extends NumberDescriptor<Long> {
-  LongDescriptor() {
-    super(Long.class);
+
+  final static LongDescriptor LONG_DESC = new LongDescriptor(Long.class);
+  final static LongDescriptor LONG_LITERAL_DESC = new LongDescriptor(Long.TYPE);
+
+  private LongDescriptor(Class<Long> klass) {
+    super(klass);
   }
 
   @Override
   Long convert(BigDecimal entity) {
     return entity.longValue();
   }
+
 }

@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 
 /**
  * Descriptor for the {@link Float} type.
- *
- * @author pascal
  */
 class FloatDescriptor extends NumberDescriptor<Float> {
-  FloatDescriptor() {
-    super(Float.class);
+
+  final static FloatDescriptor FLOAT_DESC = new FloatDescriptor(Float.class);
+  final static FloatDescriptor FLOAT_LITERAL_DESC = new FloatDescriptor(Float.TYPE);
+
+  private FloatDescriptor(Class<Float> klass) {
+    super(klass);
   }
 
   @Override
@@ -21,4 +23,5 @@ class FloatDescriptor extends NumberDescriptor<Float> {
   Float convert(BigDecimal entity) {
     return entity.floatValue();
   }
+
 }

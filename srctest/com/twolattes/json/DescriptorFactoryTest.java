@@ -1,5 +1,6 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.StringDescriptor.STRING_DESC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -30,7 +31,7 @@ public class DescriptorFactoryTest {
       assertNull(f.getShouldInline());
     }
   }
-  
+
   @Test
   public void testGetterSetterEntity() throws Exception {
     EntityDescriptor<?> d = create(GetterSetterEntity.class);
@@ -41,7 +42,7 @@ public class DescriptorFactoryTest {
       assertEquals("name", f.getFieldName());
     }
   }
-  
+
   @Test
   public void testEntityInterface() throws Exception {
     EntityDescriptor<?> d = create(EntityInterface.class);
@@ -52,12 +53,12 @@ public class DescriptorFactoryTest {
       assertEquals("whatever", f.getFieldName());
     }
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testEntityInterfaceWrongImplementedBy() throws Exception {
     create(EntityInterfaceWrongImplementedBy.class);
   }
-  
+
   @Test(expected = IllegalArgumentException.class)
   public void testGetSetCollidingWithField() throws Exception {
     create(GetSetCollidingWithField.class);
@@ -72,7 +73,7 @@ public class DescriptorFactoryTest {
       assertEquals("buddies", f.getFieldName());
       assertEquals("friends", f.getJsonName());
       assertEquals(
-          new CollectionDescriptor(Collection.class, new StringDescriptor()),
+          new CollectionDescriptor(Collection.class, STRING_DESC),
           f.getDescriptor());
       assertNull(f.getShouldInline());
     }
@@ -115,7 +116,7 @@ public class DescriptorFactoryTest {
   public void testInlinedUninlineableEntity2() throws IOException {
     create(Uninlineable2.class);
   }
-  
+
   @Test
   public void testMap() throws Exception {
     EntityDescriptor<?> d = create(EntityMap.class);
@@ -128,7 +129,7 @@ public class DescriptorFactoryTest {
       assertEquals(Email.class, ed.getReturnedClass());
     }
   }
-  
+
   @Test
   public void testViews() throws Exception {
     EntityDescriptor<?> d = create(MultipleViewEntity.class);
@@ -152,7 +153,7 @@ public class DescriptorFactoryTest {
       }
     }
   }
-  
+
   @Ignore("not yet implemented")
   @Test
   public void testBExtendsA() throws IOException {
@@ -160,7 +161,7 @@ public class DescriptorFactoryTest {
     // TODO: make the test pass!
     assertEquals(2, d.getFieldDescriptors().size());
     for (FieldDescriptor f : d.getFieldDescriptors()) {
-      assertTrue(f.getFieldName().equals("a") || f.getFieldName().equals("b")); 
+      assertTrue(f.getFieldName().equals("a") || f.getFieldName().equals("b"));
     }
   }
 

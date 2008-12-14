@@ -1,18 +1,22 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.NULL;
+import static com.twolattes.json.Json.string;
 
 /**
  * Descriptor for the {@link Character} type.
- *
- * @author pascal
  */
 class CharacterDescriptor extends AbstractDescriptor<Character, Json.String> {
-  CharacterDescriptor() {
-    super(Character.class);
+
+  final static CharacterDescriptor CHARARACTER_DESC = new CharacterDescriptor(Character.class);
+  final static CharacterDescriptor CHAR_DESC = new CharacterDescriptor(Character.TYPE);
+
+  private CharacterDescriptor(Class<Character> klass) {
+    super(klass);
   }
 
   public final Json.String marshall(Character entity, String view) {
-    return entity == null ? Json.NULL : Json.string(entity.toString());
+    return entity == null ? NULL : string(entity.toString());
   }
 
   public final Character unmarshall(Json.String marshalled, String view) {
@@ -26,4 +30,5 @@ class CharacterDescriptor extends AbstractDescriptor<Character, Json.String> {
       }
     }
   }
+
 }

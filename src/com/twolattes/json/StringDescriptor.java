@@ -1,22 +1,25 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.NULL;
+import static com.twolattes.json.Json.string;
+
 /**
  * Descriptor for the {@link String} type.
  */
 class StringDescriptor extends AbstractDescriptor<String, Json.String> {
-  StringDescriptor() {
+
+  final static StringDescriptor STRING_DESC = new StringDescriptor();
+
+  private StringDescriptor() {
     super(String.class);
   }
 
   public final Json.String marshall(String entity, String view) {
-    if (entity == null) {
-      return Json.NULL;
-    } else {
-      return Json.string(entity);
-    }
+    return entity == null ? NULL : string(entity);
   }
 
   public final String unmarshall(Json.String marshalled, String view) {
-    return Json.NULL.equals(marshalled) ? null : marshalled.getString();
+    return NULL.equals(marshalled) ? null : marshalled.getString();
   }
+
 }

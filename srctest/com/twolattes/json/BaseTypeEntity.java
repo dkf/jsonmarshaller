@@ -7,14 +7,14 @@ import java.util.Map;
 public class BaseTypeEntity {
   public static final Map<String, Class<?>> fields = new HashMap<String, Class<?>>();
   static {
-    fields.put("_0", Integer.class);
-    fields.put("_1", Character.class);
-    fields.put("_2", Long.class);
-    fields.put("_3", Float.class);
-    fields.put("_4", Short.class);
+    fields.put("_0", Integer.TYPE);
+    fields.put("_1", Character.TYPE);
+    fields.put("_2", Long.TYPE);
+    fields.put("_3", Float.TYPE);
+    fields.put("_4", Short.TYPE);
     fields.put("_5", String.class);
-    fields.put("_6", Boolean.class);
-    fields.put("_7", Double.class);
+    fields.put("_6", Boolean.TYPE);
+    fields.put("_7", Double.TYPE);
   }
 
   @Value
@@ -72,11 +72,11 @@ public class BaseTypeEntity {
   public double get_7() {
     return _7;
   }
-  
+
   public static class Factory {
     public BaseTypeEntity create(int p0, char p1, long p2, float p3, short p4, String p5, boolean p6, double p7) {
       BaseTypeEntity entity = new BaseTypeEntity();
-      
+
       entity._0 = p0;
       entity._1 = p1;
       entity._2 = p2;
@@ -85,7 +85,7 @@ public class BaseTypeEntity {
       entity._5 = p5;
       entity._6 = p6;
       entity._7 = p7;
-      
+
       return entity;
     }
   }

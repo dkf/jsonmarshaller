@@ -44,16 +44,17 @@ class ArrayDescriptor extends AbstractDescriptor<Object, Json.Value> {
       return null;
     }
     Json.Array jsonArray = (Json.Array) object;
-    Object[] array = (Object[]) Array.newInstance(
+    Object array = Array.newInstance(
         elementsDescriptor.getReturnedClass(),
         jsonArray.size());
+    int length = Array.getLength(array);
     if (elementsDescriptor.shouldInline()) {
-      for (int i = 0; i < array.length; i++) {
-        array[i] = elementsDescriptor.unmarshallInline(jsonArray.get(i), view);
+      for (int i = 0; i < length; i++) {
+        Array.set(array, i, elementsDescriptor.unmarshallInline(jsonArray.get(i), view));
       }
     } else {
-      for (int i = 0; i < array.length; i++) {
-        array[i] = elementsDescriptor.unmarshall(jsonArray.get(i), view);
+      for (int i = 0; i < length; i++) {
+        Array.set(array, i, elementsDescriptor.unmarshall(jsonArray.get(i), view));
       }
     }
     return array;

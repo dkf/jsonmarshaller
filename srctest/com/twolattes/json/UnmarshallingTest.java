@@ -262,9 +262,8 @@ public class UnmarshallingTest {
   }
 
   @Test
-  @Ignore
   public void nativeArray() throws Exception {
-    EntityWithNativeArray e = unmarshall(EntityWithNativeArray.class, "{ids:[5,1,3]}");
+    EntityWithNativeArray e = unmarshall(EntityWithNativeArray.class, "{\"ids\":[5,1,3]}");
 
     assertNotNull(e.ids);
     assertEquals(3, e.ids.length);

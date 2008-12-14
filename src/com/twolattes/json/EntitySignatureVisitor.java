@@ -1,5 +1,21 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.BooleanDescriptor.BOOLEAN_DESC;
+import static com.twolattes.json.BooleanDescriptor.BOOLEAN_LITERAL_DESC;
+import static com.twolattes.json.CharacterDescriptor.CHARARACTER_DESC;
+import static com.twolattes.json.CharacterDescriptor.CHAR_DESC;
+import static com.twolattes.json.DoubleDescriptor.DOUBLE_DESC;
+import static com.twolattes.json.DoubleDescriptor.DOUBLE_LITERAL_DESC;
+import static com.twolattes.json.FloatDescriptor.FLOAT_DESC;
+import static com.twolattes.json.FloatDescriptor.FLOAT_LITERAL_DESC;
+import static com.twolattes.json.IntegerDescriptor.INTEGER_DESC;
+import static com.twolattes.json.IntegerDescriptor.INT_DESC;
+import static com.twolattes.json.LongDescriptor.LONG_DESC;
+import static com.twolattes.json.LongDescriptor.LONG_LITERAL_DESC;
+import static com.twolattes.json.ShortDescriptor.SHORT_DESC;
+import static com.twolattes.json.ShortDescriptor.SHORT_LITERAL_DESC;
+import static com.twolattes.json.StringDescriptor.STRING_DESC;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,18 +39,25 @@ class EntitySignatureVisitor implements SignatureVisitor {
   private static final Map<Character, Descriptor<?, ?>> baseTypes = new HashMap<Character, Descriptor<?, ?>>();
   private static final Map<String, Descriptor<?, ?>> baseObjectTypes = new HashMap<String, Descriptor<?, ?>>();
   static {
-    baseTypes.put('I', new IntegerDescriptor());
-    baseTypes.put('D', new DoubleDescriptor());
-    baseTypes.put('S', new ShortDescriptor());
-    baseTypes.put('C', new CharacterDescriptor());
-    baseTypes.put('J', new LongDescriptor());
-    baseTypes.put('Z', new BooleanDescriptor());
-    baseTypes.put('F', new FloatDescriptor());
+    baseTypes.put('I', INT_DESC);
+    baseTypes.put('D', DOUBLE_LITERAL_DESC);
+    baseTypes.put('S', SHORT_LITERAL_DESC);
+    baseTypes.put('C', CHAR_DESC);
+    baseTypes.put('J', LONG_LITERAL_DESC);
+    baseTypes.put('Z', BOOLEAN_LITERAL_DESC);
+    baseTypes.put('F', FLOAT_LITERAL_DESC);
 
-    baseObjectTypes.put(String.class.getName().replace('.', '/'), new StringDescriptor());
-    for (Descriptor<?, ?> d : baseTypes.values()) {
-      baseObjectTypes.put(d.getReturnedClass().getName().replace('.', '/'), d);
-    }
+    putBaseObjectTypes(String.class, STRING_DESC);
+    putBaseObjectTypes(Integer.class, INTEGER_DESC);
+    putBaseObjectTypes(Double.class, DOUBLE_DESC);
+    putBaseObjectTypes(Short.class, SHORT_DESC);
+    putBaseObjectTypes(Character.class, CHARARACTER_DESC);
+    putBaseObjectTypes(Long.class, LONG_DESC);
+    putBaseObjectTypes(Boolean.class, BOOLEAN_DESC);
+    putBaseObjectTypes(Float.class, FLOAT_DESC);
+  }
+  private static void putBaseObjectTypes(Class<?> klass, Descriptor<?, ?> desc) {
+    baseObjectTypes.put(klass.getName().replace('.', '/'), desc);
   }
 
   private Descriptor<?, ?> descriptor;
@@ -116,7 +139,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
       case collection:
         if (next.size() == 0) {
           throw new IllegalArgumentException(
-              "Collection must be parametrize, e.g. List<String>. " +
+              "Collection must be parameterized, e.g. List<String>. " +
               "Signature " + signature);
         } else {
           return new CollectionDescriptor(
