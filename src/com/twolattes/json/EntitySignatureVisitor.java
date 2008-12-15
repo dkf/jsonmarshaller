@@ -37,6 +37,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
   }
 
   private static final Map<Character, Descriptor<?, ?>> baseTypes = new HashMap<Character, Descriptor<?, ?>>();
+
   private static final Map<String, Descriptor<?, ?>> baseObjectTypes = new HashMap<String, Descriptor<?, ?>>();
   static {
     baseTypes.put('I', INT_DESC);
@@ -56,15 +57,22 @@ class EntitySignatureVisitor implements SignatureVisitor {
     putBaseObjectTypes(Boolean.class, BOOLEAN_DESC);
     putBaseObjectTypes(Float.class, FLOAT_DESC);
   }
+
   private static void putBaseObjectTypes(Class<?> klass, Descriptor<?, ?> desc) {
     baseObjectTypes.put(klass.getName().replace('.', '/'), desc);
   }
 
   private Descriptor<?, ?> descriptor;
+
   private State state = State.base;
-  private List<EntitySignatureVisitor> next = new ArrayList<EntitySignatureVisitor>(2);
+
+  private List<EntitySignatureVisitor> next = new ArrayList<EntitySignatureVisitor>(
+      2);
+
   private Class<? extends Collection<?>> collectionType;
+
   private final EntityDescriptorStore store;
+
   private final String signature;
 
   public EntitySignatureVisitor(String signature, EntityDescriptorStore store) {
@@ -81,13 +89,12 @@ class EntitySignatureVisitor implements SignatureVisitor {
     Descriptor<?, ?> d = baseObjectTypes.get(className);
     if (d != null) {
       descriptor = d;
-    }
-    else {
+    } else {
       try {
         Class<?> c = Class.forName(className.replace('/', '.'));
         if (Enum.class.isAssignableFrom(c)) {
           state = State.base;
-          descriptor = new EnumDescriptor(c);
+          descriptor = new EnumDescriptor((Class<? extends Enum>) c);
         } else if (Collection.class.isAssignableFrom(c)) {
           state = State.collection;
           collectionType = (Class<? extends Collection<?>>) c;
@@ -116,9 +123,10 @@ class EntitySignatureVisitor implements SignatureVisitor {
 
   public SignatureVisitor visitTypeArgument(char variance) {
     if (SUPER == variance) {
-      /* We process only covariant structures, encountering a contravariant
-       * marker indicates that the entity is incorrectly specified. If we
-       * had List<? super A> then it might as we be List<Object>.
+      /*
+       * We process only covariant structures, encountering a contravariant
+       * marker indicates that the entity is incorrectly specified. If we had
+       * List<? super A> then it might as we be List<Object>.
        */
       throw new IllegalArgumentException("collections contravariant");
     } else if (State.collection.equals(state)) {
@@ -143,23 +151,24 @@ class EntitySignatureVisitor implements SignatureVisitor {
       case collection:
         if (next.size() == 0) {
           throw new IllegalArgumentException(
-              "Collection must be parameterized, e.g. List<String>. " +
-              "Signature " + signature);
+              "Collection must be parameterized, e.g. List<String>. "
+                  + "Signature " + signature);
         } else {
-          return new CollectionDescriptor(
-              collectionType, next.get(0).getDescriptor());
+          return new CollectionDescriptor(collectionType, next.get(0)
+              .getDescriptor());
         }
 
       case array:
         return new ArrayDescriptor(next.get(0).getDescriptor());
 
       case map:
-        if (next.size() == 2 &&
-            next.get(0).getDescriptor().getReturnedClass().equals(String.class)) {
+        if (next.size() == 2
+            && next.get(0).getDescriptor().getReturnedClass().equals(
+                String.class)) {
           return new MapDescriptor(next.get(1).getDescriptor());
         } else {
-          throw new IllegalArgumentException("Map<String, ...> must be used. " +
-          		"Signature " + signature);
+          throw new IllegalArgumentException("Map<String, ...> must be used. "
+              + "Signature " + signature);
         }
       }
     }

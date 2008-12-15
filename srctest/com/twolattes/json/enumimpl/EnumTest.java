@@ -75,7 +75,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnum3Marshall() throws Exception {
     // entity
     HasEnum3 e = new HasEnum3();
@@ -90,10 +89,9 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnum3Unmarshall() throws Exception {
     // unmarshalling
-    HasEnum1 e = TwoLattes.createMarshaller(HasEnum1.class)
+    HasEnum3 e = TwoLattes.createMarshaller(HasEnum3.class)
         .unmarshall(
             (Json.Object) Json.fromString("{\"my_enum\":\"" + Abc.B.name()
                 + "\"}"));
@@ -131,7 +129,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnumList1Marshall() throws Exception {
     // entity
     HasEnumList1 e = new HasEnumList1();
@@ -154,7 +151,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnumList1Unmarshall() throws Exception {
     // unmarshalling
     HasEnumList1 e = TwoLattes.createMarshaller(HasEnumList1.class).unmarshall(
