@@ -31,10 +31,10 @@ class DescriptorFactory {
       throw new IllegalArgumentException(c + " is not an entity. Entities must"
           + " be annotated with @Entity.");
     }
-    
+
     // weak reference
     store.put(c);
-    
+
     // polymorphic entity
     int subclassesLength = annotation.subclasses().length;
     String discriminatorName = annotation.discriminatorName();
@@ -44,7 +44,7 @@ class DescriptorFactory {
             "The discriminatorName option must be used in conjunction of the " +
             "subclasses option: " + c);
       }
-      
+
       // getting all the concrete descriptors
       Set<EntityDescriptor<?>> subclassesDescriptor =
           new HashSet<EntityDescriptor<?>>(subclassesLength);
@@ -60,7 +60,7 @@ class DescriptorFactory {
           subclassesDescriptor.add(create(subclass, store));
         }
       }
-      
+
       return createPolymorphicEntityDescriptor(c, store, subclassesDescriptor);
     } else if (discriminatorName != null && discriminatorName.length() > 0) {
       throw new IllegalArgumentException(
@@ -85,10 +85,10 @@ class DescriptorFactory {
       }
       parentClass = parentClass.getSuperclass();
     }
-    
+
     // @Entity
     Entity annotation = c.getAnnotation(Entity.class);
-    
+
     // bug 1739760
     InputStream in = c.getResourceAsStream("/" + c.getName().replace('.', '/') + ".class");
     if (in == null) {
@@ -98,12 +98,12 @@ class DescriptorFactory {
     EntityClassVisitor entityClassVisitor =
       new EntityClassVisitor(c, store, annotation.inline());
     reader.accept(entityClassVisitor, true);
-    
+
     // getting the descriptor
     EntityDescriptor<?> descriptor = entityClassVisitor.getDescriptor(parent);
-    
+
     store.put(c, descriptor);
-    
+
     // is this entity inlineable?
     if (annotation.inline()) {
       if (!descriptor.isInlineable()) {
@@ -112,7 +112,7 @@ class DescriptorFactory {
             " An entity is inlineable only if it has one property.");
       }
     }
-    
+
     return (ConcreteEntityDescriptor<T>) descriptor;
   }
 
@@ -128,10 +128,10 @@ class DescriptorFactory {
    * {@code Ljava/lang/String;}.
    */
   @SuppressWarnings("unchecked")
-  Descriptor create(String signature, EntityDescriptorStore store) {
+  Descriptor create(String signature, EntityDescriptorStore store, FieldDescriptor fieldDescriptor) {
     SignatureReader r = new SignatureReader(signature);
     EntitySignatureVisitor entitySignatureVisitor =
-        new EntitySignatureVisitor(signature, store);
+        new EntitySignatureVisitor(signature, store, fieldDescriptor);
     r.accept(entitySignatureVisitor);
     return entitySignatureVisitor.getDescriptor();
   }

@@ -75,9 +75,12 @@ class EntitySignatureVisitor implements SignatureVisitor {
 
   private final String signature;
 
-  public EntitySignatureVisitor(String signature, EntityDescriptorStore store) {
+  private final FieldDescriptor fieldDescriptor;
+
+  public EntitySignatureVisitor(String signature, EntityDescriptorStore store, FieldDescriptor fieldDescriptor) {
     this.signature = signature;
     this.store = store;
+    this.fieldDescriptor = fieldDescriptor;
   }
 
   public void visitBaseType(char t) {
@@ -92,9 +95,13 @@ class EntitySignatureVisitor implements SignatureVisitor {
     } else {
       try {
         Class<?> c = Class.forName(className.replace('/', '.'));
-        if (Enum.class.isAssignableFrom(c)) {
+        if (c.isEnum()) {
           state = State.base;
-          descriptor = new EnumDescriptor((Class<? extends Enum>) c);
+          if(fieldDescriptor.useOrdinal()) {
+            descriptor = new EnumOrdinalDescriptor((Class<? extends Enum>) c);
+          } else {
+            descriptor = new EnumNameDescriptor((Class<? extends Enum>) c);
+          }
         } else if (Collection.class.isAssignableFrom(c)) {
           state = State.collection;
           collectionType = (Class<? extends Collection<?>>) c;
@@ -139,7 +146,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
   }
 
   private SignatureVisitor nextSignatureVisitor() {
-    EntitySignatureVisitor sv = new EntitySignatureVisitor(null, store);
+    EntitySignatureVisitor sv = new EntitySignatureVisitor(null, store, fieldDescriptor);
     next.add(sv);
     return sv;
   }

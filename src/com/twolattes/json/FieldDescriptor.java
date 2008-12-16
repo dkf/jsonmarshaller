@@ -8,9 +8,9 @@ import java.util.Set;
 
 import com.twolattes.json.types.JsonType;
 
-
 /**
  * An entity's field descriptor.
+ *
  * @author pascal
  * @version $Id$
  */
@@ -19,12 +19,18 @@ abstract class FieldDescriptor {
 
   // fields with a default value
   private Set<String> views = null;
+
   private Boolean shouldInline = null;
+
   private boolean optional = false;
+
   private String jsonName = null;
+
+  private boolean ordinal = false;
 
   // fields that MUST be defined before the FieldDescriptor can (un)marshall
   private Descriptor<?, ?> descriptor;
+
   private JsonType<?, ?> type;
 
   FieldDescriptor(String fieldName) {
@@ -33,6 +39,7 @@ abstract class FieldDescriptor {
 
   /**
    * Get the entitiy's field name.
+   *
    * @return the entitiy's field name
    */
   final String getFieldName() {
@@ -41,15 +48,20 @@ abstract class FieldDescriptor {
 
   /**
    * Get the described field's value.
-   * @param instance instance of an object on which the field is
+   *
+   * @param instance
+   *          instance of an object on which the field is
    * @return the field's value
    */
   abstract Object getFieldValue(Object instance);
 
   /**
    * Set the described field's value.
-   * @param instance instance of an object on which the field is
-   * @param value the value to set
+   *
+   * @param instance
+   *          instance of an object on which the field is
+   * @param value
+   *          the value to set
    */
   abstract void setFieldValue(Object instance, Object value);
 
@@ -62,21 +74,34 @@ abstract class FieldDescriptor {
 
   /**
    * Returns whether this field should be inlined.
-   * @return {@code true} if this field should be inline,
-   *     {@code false} if this field should not be inline,
-   *     {@code null} if the {@link Value#inline()} was not set on this field
+   *
+   * @return {@code true} if this field should be inline, {@code false} if this
+   *         field should not be inline, {@code null} if the
+   *         {@link Value#inline()} was not set on this field
    */
   final Boolean getShouldInline() {
     return shouldInline;
   }
 
-  /** Whether this field should this field be inlined.
+  /**
+   * Whether this field should this field be inlined.
    */
   final boolean isOptional() {
     return optional;
   }
 
-  /** The type of the field.
+  /**
+   * Whether or not to use the {@link Enum#ordinal()} value to represent enum
+   * constants if the field is of type {@link Enum}
+   *
+   * @return
+   */
+  final boolean useOrdinal() {
+    return ordinal;
+  }
+
+  /**
+   * The type of the field.
    */
   final JsonType<?, ?> getType() {
     return type;
@@ -84,6 +109,7 @@ abstract class FieldDescriptor {
 
   /**
    * Get the field's descriptor.
+   *
    * @return the field's descriptor
    */
   @SuppressWarnings("unchecked")
@@ -93,7 +119,9 @@ abstract class FieldDescriptor {
 
   /**
    * Tests whether the field is in a specific view.
-   * @param view the view
+   *
+   * @param view
+   *          the view
    * @return <tt>true</tt> if the field is in the view
    */
   final boolean isInView(String view) {
@@ -126,6 +154,10 @@ abstract class FieldDescriptor {
     this.optional = optional;
   }
 
+  void setOrdinal(boolean ordinal) {
+    this.ordinal = ordinal;
+  }
+
   void setType(JsonType<?, ?> type) {
     this.type = type;
   }
@@ -136,9 +168,8 @@ abstract class FieldDescriptor {
 
   @Override
   public final String toString() {
-    return getFieldName() + ", " +
-    getJsonName() + ": " +
-    getDescriptor().toString();
+    return getFieldName() + ", " + getJsonName() + ": "
+        + getDescriptor().toString();
   }
 
   /**
@@ -157,7 +188,8 @@ abstract class FieldDescriptor {
       try {
         return field.get(instance);
       } catch (IllegalAccessException e) {
-        throw new IllegalStateException("cannot access " + instance.getClass() + " field");
+        throw new IllegalStateException("cannot access " + instance.getClass()
+            + " field");
       }
     }
 
@@ -166,7 +198,8 @@ abstract class FieldDescriptor {
       try {
         field.set(instance, value);
       } catch (IllegalAccessException e) {
-        throw new IllegalStateException("cannot access " + instance.getClass() + " field");
+        throw new IllegalStateException("cannot access " + instance.getClass()
+            + " field");
       }
     }
 
@@ -228,10 +261,12 @@ abstract class FieldDescriptor {
       };
 
       abstract String name(Method m);
+
       abstract void store(GetSetFieldDescriptor a, Method m);
     }
 
     private Method getter;
+
     private Method setter;
 
     GetSetFieldDescriptor(Type t, Method m) {
@@ -251,6 +286,7 @@ abstract class FieldDescriptor {
         throw new IllegalStateException(e);
       }
     }
+
     @Override
     void setFieldValue(Object instance, Object value) {
       try {

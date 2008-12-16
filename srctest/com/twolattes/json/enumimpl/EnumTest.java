@@ -11,7 +11,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.twolattes.json.Json;
@@ -47,7 +46,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnumOrdinalTrueMarshall() throws Exception {
     // entity
     HasEnum2 e = new HasEnum2();
@@ -61,7 +59,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnumOrdinalTrueUnmarshall() throws Exception {
     // unmarshalling
     HasEnum2 e = TwoLattes.createMarshaller(HasEnum2.class).unmarshall(
@@ -167,7 +164,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnumList2Marshall() throws Exception {
     // entity
     HasEnumList2 e = new HasEnumList2();
@@ -190,7 +186,6 @@ public class EnumTest {
   }
 
   @Test
-  @Ignore("TODO: implement.")
   public void hasEnumList2Unmarshall() throws Exception {
     // unmarshalling
     HasEnumList2 e = TwoLattes.createMarshaller(HasEnumList2.class).unmarshall(
@@ -214,7 +209,6 @@ public class EnumTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  @Ignore("TODO: implement.")
   public void testInvalidOrdinalUnmarshall() throws Exception {
     // unmarshalling
     TwoLattes.createMarshaller(HasEnum2.class).unmarshall(

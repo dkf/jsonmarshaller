@@ -15,6 +15,7 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
   private static final String VALUE_ANNOTATION_OPTIONAL = "optional";
   private static final String VALUE_ANNOTATION_TYPE = "type";
   private static final String VALUE_ANNOTATION_VIEWS = "views";
+  private static final String VALUE_ANNOTATION_ORDINAL = "ordinal";
   private static final String VALUE_ANNOTATION_NAME_DEFAULT = "";
   private final FieldDescriptor descriptor;
   private boolean visitingViews = false;
@@ -36,6 +37,8 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
       descriptor.setShouldInline((Boolean) value);
     } else if (VALUE_ANNOTATION_OPTIONAL.equals(name)) {
       descriptor.setOptional((Boolean) value);
+    } else if (VALUE_ANNOTATION_ORDINAL.equals(name)) {
+      descriptor.setOrdinal((Boolean) value);
     } else if (VALUE_ANNOTATION_TYPE.equals(name)) {
       String className = ((org.objectweb.asm.Type) value).getClassName();
       try {

@@ -7,11 +7,11 @@ import static com.twolattes.json.Json.string;
  * Descriptor for the {@link Enum} type.
  */
 @SuppressWarnings("unchecked")
-class EnumDescriptor extends AbstractDescriptor<Enum, Json.String> {
+class EnumNameDescriptor extends AbstractDescriptor<Enum, Json.String> {
 
   private final Class<? extends Enum> enumClass;
 
-  EnumDescriptor(Class<? extends Enum> c) {
+  EnumNameDescriptor(Class<? extends Enum> c) {
     super(Enum.class);
     enumClass = c;
   }

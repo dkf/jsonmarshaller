@@ -100,7 +100,7 @@ class EntityClassVisitor extends EmptyVisitor {
     		  }
         } else if (descriptor.getDescriptor() == null) {
           descriptor.setDescriptor(
-              new DescriptorFactory().create(signature.substring(2), store));
+              new DescriptorFactory().create(signature.substring(2), store, descriptor));
         }
 
         // using annotation to populate the descriptor
@@ -145,7 +145,7 @@ class EntityClassVisitor extends EmptyVisitor {
     		  }
         } else if (descriptor.getDescriptor() == null) {
           descriptor.setDescriptor(
-              new DescriptorFactory().create(signature.substring(1, signature.length() - 2), store));
+              new DescriptorFactory().create(signature.substring(1, signature.length() - 2), store, descriptor));
         }
 
         // using annotation to populate the descriptor
