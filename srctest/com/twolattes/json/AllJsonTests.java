@@ -11,7 +11,8 @@ import com.twolattes.json.inheritance1.Inheritance1Test;
 import com.twolattes.json.inheritance2.Inheritance2Test;
 import com.twolattes.json.inheritance3.Inheritance3Test;
 import com.twolattes.json.inheritanceerror.InheritanceErrorTest;
-import com.twolattes.json.literals.LiteralsTest;
+import com.twolattes.json.nativetypes.BigDecimalTest;
+import com.twolattes.json.nativetypes.LiteralsTest;
 import com.twolattes.json.types.TypesTest;
 import com.twolattes.json.types.URLTypeTest;
 import com.twolattes.json.views.ViewsTest;
@@ -40,6 +41,7 @@ import com.twolattes.json.visibility2.Visibility2Test;
   CollectionTypeTest.class,
   EnumTest.class,
   LiteralsTest.class,
+  BigDecimalTest.class,
 
   // Json
   JsonTest.class,

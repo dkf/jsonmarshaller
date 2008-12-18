@@ -1,4 +1,4 @@
-package com.twolattes.json.literals;
+package com.twolattes.json.nativetypes;
 
 import static com.twolattes.json.Json.FALSE;
 import static com.twolattes.json.Json.TRUE;

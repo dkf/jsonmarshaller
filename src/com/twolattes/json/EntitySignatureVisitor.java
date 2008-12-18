@@ -1,5 +1,6 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.BigDecimalDescriptor.BIG_DECIMAL_DESC;
 import static com.twolattes.json.BooleanDescriptor.BOOLEAN_DESC;
 import static com.twolattes.json.BooleanDescriptor.BOOLEAN_LITERAL_DESC;
 import static com.twolattes.json.CharacterDescriptor.CHARARACTER_DESC;
@@ -17,6 +18,7 @@ import static com.twolattes.json.ShortDescriptor.SHORT_LITERAL_DESC;
 import static com.twolattes.json.StringDescriptor.STRING_DESC;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,6 +58,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
     putBaseObjectTypes(Long.class, LONG_DESC);
     putBaseObjectTypes(Boolean.class, BOOLEAN_DESC);
     putBaseObjectTypes(Float.class, FLOAT_DESC);
+    putBaseObjectTypes(BigDecimal.class, BIG_DECIMAL_DESC);
   }
 
   private static void putBaseObjectTypes(Class<?> klass, Descriptor<?, ?> desc) {

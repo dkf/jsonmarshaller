@@ -360,7 +360,7 @@ public class MarshallingTest {
   	Json.Object o = TwoLattes.createMarshaller(TypeOnGetter.class).marshall(e);
 
   	assertEquals(1, o.size());
-  	assertEquals(number(10.0), o.get(string("price")));
+  	assertEquals(string("http://www.kaching.com"), o.get(string("url")));
   }
 
   @Test

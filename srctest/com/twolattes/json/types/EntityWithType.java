@@ -12,7 +12,7 @@ public class EntityWithType {
   @Value(type = URLType.class, views = "url")
   URL url;
 
-  @Value(type = BigDecimalType.class, views = "bigDecimal")
+  @Value(views = "bigDecimal")
   BigDecimal bigDecimal;
 
   @Value(type = BigIntegerType.class, views = "bigInteger")

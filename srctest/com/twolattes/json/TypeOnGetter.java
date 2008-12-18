@@ -1,21 +1,26 @@
 package com.twolattes.json;
 
-import static java.math.BigDecimal.TEN;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import java.math.BigDecimal;
-
-import com.twolattes.json.types.BigDecimalType;
+import com.twolattes.json.types.URLType;
 
 @Entity
 public class TypeOnGetter {
-  private BigDecimal price;
-  
+
+  private URL url;
+
   public TypeOnGetter() {
-	price = TEN;
+    try {
+      url = new URL("http://www.kaching.com");
+    } catch (MalformedURLException e) {
+      throw new RuntimeException(e);
+    }
   }
-  
-  @Value(type = BigDecimalType.class)
-  public BigDecimal getPrice() {
-	return price;
+
+  @Value(type = URLType.class)
+  public URL getUrl() {
+    return url;
   }
+
 }
