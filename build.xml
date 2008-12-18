@@ -39,6 +39,11 @@
         target="1.5" debug="true" debuglevel="source,lines">
       <classpath path="target/bin" />
     </javac>
+    <copy todir="target/bintest">
+      <fileset dir="srctest">
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
   </target>
 
   <!-- run the tests -->
