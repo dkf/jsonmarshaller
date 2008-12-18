@@ -108,7 +108,7 @@
     }, 
     {
       "commission": 12086, 
-      "cost": 8445827.8399999999, 
+      "cost": 8445827.84, 
       "lots": [
         {
           "buyDate": "2008-12-02 11:06:13.000", 
@@ -322,7 +322,7 @@
   ], 
   "id": 219948, 
   "inceptionDate": "2008-04-01", 
-  "longCash": 14826.049999999999, 
+  "longCash": 14826.05, 
   "ownerId": 8, 
   "pendingOrders": [], 
   "shortCash": -0.16, 

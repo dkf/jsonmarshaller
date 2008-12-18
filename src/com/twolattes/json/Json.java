@@ -599,7 +599,11 @@ public final class Json {
           }
           object.put(key, read(reader, skip(reader)));
         } while ((c = skip(reader)) == ',' || c == '}');
-        throw new IllegalArgumentException("non terminated object literal");
+        throw new IllegalArgumentException(java.lang.String.format(
+            "Non terminated object literal. Last character read was %s. " +
+            "Partial object literal read %s.",
+            Character.toString((char) c),
+            object.toString()));
 
       // array
       case '[':

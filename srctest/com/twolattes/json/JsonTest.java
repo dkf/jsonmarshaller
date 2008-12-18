@@ -6,14 +6,19 @@ import static com.twolattes.json.Json.array;
 import static com.twolattes.json.Json.number;
 import static com.twolattes.json.Json.object;
 import static com.twolattes.json.Json.string;
+import static java.lang.String.format;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -411,6 +416,47 @@ public class JsonTest {
   private void testNotEquals(Json.Value v1, Json.Value v2) {
     assertFalse(v1.equals(v2));
     assertFalse(v2.equals(v1));
+  }
+
+  @Test
+  public void regression1() throws Exception {
+    regression(1, true);
+  }
+
+  @Test
+  public void regression2() throws Exception {
+    regression(2, false);
+  }
+
+  @Test
+  public void regression3() throws Exception {
+    regression(3, true);
+  }
+
+  @Test
+  public void regression4() throws Exception {
+    regression(4, true);
+  }
+
+  private void regression(int index, boolean array) throws IOException {
+    Json.Value sample = Json.read(new BufferedReader(new InputStreamReader(
+        JsonTest.class.getResourceAsStream(format("/com/twolattes/json/testdata/sample%s.json", index)))));
+    Json.Value sample_pretty = Json.read(new BufferedReader(new InputStreamReader(
+        JsonTest.class.getResourceAsStream(format("/com/twolattes/json/testdata/sample%s_pretty.json", index)))));
+
+    System.out.println(sample);
+    System.out.println(sample_pretty);
+    assertEquals(sample, sample_pretty);
+
+    Object sampleOrgJson;
+    if (array) {
+      sampleOrgJson = new JSONArray(sample.toString());
+    } else {
+      sampleOrgJson = new JSONObject(sample.toString());
+    }
+
+    OrgJsonAssert.assertJsonEquals(sample, sampleOrgJson);
+    OrgJsonAssert.assertJsonEquals(sample_pretty, sampleOrgJson);
   }
 
 }
