@@ -128,7 +128,8 @@ class DescriptorFactory {
    * {@code Ljava/lang/String;}.
    */
   @SuppressWarnings("unchecked")
-  Descriptor create(String signature, EntityDescriptorStore store, FieldDescriptor fieldDescriptor) {
+  Descriptor create(String signature, EntityDescriptorStore store,
+      FieldDescriptor fieldDescriptor) {
     SignatureReader r = new SignatureReader(signature);
     EntitySignatureVisitor entitySignatureVisitor =
         new EntitySignatureVisitor(signature, store, fieldDescriptor);

@@ -80,7 +80,8 @@ class EntitySignatureVisitor implements SignatureVisitor {
 
   private final FieldDescriptor fieldDescriptor;
 
-  public EntitySignatureVisitor(String signature, EntityDescriptorStore store, FieldDescriptor fieldDescriptor) {
+  EntitySignatureVisitor(String signature, EntityDescriptorStore store,
+      FieldDescriptor fieldDescriptor) {
     this.signature = signature;
     this.store = store;
     this.fieldDescriptor = fieldDescriptor;

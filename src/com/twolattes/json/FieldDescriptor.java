@@ -11,8 +11,6 @@ import com.twolattes.json.types.JsonType;
 /**
  * An entity's field descriptor.
  *
- * @author pascal
- * @version $Id$
  */
 abstract class FieldDescriptor {
   private final String fieldName;
@@ -92,9 +90,10 @@ abstract class FieldDescriptor {
 
   /**
    * Whether or not to use the {@link Enum#ordinal()} value to represent enum
-   * constants if the field is of type {@link Enum}
+   * constants if the field is of type {@link Enum}.
    *
-   * @return
+   * @return returns {@code true} if the ordinal representation should be used,
+   *         {@code false} otherwise.
    */
   final boolean useOrdinal() {
     return ordinal;

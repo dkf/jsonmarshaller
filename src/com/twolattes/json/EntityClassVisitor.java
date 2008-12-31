@@ -145,7 +145,8 @@ class EntityClassVisitor extends EmptyVisitor {
     		  }
         } else if (descriptor.getDescriptor() == null) {
           descriptor.setDescriptor(
-              new DescriptorFactory().create(signature.substring(1, signature.length() - 2), store, descriptor));
+              new DescriptorFactory().create(
+                  signature.substring(1, signature.length() - 2), store, descriptor));
         }
 
         // using annotation to populate the descriptor
