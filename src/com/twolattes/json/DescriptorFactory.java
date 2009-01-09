@@ -98,6 +98,7 @@ class DescriptorFactory {
     EntityClassVisitor entityClassVisitor =
       new EntityClassVisitor(c, store, annotation.inline());
     reader.accept(entityClassVisitor, true);
+    in.close();
 
     // getting the descriptor
     EntityDescriptor<?> descriptor = entityClassVisitor.getDescriptor(parent);
