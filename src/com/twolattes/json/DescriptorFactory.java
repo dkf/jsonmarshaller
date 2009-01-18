@@ -89,32 +89,38 @@ class DescriptorFactory {
     // @Entity
     Entity annotation = c.getAnnotation(Entity.class);
 
-    // bug 1739760
-    InputStream in = c.getResourceAsStream("/" + c.getName().replace('.', '/') + ".class");
-    if (in == null) {
-      throw new IllegalArgumentException("cannot find bytecode for " + c);
-    }
-    ClassReader reader = new ClassReader(in);
-    EntityClassVisitor entityClassVisitor =
-      new EntityClassVisitor(c, store, annotation.inline());
-    reader.accept(entityClassVisitor, true);
-    in.close();
+    InputStream in = null;
+    try {
+      // bug 1739760
+      in = c.getResourceAsStream("/" + c.getName().replace('.', '/') + ".class");
+      if (in == null) {
+        throw new IllegalArgumentException("cannot find bytecode for " + c);
+      }
+      ClassReader reader = new ClassReader(in);
+      EntityClassVisitor entityClassVisitor =
+        new EntityClassVisitor(c, store, annotation.inline());
+      reader.accept(entityClassVisitor, true);
+      // getting the descriptor
 
-    // getting the descriptor
-    EntityDescriptor<?> descriptor = entityClassVisitor.getDescriptor(parent);
+      EntityDescriptor<?> descriptor = entityClassVisitor.getDescriptor(parent);
 
-    store.put(c, descriptor);
+      store.put(c, descriptor);
 
-    // is this entity inlineable?
-    if (annotation.inline()) {
-      if (!descriptor.isInlineable()) {
-        throw new IllegalArgumentException(
-            "entity  '" + descriptor.getReturnedClass() + "' is not inlineable." +
-            " An entity is inlineable only if it has one property.");
+      // is this entity inlineable?
+      if (annotation.inline()) {
+        if (!descriptor.isInlineable()) {
+          throw new IllegalArgumentException(
+              "entity  '" + descriptor.getReturnedClass() + "' is not inlineable." +
+          " An entity is inlineable only if it has one property.");
+        }
+      }
+
+      return (ConcreteEntityDescriptor<T>) descriptor;
+    } finally {
+      if (in != null) {
+        in.close();
       }
     }
-
-    return (ConcreteEntityDescriptor<T>) descriptor;
   }
 
   private <T> EntityDescriptor<T> createPolymorphicEntityDescriptor(Class<?> c,
