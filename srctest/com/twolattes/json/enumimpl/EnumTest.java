@@ -215,4 +215,31 @@ public class EnumTest {
         (Json.Object) Json.fromString("{\"abc\":-1}"));
   }
 
+  @Test
+  public void hasEnum4Marshall() throws Exception {
+    // entity
+    HasEnum4 e = new HasEnum4();
+    e.abc = Abc.B;
+
+    // marshalling
+    Json.Object o = TwoLattes.createMarshaller(HasEnum4.class).marshall(e);
+
+    // assertions
+    assertEquals(1, o.size());
+    assertEquals(string("myvalue"), o.get(string("abc")));
+  }
+
+  @Test
+  public void hasEnum4Unmarshall() throws Exception {
+    // unmarshalling
+    HasEnum4 e = TwoLattes.createMarshaller(HasEnum4.class).unmarshall(
+        (Json.Object) Json.fromString("{\"abc\":\"doesnotmatter\"}"));
+
+    // assertions
+    assertNotNull(e);
+    Abc abc = e.abc;
+    assertNotNull(abc);
+    assertEquals(Abc.A, abc);
+  }
+
 }

@@ -1,5 +1,7 @@
 package com.twolattes.json;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -72,7 +74,9 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
 
   JsonType<?, ?> getType(Class<?> typeClass) {
     try {
-      return (JsonType<?, ?>) typeClass.newInstance();
+      Constructor<?> ctor = typeClass.getDeclaredConstructor();
+      ctor.setAccessible(true);
+      return (JsonType<?, ?>) ctor.newInstance();
     } catch (InstantiationException e) {
       throw new IllegalArgumentException(
           "Cannot instantiate the type " + typeClass + ". Types must have a public no" +
@@ -80,6 +84,16 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
     } catch (IllegalAccessException e) {
       throw new IllegalArgumentException(
           "Cannot access the type " + typeClass + ".");
+    } catch (SecurityException e) {
+      throw new IllegalArgumentException(
+          "Cannot access the type " + typeClass + ".");
+    } catch (NoSuchMethodException e) {
+      throw new IllegalArgumentException(
+          "Cannot access the type " + typeClass + ". Missing no-argument constrcutor.");
+    } catch (InvocationTargetException e) {
+      throw new IllegalArgumentException(
+          "Cannot instantiate the type " + typeClass + ". Types must have a public no" +
+          " argument constructor.");
     }
   }
 }
