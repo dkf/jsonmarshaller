@@ -4,6 +4,8 @@ import static com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor.Type.GETT
 import static com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor.Type.SETTER;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -12,8 +14,6 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.EmptyVisitor;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
 import com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor;
 
@@ -23,11 +23,11 @@ class EntityClassVisitor extends EmptyVisitor {
   private static final Pattern SETTER_PATTERN = Pattern.compile("^set[A-Z0-9_].*$");
   private static final Pattern SETTER_SIGNATURE = Pattern.compile("^\\([^\\)]+\\)V$");
 
-  private Map<String, FieldDescriptor> fieldDescriptors = Maps.newHashMap();
+  private Map<String, FieldDescriptor> fieldDescriptors = new HashMap<String, FieldDescriptor>();
   private final Class<?> entityClass;
   private final EntityDescriptorStore store;
   private final boolean shouldInline;
-  private final Map<String, Set<Method>> methods = Maps.newHashMap();
+  private final Map<String, Set<Method>> methods = new HashMap<String, Set<Method>>();
 
   public EntityClassVisitor(Class<?> entityClass, EntityDescriptorStore store, boolean shouldInline) {
     this.entityClass = entityClass;
@@ -41,7 +41,7 @@ class EntityClassVisitor extends EmptyVisitor {
       String name = m.getName();
       Set<Method> set = methods.get(name);
       if (set == null) {
-        set = Sets.newHashSet();
+        set = new HashSet<Method>();
         methods.put(name, set);
       }
       set.add(m);
@@ -169,7 +169,8 @@ class EntityClassVisitor extends EmptyVisitor {
   @SuppressWarnings("unchecked")
   EntityDescriptor<?> getDescriptor(ConcreteEntityDescriptor<?> parent) {
     return new ConcreteEntityDescriptor(entityClass,
-        Sets.newHashSet(fieldDescriptors.values()), shouldInline, parent);
+        new HashSet<FieldDescriptor>(fieldDescriptors.values()),
+        shouldInline, parent);
   }
 
   boolean isGetterName(String name) {
