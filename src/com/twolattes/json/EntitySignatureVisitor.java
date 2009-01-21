@@ -74,6 +74,8 @@ class EntitySignatureVisitor implements SignatureVisitor {
 
   private Class<? extends Collection<?>> collectionType;
 
+  private Class<? extends Map<?, ?>> mapClass;
+
   private final EntityDescriptorStore store;
 
   private final String signature;
@@ -111,6 +113,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
           collectionType = (Class<? extends Collection<?>>) c;
         } else if (Map.class.isAssignableFrom(c)) {
           state = State.map;
+          mapClass = (Class<? extends Map<?, ?>>) c;
         } else {
           state = State.entity;
           if (store.contains(c)) {
@@ -176,7 +179,9 @@ class EntitySignatureVisitor implements SignatureVisitor {
         if (next.size() == 2
             && next.get(0).getDescriptor().getReturnedClass().equals(
                 String.class)) {
-          return new MapDescriptor(next.get(1).getDescriptor());
+          return new MapDescriptor(
+              MapType.fromClass(mapClass),
+              next.get(1).getDescriptor());
         } else {
           throw new IllegalArgumentException("Map<String, ...> must be used. "
               + "Signature " + signature);

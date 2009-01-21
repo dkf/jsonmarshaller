@@ -1,16 +1,20 @@
 package com.twolattes.json.collection;
 
 import static com.twolattes.json.Json.string;
+import static com.twolattes.json.TwoLattes.createMarshaller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.junit.Test;
 
 import com.twolattes.json.Json;
+import com.twolattes.json.Marshaller;
 import com.twolattes.json.TwoLattes;
 
 public class CollectionTest {
@@ -61,6 +65,22 @@ public class CollectionTest {
     assertEquals(
         string("child"),
         ((Json.Object) entities.get(0)).get(string("type")));
+  }
+
+  @Test
+  public void maps() throws Exception {
+    Marshaller<NormalAndSortedMaps> marshaller = createMarshaller(
+        NormalAndSortedMaps.class);
+
+    Json.Object o = marshaller.marshall(new NormalAndSortedMaps() {{
+          this.map1 = new HashMap<String, Double>();
+          this.map2 = new TreeMap<String, Double>();
+        }});
+
+    NormalAndSortedMaps maps = marshaller.unmarshall(o);
+
+    assertEquals(0, maps.map1.size());
+    assertEquals(0, maps.map2.size());
   }
 
 }

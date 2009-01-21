@@ -39,6 +39,7 @@ import com.twolattes.json.visibility2.Visibility2Test;
   ViewsTest.class,
   CollectionTest.class,
   CollectionTypeTest.class,
+  MapTypeTest.class,
   EnumTest.class,
   LiteralsTest.class,
   BigDecimalTest.class,

@@ -1,6 +1,7 @@
 package com.twolattes.json;
 
-import java.util.HashMap;
+import static com.twolattes.json.Json.NULL;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,11 +11,13 @@ import java.util.Map.Entry;
  */
 @SuppressWarnings("unchecked")
 final class MapDescriptor extends AbstractDescriptor<Map, Json.Object> {
+
+  private final MapType mapType;
   final Descriptor<Object, Json.Value> mapDescriptor;
 
-  @SuppressWarnings("unchecked")
-  MapDescriptor(Descriptor<?, ?> mapDescriptor) {
+  MapDescriptor(MapType mapType, Descriptor<?, ?> mapDescriptor) {
     super(Map.class);
+    this.mapType = mapType;
     this.mapDescriptor = (Descriptor<Object, Json.Value>) mapDescriptor;
   }
 
@@ -30,13 +33,12 @@ final class MapDescriptor extends AbstractDescriptor<Map, Json.Object> {
 
   @Override
   public Class<?> getReturnedClass() {
-    return Map.class;
+    return mapType.toClass();
   }
 
-  @SuppressWarnings("unchecked")
   public Json.Object marshall(Map entity, String view) {
     if (entity == null) {
-      return Json.NULL;
+      return NULL;
     } else {
       Map<String, Object> map = entity;
       Json.Object o = Json.object();
@@ -57,12 +59,11 @@ final class MapDescriptor extends AbstractDescriptor<Map, Json.Object> {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public Map<String, ?> unmarshall(Json.Object object, String view) {
-    if (object.equals(Json.NULL)) {
+    if (object.equals(NULL)) {
       return null;
     } else {
-      HashMap<String, Object> map = new HashMap<String, Object>();
+      Map<String, Object> map = mapType.newMap();
       Iterator<Json.String> i = object.keySet().iterator();
       if (mapDescriptor.shouldInline()) {
         while (i.hasNext()) {
@@ -80,4 +81,5 @@ final class MapDescriptor extends AbstractDescriptor<Map, Json.Object> {
       return map;
     }
   }
+
 }
