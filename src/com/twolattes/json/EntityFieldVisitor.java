@@ -1,6 +1,8 @@
 package com.twolattes.json;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -18,12 +20,16 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
   private boolean isJsonValue = false;
   private final EntityDescriptorStore store;
   private final FieldDescriptor fieldDescriptor;
+  private final Map<Type, Class<?>> types;
 
-  public EntityFieldVisitor(EntityClassVisitor visitor, Field field, String signature, EntityDescriptorStore store) {
+  public EntityFieldVisitor(EntityClassVisitor visitor, Field field,
+      String signature, EntityDescriptorStore store,
+      Map<Type, Class<?>> types) {
     this.classVisitor = visitor;
     this.field = field;
     this.signature = signature;
     this.store = store;
+    this.types = types;
     this.fieldDescriptor = new DirectAccessFieldDescriptor(field);
 
     // accessibility of the field
@@ -50,7 +56,7 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
       JsonType<?, ?> type = fieldDescriptor.getType();
       if (type == null) {
         entityDescriptor =
-            new DescriptorFactory().create(signature, store, fieldDescriptor);
+            new DescriptorFactory().create(signature, store, fieldDescriptor, types);
       } else {
         entityDescriptor = new UserTypeDescriptor(type);
       }

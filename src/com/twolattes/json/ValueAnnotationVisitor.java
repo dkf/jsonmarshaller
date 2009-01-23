@@ -1,7 +1,5 @@
 package com.twolattes.json;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,7 +42,8 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
     } else if (VALUE_ANNOTATION_TYPE.equals(name)) {
       String className = ((org.objectweb.asm.Type) value).getClassName();
       try {
-        descriptor.setType(getType(Class.forName(className)));
+        descriptor.setType(
+            (JsonType) Instantiator.newInstance(Class.forName(className)));
       } catch (ClassNotFoundException e) {
         throw new IllegalStateException("type not found " + className);
       }
@@ -72,28 +71,4 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
     }
   }
 
-  JsonType<?, ?> getType(Class<?> typeClass) {
-    try {
-      Constructor<?> ctor = typeClass.getDeclaredConstructor();
-      ctor.setAccessible(true);
-      return (JsonType<?, ?>) ctor.newInstance();
-    } catch (InstantiationException e) {
-      throw new IllegalArgumentException(
-          "Cannot instantiate the type " + typeClass + ". Types must have a public no" +
-          " argument constructor.");
-    } catch (IllegalAccessException e) {
-      throw new IllegalArgumentException(
-          "Cannot access the type " + typeClass + ".");
-    } catch (SecurityException e) {
-      throw new IllegalArgumentException(
-          "Cannot access the type " + typeClass + ".");
-    } catch (NoSuchMethodException e) {
-      throw new IllegalArgumentException(
-          "Cannot access the type " + typeClass + ". Missing no-argument constrcutor.");
-    } catch (InvocationTargetException e) {
-      throw new IllegalArgumentException(
-          "Cannot instantiate the type " + typeClass + ". Types must have a public no" +
-          " argument constructor.");
-    }
-  }
 }

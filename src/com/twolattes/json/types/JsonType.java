@@ -8,12 +8,6 @@ import com.twolattes.json.Json;
 public interface JsonType<E, J extends Json.Value> {
 
   /**
-   * The returned class of this type.
-   * @return the returned class of this type
-   */
-  public Class<E> getReturnedClass();
-
-  /**
    * Handles the marshalling on an instance of an entity.
    * @param entity the entity to marshall, it can never be <tt>null</tt>
    * @return a {@link Json.Value}

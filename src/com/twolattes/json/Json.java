@@ -745,6 +745,21 @@ public final class Json {
     return new Json.ObjectImpl();
   }
 
+  public static Json.Object object(
+      Json.String k1, Json.Value v1) {
+    Json.Object o = object();
+    o.put(k1, v1);
+    return o;
+  }
+
+  public static Json.Object object(
+      Json.String k1, Json.Value v1,
+      Json.String k2, Json.Value v2) {
+    Json.Object o = object(k1, v1);
+    o.put(k2, v2);
+    return o;
+  }
+
   public static Json.Number number(double number) {
     return new Json.NumberImpl(number);
   }

@@ -4,6 +4,7 @@ import static com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor.Type.GETT
 import static com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor.Type.SETTER;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.objectweb.asm.commons.EmptyVisitor;
 
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
 import com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor;
+import com.twolattes.json.types.JsonType;
 
 class EntityClassVisitor extends EmptyVisitor {
   private static final Pattern GETTER_PATTERN = Pattern.compile("^(get|is)[A-Z0-9_].*$");
@@ -28,11 +30,14 @@ class EntityClassVisitor extends EmptyVisitor {
   private final EntityDescriptorStore store;
   private final boolean shouldInline;
   private final Map<String, Set<Method>> methods = new HashMap<String, Set<Method>>();
+  private final Map<Type, Class<?>> types;
 
-  public EntityClassVisitor(Class<?> entityClass, EntityDescriptorStore store, boolean shouldInline) {
+  public EntityClassVisitor(Class<?> entityClass, EntityDescriptorStore store,
+      boolean shouldInline, Map<Type, Class<?>> types) {
     this.entityClass = entityClass;
     this.store = store;
     this.shouldInline = shouldInline;
+    this.types = types;
     methods2map(entityClass.getDeclaredMethods());
   }
 
@@ -53,9 +58,11 @@ class EntityClassVisitor extends EmptyVisitor {
       String signature, Object value) {
     try {
       if (signature != null) {
-        return new EntityFieldVisitor(this, entityClass.getDeclaredField(name), signature, store);
+        return new EntityFieldVisitor(
+            this, entityClass.getDeclaredField(name), signature, store, types);
       } else {
-        return new EntityFieldVisitor(this, entityClass.getDeclaredField(name), desc, store);
+        return new EntityFieldVisitor(
+            this, entityClass.getDeclaredField(name), desc, store, types);
       }
     } catch (NoSuchFieldException e) {
       throw new IllegalStateException();
@@ -89,18 +96,14 @@ class EntityClassVisitor extends EmptyVisitor {
         }
 
         // type
-        if (!annotation.type().equals(com.twolattes.json.types.JsonType.class)) {
-          try {
-            descriptor.setDescriptor(
-                new UserTypeDescriptor(annotation.type().newInstance()));
-    		  } catch (InstantiationException e) {
-    		    throw new IllegalStateException("could not instanciate " + annotation.type());
-    		  } catch (IllegalAccessException e) {
-    			throw new IllegalStateException("could not access " + annotation.type());
-    		  }
+        Class<? extends JsonType> type = annotation.type();
+        if (!type.equals(com.twolattes.json.types.JsonType.class)) {
+          descriptor.setDescriptor(
+              new UserTypeDescriptor(Instantiator.newInstance(type)));
         } else if (descriptor.getDescriptor() == null) {
           descriptor.setDescriptor(
-              new DescriptorFactory().create(signature.substring(2), store, descriptor));
+              new DescriptorFactory().create(
+                  signature.substring(2), store, descriptor, types));
         }
 
         // using annotation to populate the descriptor
@@ -135,18 +138,13 @@ class EntityClassVisitor extends EmptyVisitor {
 
         // type
         if (!annotation.type().equals(com.twolattes.json.types.JsonType.class)) {
-          try {
-            descriptor.setDescriptor(
-                new UserTypeDescriptor(annotation.type().newInstance()));
-    		  } catch (InstantiationException e) {
-    		    throw new IllegalStateException("could not instanciate " + annotation.type());
-    		  } catch (IllegalAccessException e) {
-    			throw new IllegalStateException("could not access " + annotation.type());
-    		  }
+          descriptor.setDescriptor(
+              new UserTypeDescriptor(Instantiator.newInstance(annotation.type())));
         } else if (descriptor.getDescriptor() == null) {
           descriptor.setDescriptor(
               new DescriptorFactory().create(
-                  signature.substring(1, signature.length() - 2), store, descriptor));
+                  signature.substring(1, signature.length() - 2),
+                  store, descriptor, types));
         }
 
         // using annotation to populate the descriptor

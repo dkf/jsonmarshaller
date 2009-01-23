@@ -18,6 +18,7 @@ import static com.twolattes.json.ShortDescriptor.SHORT_LITERAL_DESC;
 import static com.twolattes.json.StringDescriptor.STRING_DESC;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +29,7 @@ import java.util.Map;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
+import com.twolattes.json.types.JsonType;
 
 /**
  * An entity signature visitor capable of converting a signature (such as
@@ -82,11 +84,14 @@ class EntitySignatureVisitor implements SignatureVisitor {
 
   private final FieldDescriptor fieldDescriptor;
 
+  private final Map<Type, Class<?>> types;
+
   EntitySignatureVisitor(String signature, EntityDescriptorStore store,
-      FieldDescriptor fieldDescriptor) {
+      FieldDescriptor fieldDescriptor, Map<Type, Class<?>> types) {
     this.signature = signature;
     this.store = store;
     this.fieldDescriptor = fieldDescriptor;
+    this.types = types;
   }
 
   public void visitBaseType(char t) {
@@ -101,7 +106,10 @@ class EntitySignatureVisitor implements SignatureVisitor {
     } else {
       try {
         Class<?> c = Class.forName(className.replace('/', '.'));
-        if (c.isEnum()) {
+        if (types.containsKey(c)) {
+          descriptor = new UserTypeDescriptor(
+              (JsonType) Instantiator.newInstance(types.get(c)));
+        } else if (c.isEnum()) {
           state = State.base;
           if(fieldDescriptor.useOrdinal()) {
             descriptor = new EnumOrdinalDescriptor((Class<? extends Enum>) c);
@@ -119,7 +127,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
           if (store.contains(c)) {
             descriptor = new ProxyEntityDescriptor(c, store);
           } else {
-            descriptor = new DescriptorFactory().create(c, store);
+            descriptor = new DescriptorFactory().create(c, store, types);
           }
         }
       } catch (ClassNotFoundException e) {
@@ -153,7 +161,8 @@ class EntitySignatureVisitor implements SignatureVisitor {
   }
 
   private SignatureVisitor nextSignatureVisitor() {
-    EntitySignatureVisitor sv = new EntitySignatureVisitor(null, store, fieldDescriptor);
+    EntitySignatureVisitor sv = new EntitySignatureVisitor(
+        null, store, fieldDescriptor, types);
     next.add(sv);
     return sv;
   }

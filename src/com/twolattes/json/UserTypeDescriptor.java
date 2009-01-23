@@ -11,8 +11,10 @@ class UserTypeDescriptor<E, J extends Json.Value> extends AbstractDescriptor<E, 
 
   private final JsonType<E, J> type;
 
+  @SuppressWarnings("unchecked")
   public UserTypeDescriptor(JsonType<E, J> type) {
-    super(type.getReturnedClass());
+    super((Class) Unification
+        .getActualTypeArgument(type.getClass(), JsonType.class, 0));
     this.type = type;
   }
 
@@ -27,7 +29,7 @@ class UserTypeDescriptor<E, J extends Json.Value> extends AbstractDescriptor<E, 
       // The Json.Value hierarchy is closed with Null as the bottom type.
       return (J) NULL;
     } else {
-      return type.marshall(type.getReturnedClass().cast(entity));
+      return type.marshall(getReturnedClass().cast(entity));
     }
   }
 
@@ -40,8 +42,9 @@ class UserTypeDescriptor<E, J extends Json.Value> extends AbstractDescriptor<E, 
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public Class<E> getReturnedClass() {
-    return type.getReturnedClass();
+    return (Class<E>) super.getReturnedClass();
   }
 
   @Override

@@ -3,6 +3,8 @@ package com.twolattes.json;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.HashMap;
 
 import org.junit.Test;
 
@@ -18,6 +20,6 @@ public class DescriptorsEqualityTest {
 
   private EntityDescriptor<?> create(Class<BaseTypeEntity> clazz) throws IOException {
     return new DescriptorFactory().create(
-        clazz, new EntityDescriptorStore());
+        clazz, new EntityDescriptorStore(), new HashMap<Type, Class<?>>());
   }
 }

@@ -7,7 +7,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -175,6 +177,7 @@ public class DescriptorFactoryTest {
 
   private EntityDescriptor<?> create(Class<?> clazz) throws IOException {
     return new DescriptorFactory().create(
-        clazz, new DescriptorFactory.EntityDescriptorStore());
+        clazz, new DescriptorFactory.EntityDescriptorStore(),
+        new HashMap<Type, Class<?>>());
   }
 }

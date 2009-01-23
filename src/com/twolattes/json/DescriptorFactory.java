@@ -2,6 +2,7 @@ package com.twolattes.json;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,12 +15,14 @@ import org.objectweb.asm.signature.SignatureReader;
  * An {@link EntityDescriptor} factory.
  */
 class DescriptorFactory {
+
   /**
    * Creates an {@link EntityDescriptor} based on a {@link Class} object.
    */
   @SuppressWarnings("unchecked")
   <T> EntityDescriptor<T> create(
-      Class<?> c, EntityDescriptorStore store) throws IOException {
+      Class<?> c, EntityDescriptorStore store,
+      Map<Type, Class<?>> types) throws IOException {
     // may be creating it already
     if (store.contains(c)) {
       return store.get(c);
@@ -51,13 +54,13 @@ class DescriptorFactory {
       for (Class<?> subclass : annotation.subclasses()) {
         if (subclass.equals(c)) {
           subclassesDescriptor.add(
-              createConcreteEntityDescriptor(subclass, store));
+              createConcreteEntityDescriptor(subclass, store, types));
         } else if (!c.isAssignableFrom(subclass)) {
           throw new IllegalArgumentException(
               "The class " + subclass + " is not a subclass of the" +
               " polymorphic entity " + c + ".");
         } else {
-          subclassesDescriptor.add(create(subclass, store));
+          subclassesDescriptor.add(create(subclass, store, types));
         }
       }
 
@@ -67,20 +70,21 @@ class DescriptorFactory {
           "The subclasses option must be used in conjunction of the " +
           "discriminatorName option: " + c);
     } else {
-      return createConcreteEntityDescriptor(c, store);
+      return createConcreteEntityDescriptor(c, store, types);
     }
   }
 
   @SuppressWarnings("unchecked")
   private <T> ConcreteEntityDescriptor<T> createConcreteEntityDescriptor(
-      Class<?> c, EntityDescriptorStore store) throws IOException {
+      Class<?> c, EntityDescriptorStore store,
+      Map<Type, Class<?>> types) throws IOException {
     // parent of the entity
     Class<?> parentClass = c.getSuperclass();
     ConcreteEntityDescriptor<?> parent = null;
     while (parentClass != null) {
       Entity parentAnnotation = parentClass.getAnnotation(Entity.class);
       if (parentAnnotation != null) {
-        parent = createConcreteEntityDescriptor(parentClass, store);
+        parent = createConcreteEntityDescriptor(parentClass, store, types);
         break;
       }
       parentClass = parentClass.getSuperclass();
@@ -98,7 +102,7 @@ class DescriptorFactory {
       }
       ClassReader reader = new ClassReader(in);
       EntityClassVisitor entityClassVisitor =
-        new EntityClassVisitor(c, store, annotation.inline());
+        new EntityClassVisitor(c, store, annotation.inline(), types);
       reader.accept(entityClassVisitor, true);
       // getting the descriptor
 
@@ -136,10 +140,10 @@ class DescriptorFactory {
    */
   @SuppressWarnings("unchecked")
   Descriptor create(String signature, EntityDescriptorStore store,
-      FieldDescriptor fieldDescriptor) {
+      FieldDescriptor fieldDescriptor, Map<Type, Class<?>> types) {
     SignatureReader r = new SignatureReader(signature);
     EntitySignatureVisitor entitySignatureVisitor =
-        new EntitySignatureVisitor(signature, store, fieldDescriptor);
+        new EntitySignatureVisitor(signature, store, fieldDescriptor, types);
     r.accept(entitySignatureVisitor);
     return entitySignatureVisitor.getDescriptor();
   }

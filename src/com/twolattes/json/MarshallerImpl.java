@@ -1,9 +1,11 @@
 package com.twolattes.json;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 class MarshallerImpl<T> implements Marshaller<T> {
 
@@ -12,11 +14,11 @@ class MarshallerImpl<T> implements Marshaller<T> {
 
 
   @SuppressWarnings("unchecked")
-  MarshallerImpl(Class<T> clazz) {
+  MarshallerImpl(Class<T> clazz, Map<Type, Class<?>> types) {
     try {
       this.clazz = clazz;
       this.descriptor = new DescriptorFactory().create(
-          clazz, new DescriptorFactory.EntityDescriptorStore());
+          clazz, new DescriptorFactory.EntityDescriptorStore(), types);
     } catch (IOException e) {
       throw new IllegalArgumentException(clazz + " unreadable");
     }

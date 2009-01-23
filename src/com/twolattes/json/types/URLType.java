@@ -11,8 +11,6 @@ import com.twolattes.json.Value;
 /**
  * A type converter for {@link URL} objects. This converter may be used with
  * the {@link Value#type()} option.
- *
- * @author Pascal
  */
 public class URLType extends NullSafeType<URL, Json.String> {
   @Override
