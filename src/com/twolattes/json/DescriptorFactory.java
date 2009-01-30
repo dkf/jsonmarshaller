@@ -49,22 +49,28 @@ class DescriptorFactory {
       }
 
       // getting all the concrete descriptors
-      Set<EntityDescriptor<?>> subclassesDescriptor =
-          new HashSet<EntityDescriptor<?>>(subclassesLength);
+      Map<String, EntityDescriptor<?>> subclassesDescriptor =
+          new HashMap<String, EntityDescriptor<?>>(subclassesLength);
       for (Class<?> subclass : annotation.subclasses()) {
-        if (subclass.equals(c)) {
-          subclassesDescriptor.add(
-              createConcreteEntityDescriptor(subclass, store, types));
-        } else if (!c.isAssignableFrom(subclass)) {
+        if (c.isAssignableFrom(subclass)) {
+          ConcreteEntityDescriptor<Object> concreteEntityDescriptor =
+              createConcreteEntityDescriptor(subclass, store, types);
+          String discriminator = concreteEntityDescriptor.getDiscriminator();
+          if (subclassesDescriptor.put(
+              discriminator, concreteEntityDescriptor) != null) {
+            throw new IllegalArgumentException(
+                "The discriminator " + discriminator + " is already used by" +
+                " the entity " + concreteEntityDescriptor.getReturnedClass() + ".");
+          }
+        } else {
           throw new IllegalArgumentException(
               "The class " + subclass + " is not a subclass of the" +
               " polymorphic entity " + c + ".");
-        } else {
-          subclassesDescriptor.add(create(subclass, store, types));
         }
       }
 
-      return createPolymorphicEntityDescriptor(c, store, subclassesDescriptor);
+      return createPolymorphicEntityDescriptor(c, store,
+          new HashSet<EntityDescriptor<?>>(subclassesDescriptor.values()));
     } else if (discriminatorName != null && discriminatorName.length() > 0) {
       throw new IllegalArgumentException(
           "The subclasses option must be used in conjunction of the " +

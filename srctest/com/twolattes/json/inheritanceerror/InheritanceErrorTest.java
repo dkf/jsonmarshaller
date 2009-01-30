@@ -36,6 +36,11 @@ public class InheritanceErrorTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
+  public void testDiscriminatorUsedTwice() throws Exception {
+    TwoLattes.createMarshaller(DiscriminatorUsedTwice.class);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
   public void testParentEntity() throws Exception {
     TwoLattes.createMarshaller(ParentEntity.class);
   }
