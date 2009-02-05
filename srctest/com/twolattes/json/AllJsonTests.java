@@ -43,6 +43,7 @@ import com.twolattes.json.visibility2.Visibility2Test;
   EnumTest.class,
   LiteralsTest.class,
   BigDecimalTest.class,
+  UserTypeDescriptorTest.class,
 
   // Json
   JsonTest.class,
