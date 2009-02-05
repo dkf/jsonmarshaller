@@ -760,6 +760,36 @@ public final class Json {
     return o;
   }
 
+  public static Json.Object object(
+      Json.String k1, Json.Value v1,
+      Json.String k2, Json.Value v2,
+      Json.String k3, Json.Value v3) {
+    Json.Object o = object(k1, v1, k2, v2);
+    o.put(k3, v3);
+    return o;
+  }
+
+  public static Json.Object object(
+      Json.String k1, Json.Value v1,
+      Json.String k2, Json.Value v2,
+      Json.String k3, Json.Value v3,
+      Json.String k4, Json.Value v4) {
+    Json.Object o = object(k1, v1, k2, v2, k3, v3);
+    o.put(k4, v4);
+    return o;
+  }
+
+  public static Json.Object object(
+      Json.String k1, Json.Value v1,
+      Json.String k2, Json.Value v2,
+      Json.String k3, Json.Value v3,
+      Json.String k4, Json.Value v4,
+      Json.String k5, Json.Value v5) {
+    Json.Object o = object(k1, v1, k2, v2, k3, v3, k4, v4);
+    o.put(k5, v5);
+    return o;
+  }
+
   public static Json.Number number(double number) {
     return new Json.NumberImpl(number);
   }
