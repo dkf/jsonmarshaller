@@ -10,7 +10,7 @@ import com.twolattes.json.Json;
 import com.twolattes.json.Value;
 
 @Entity
-public class EntityRequiringTypeRegistration {
+public class EntityRequiringTypeRegistration1 {
 
   @Value(optional = true)
   Weird weird1;

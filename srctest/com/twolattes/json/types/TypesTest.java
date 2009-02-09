@@ -21,7 +21,9 @@ import org.junit.Test;
 import com.twolattes.json.Json;
 import com.twolattes.json.Marshaller;
 import com.twolattes.json.TwoLattes;
-import com.twolattes.json.types.EntityRequiringTypeRegistration.WeirdJsonType;
+import com.twolattes.json.types.EntityRequiringTypeRegistration1.WeirdJsonType;
+import com.twolattes.json.types.EntityRequiringTypeRegistration2.ArrayJsonType;
+import com.twolattes.json.types.EntityRequiringTypeRegistration2.IdJsonType;
 
 public class TypesTest {
 
@@ -138,10 +140,10 @@ public class TypesTest {
 
   @Test
   public void typesRegistration1() throws Exception {
-    Marshaller<EntityRequiringTypeRegistration> marshaller = TwoLattes
+    Marshaller<EntityRequiringTypeRegistration1> marshaller = TwoLattes
         .withType(WeirdJsonType.class)
-        .createMarshaller(EntityRequiringTypeRegistration.class);
-    Json.Object o = marshaller.marshall(new EntityRequiringTypeRegistration() {{
+        .createMarshaller(EntityRequiringTypeRegistration1.class);
+    Json.Object o = marshaller.marshall(new EntityRequiringTypeRegistration1() {{
           this.weird1 = new Weird("field-registered-type");
           this.weird2 = new Weird("field-overridden-type");
           this.weird3 = new Weird("getter-registered-type");
@@ -166,8 +168,8 @@ public class TypesTest {
   @Test
   public void typesRegistration2() throws Exception {
     Json.Object o = TwoLattes.withType(WeirdJsonType.class)
-        .createMarshaller(EntityRequiringTypeRegistration.class)
-        .marshall(new EntityRequiringTypeRegistration() {{
+        .createMarshaller(EntityRequiringTypeRegistration1.class)
+        .marshall(new EntityRequiringTypeRegistration1() {{
           this.list = newArrayList(new Weird("yo"));
         }});
 
@@ -178,13 +180,46 @@ public class TypesTest {
   @Test
   public void typesRegistration3() throws Exception {
     Json.Object o = TwoLattes.withType(WeirdJsonType.class)
-        .createMarshaller(EntityRequiringTypeRegistration.class)
-        .marshall(new EntityRequiringTypeRegistration() {{
+        .createMarshaller(EntityRequiringTypeRegistration1.class)
+        .marshall(new EntityRequiringTypeRegistration1() {{
           this.map = immutableMap("foo", new Weird("bar"));
         }});
 
     assertEquals(object(string("foo"), string("bar")), o.get(string("map")));
     assertEquals(1, o.size());
+  }
+
+  @Test
+  public void typesRegistration4() throws Exception {
+    Marshaller<EntityRequiringTypeRegistration2> marshaller = TwoLattes
+        .withType(IdJsonType.class)
+        .createMarshaller(EntityRequiringTypeRegistration2.class);
+
+    Json.Object o = marshaller
+        .marshall(new EntityRequiringTypeRegistration2() {{
+          this.id = new Id<EntityRequiringTypeRegistration2>() {{
+            this.id = 7;
+          }};
+        }});
+
+    assertEquals(
+        object(
+            string("id"), number(7),
+            string("array"), NULL),
+        o);
+
+    EntityRequiringTypeRegistration2 entity = marshaller.unmarshall(o);
+
+    assertEquals(7L, entity.id.id);
+    assertNull(entity.array);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void typesRegistration5() throws Exception {
+    TwoLattes
+        .withType(IdJsonType.class)
+        .withType(ArrayJsonType.class)
+        .createMarshaller(EntityRequiringTypeRegistration2.class);
   }
 
 }

@@ -3,6 +3,8 @@ package com.twolattes.json;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -13,6 +15,17 @@ import java.util.List;
  * {@link http://blog.kaching.com/index.php/2009/01/16/unifying-type-parameters-in-java/}.
  */
 class Unification {
+
+  @SuppressWarnings("unchecked")
+  public static Class<?> extractRawType(Type type) {
+    if (type instanceof ParameterizedType) {
+      return (Class) (((ParameterizedType) type).getRawType());
+    } else if (type instanceof GenericArrayType) {
+      return Array.class;
+    } else {
+      return (Class) type;
+    }
+  }
 
   public static Type getActualTypeArgument(
       Class<?> subClass, Class<?> superClass, int typeParameterIndex) {

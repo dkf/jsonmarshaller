@@ -1,11 +1,8 @@
 package com.twolattes.json;
 
 import static com.twolattes.json.Json.NULL;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import static com.twolattes.json.Unification.extractRawType;
+import static com.twolattes.json.Unification.getActualTypeArgument;
 
 import com.twolattes.json.types.JsonType;
 
@@ -23,15 +20,8 @@ class UserTypeDescriptor<E, J extends Json.Value> extends AbstractDescriptor<E, 
 
   @SuppressWarnings("unchecked")
   private static <E> Class<E> extractReturnType(JsonType<E, ?> jsonType) {
-    Type type = Unification
-        .getActualTypeArgument(jsonType.getClass(), JsonType.class, 0);
-    if (type instanceof ParameterizedType) {
-      return (Class) (((ParameterizedType) type).getRawType());
-    } else if (type instanceof GenericArrayType) {
-      return (Class<E>) Array.class;
-    } else {
-      return (Class) type;
-    }
+    return (Class<E>) extractRawType(
+        getActualTypeArgument(jsonType.getClass(), JsonType.class, 0));
   }
 
   @Override

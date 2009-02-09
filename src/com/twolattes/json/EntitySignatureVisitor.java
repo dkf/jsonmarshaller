@@ -148,16 +148,12 @@ class EntitySignatureVisitor implements SignatureVisitor {
       /*
        * We process only covariant structures, encountering a contravariant
        * marker indicates that the entity is incorrectly specified. If we had
-       * List<? super A> then it might as we be List<Object>.
+       * List<? super A> then it might as if we had List<Object>.
        */
       throw new IllegalArgumentException("collections contravariant");
-    } else if (State.collection.equals(state)) {
-      return nextSignatureVisitor();
-    } else if (State.map.equals(state)) {
-      return nextSignatureVisitor();
-    } else {
-      throw new UnsupportedOperationException("formal parameters to entity");
     }
+
+    return nextSignatureVisitor();
   }
 
   private SignatureVisitor nextSignatureVisitor() {

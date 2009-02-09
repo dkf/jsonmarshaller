@@ -1,5 +1,10 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Unification.extractRawType;
+import static com.twolattes.json.Unification.getActualTypeArgument;
+import static java.lang.String.format;
+
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,15 +37,22 @@ public final class TwoLattes {
    */
   public static class Builder {
 
-    private final Map<Type, Class<?>> types = new HashMap<Type, Class<?>>();
+    private final Map<Class<?>, Class<?>> types = new HashMap<Class<?>, Class<?>>();
 
     Builder() {
     }
 
     public Builder withType(Class<? extends JsonType<?, ?>> clazz) {
-      types.put(
-          Unification.getActualTypeArgument(clazz, JsonType.class, 0),
-          clazz);
+      Class<?> rawType = extractRawType(
+          getActualTypeArgument(clazz, JsonType.class, 0));
+      if (rawType.equals(Array.class)) {
+        throw new IllegalArgumentException(
+            format(
+                "%s overriding array's marshalling behavior cannot be registered",
+                JsonType.class.getSimpleName()));
+      }
+
+      types.put(rawType, clazz);
       return this;
     }
 
