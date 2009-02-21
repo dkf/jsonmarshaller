@@ -47,7 +47,8 @@ import com.twolattes.json.visibility2.Visibility2Test;
 
   // Json
   JsonTest.class,
-  OrgJsonAssert.class
+  OrgJsonAssert.class,
+  PrettyPrinterTest.class
 })
 public class AllJsonTests {
 }
