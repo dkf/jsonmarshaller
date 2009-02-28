@@ -117,7 +117,7 @@ public class UnmarshallingTest {
 
   @Test
   public void testInlinedEntityUsingInlineAnnotation6() throws Exception {
-	List<EmailInline> emails =
+    List<EmailInline> emails =
         unmarshallList(EmailInline.class, "[\"jack.bauer@ctu.gov\"]");
 
     assertNotNull(emails);
@@ -230,7 +230,7 @@ public class UnmarshallingTest {
 
   @Test
   public void testDoublyInlined1() throws Exception {
-	  DoublyInlined e = unmarshall(DoublyInlined.class, "{\"foo\":\"hello there\"}");
+    DoublyInlined e = unmarshall(DoublyInlined.class, "{\"foo\":\"hello there\"}");
 
     assertNotNull(e.foo);
     assertNotNull(e.foo.bar);
@@ -239,7 +239,7 @@ public class UnmarshallingTest {
 
   @Test
   public void testDoublyInlined2() throws Exception {
-	  DoublyInlined e = unmarshall(DoublyInlined.class, "{\"foo\":null}");
+    DoublyInlined e = unmarshall(DoublyInlined.class, "{\"foo\":null}");
 
     assertNull(e.foo);
   }
@@ -293,6 +293,18 @@ public class UnmarshallingTest {
     assertEquals("yesItIs", obj.getOptional());
   }
 
+  @Test
+  public void testMismatchedGetterSetter() {
+    AWithNonstandardAccessorNames nsan = unmarshall(
+        AWithNonstandardAccessorNames.class, "{\"foo\":\"foo\",\"bar\":\"bar\"}");
+    assertEquals(nsan.getA(), "foo");
+    assertEquals(nsan.getATag(), "bar");
+
+    String baz = "baz";
+    nsan.setAWithWeirdName(baz);
+    assertEquals(nsan.getA(), baz);
+  }
+
   private <T> T unmarshall(Class<T> clazz, String json) throws JSONException {
     return unmarshall(clazz, json, false, null);
   }
@@ -310,4 +322,5 @@ public class UnmarshallingTest {
     Marshaller<T> marshaller = TwoLattes.createMarshaller(clazz);
     return marshaller.unmarshallList((Json.Array) Json.fromString(json));
   }
+
 }

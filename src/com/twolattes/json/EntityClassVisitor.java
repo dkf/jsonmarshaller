@@ -124,6 +124,13 @@ class EntityClassVisitor extends EmptyVisitor {
         // creating, checking against discovered descriptors
         GetSetFieldDescriptor descriptor = new GetSetFieldDescriptor(SETTER, setter);
         FieldDescriptor potentialDescriptor = fieldDescriptors.get(descriptor.getFieldName());
+        if (potentialDescriptor==null) {
+          for (String fieldName : fieldDescriptors.keySet()) {
+            if (descriptor.getFieldName().startsWith(fieldName)) {
+              potentialDescriptor = fieldDescriptors.get(fieldName);
+            }
+          }
+        }
         if (potentialDescriptor != null) {
           if (potentialDescriptor instanceof GetSetFieldDescriptor) {
             descriptor = (GetSetFieldDescriptor) potentialDescriptor;
