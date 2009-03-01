@@ -168,7 +168,14 @@ class EntityClassVisitor extends EmptyVisitor {
   }
 
   protected void add(FieldDescriptor fieldDescriptor) {
-    fieldDescriptors.put(fieldDescriptor.getFieldName(), fieldDescriptor);
+      // if the annotated name is different than the actual field name, use the annotated name 
+      String fieldName = fieldDescriptor.getFieldName();
+      String jsonName = fieldDescriptor.getJsonName();
+      String name = fieldName.equals(jsonName) ? fieldName : jsonName;
+      if (fieldDescriptors.containsKey(name)) {
+          throw new IllegalArgumentException("Value with name " + name + " is described multiple times.");
+      }
+      fieldDescriptors.put(name, fieldDescriptor);
   }
 
   @SuppressWarnings("unchecked")

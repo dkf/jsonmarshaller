@@ -417,4 +417,14 @@ public class MarshallingTest {
     assertEquals(1, o.size());
   }
 
+  @Test
+  public void testDifferentFieldGetterSetterName() {
+    Foo foo = new Foo();
+    foo.foo = 42;
+
+    assertEquals(
+        object(string("foo"), number(42), string("bar"), number(42)),
+        TwoLattes.createMarshaller(Foo.class).marshall(foo));
+  }
+
 }

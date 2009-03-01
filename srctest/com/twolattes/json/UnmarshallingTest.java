@@ -305,6 +305,25 @@ public class UnmarshallingTest {
     assertEquals(nsan.getA(), baz);
   }
 
+ /** Tests a value with field @Value name that is different from the getter/setter name (see Foo.java), in effect
+  * duplicating the value under two different names in the serialized form. This is useful when migrating from an
+  * old to new protocol (i.e. renaming with no down-time).
+  * @see com.twolattes.json.Foo
+  */
+  @Test
+  public void testDifferentFieldGetterSetterName() {
+      Foo foo = unmarshall(Foo.class, "{\"bar\":42.0,\"foo\":42.0}");
+      assertEquals(foo.foo, 42);
+
+      // the following two tests are not strictly necessary, because the field name and method name should ALWAYS be
+      // identical. However, these tests are here to check that the field name takes precedence over the getter/setter
+      // names.
+      Foo bar = unmarshall(Foo.class, "{\"bar\":0.0,\"foo\":42.0}");
+      assertEquals(bar.foo, 0);
+      Foo baz = unmarshall(Foo.class, "{\"bar\":42.0,\"foo\":0.0}");
+      assertEquals(baz.foo, 42);
+  }
+
   private <T> T unmarshall(Class<T> clazz, String json) throws JSONException {
     return unmarshall(clazz, json, false, null);
   }

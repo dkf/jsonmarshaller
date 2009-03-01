@@ -8,6 +8,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * An entity descriptor.
@@ -189,12 +191,30 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
     }
   }
 
+ /**
+  * If the getter/setter for a field has a different @Value(name) annotation than the actual field, the getter/setter
+  * will have a different name, and looking for it by the field name will return a null, and trying to invoke the
+  * getter/setter will generate a NullPointerException.
+  * Using only descriptors for actual fields guarantees that it will be possible to set the field's value.
+  *
+  * @return a set of <code>FieldDescriptor</code>s that correspond to actual fields.   
+  */
+  private Set<FieldDescriptor> getDescriptorsByFieldName() {
+      Map<String, FieldDescriptor> descriptors = new HashMap<String, FieldDescriptor>();
+      for (FieldDescriptor d : getFieldDescriptors()) {
+          if (!descriptors.containsKey(d.getFieldName()) ) {
+              descriptors.put(d.getFieldName(), d);
+          }
+      }
+      return new HashSet<FieldDescriptor>(descriptors.values());
+  }
+
   @SuppressWarnings("unchecked")
   private void unmarshallFields(Json.Object jsonObject, Object entity, String view) {
     if (parent != null) {
       parent.unmarshallFields(jsonObject, entity, view);
     }
-    for (FieldDescriptor d : getFieldDescriptors()) {
+      for (FieldDescriptor d : getDescriptorsByFieldName()) {
       Json.String name = string(d.getJsonName());
       if (jsonObject.containsKey(name)) {
         if (d.isInView(view)) {
