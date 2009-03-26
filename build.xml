@@ -14,7 +14,7 @@
 
   <!-- project properties -->
   <property name="author" value="Pascal-Louis Perez (pascallouisperez@gmail.com)" />
-  <property name="version" value="0.14" />
+  <property name="version" value="0.15" />
   
   <!-- initialize the build  -->
   <target name="init">

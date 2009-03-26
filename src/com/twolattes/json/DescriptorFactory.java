@@ -136,8 +136,10 @@ class DescriptorFactory {
   private <T> EntityDescriptor<T> createPolymorphicEntityDescriptor(Class<?> c,
       EntityDescriptorStore store, Set<EntityDescriptor<?>> descriptors) {
     Entity annotation = c.getAnnotation(Entity.class);
-    return new PolymorphicEntityDescriptor<T>(
+    PolymorphicEntityDescriptor<T> descriptor = new PolymorphicEntityDescriptor<T>(
         c, annotation.discriminatorName(), descriptors);
+    store.put(c, descriptor);
+    return descriptor;
   }
 
   /**
