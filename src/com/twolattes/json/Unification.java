@@ -1,6 +1,5 @@
 package com.twolattes.json;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
 import java.lang.reflect.Array;
@@ -8,6 +7,7 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,7 +58,8 @@ class Unification {
     Type[] genericInterfaces = subClass.getGenericInterfaces();
     for (int i = 0; i < interfaces.length; i++) {
       if (interfaces[i].equals(superClass)) {
-        linearHierarchy = newArrayList(
+        linearHierarchy = new ArrayList<ClassWithType>();
+        linearHierarchy.add(
             new ClassWithType(
                 interfaces[i], (ParameterizedType) genericInterfaces[i]));
       } else {
