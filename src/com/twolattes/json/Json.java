@@ -790,6 +790,45 @@ public final class Json {
     return o;
   }
 
+  public static Json.Object object(
+      Json.String k1, Json.Value v1,
+      Json.String k2, Json.Value v2,
+      Json.String k3, Json.Value v3,
+      Json.String k4, Json.Value v4,
+      Json.String k5, Json.Value v5,
+      Json.String k6, Json.Value v6) {
+    Json.Object o = object(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5);
+    o.put(k6, v6);
+    return o;
+  }
+
+  public static Json.Object object(
+      Json.String k1, Json.Value v1,
+      Json.String k2, Json.Value v2,
+      Json.String k3, Json.Value v3,
+      Json.String k4, Json.Value v4,
+      Json.String k5, Json.Value v5,
+      Json.String k6, Json.Value v6,
+      Json.String k7, Json.Value v7) {
+    Json.Object o = object(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6);
+    o.put(k7, v7);
+    return o;
+  }
+
+  public static Json.Object object(
+      Json.String k1, Json.Value v1,
+      Json.String k2, Json.Value v2,
+      Json.String k3, Json.Value v3,
+      Json.String k4, Json.Value v4,
+      Json.String k5, Json.Value v5,
+      Json.String k6, Json.Value v6,
+      Json.String k7, Json.Value v7,
+      Json.String k8, Json.Value v8) {
+    Json.Object o = object(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7);
+    o.put(k8, v8);
+    return o;
+  }
+
   public static Json.Number number(double number) {
     return new Json.NumberImpl(number);
   }
