@@ -54,9 +54,12 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
     if (isJsonValue) {
       Descriptor entityDescriptor;
       JsonType<?, ?> type = fieldDescriptor.getType();
-      if (type == null) {
-        entityDescriptor =
-            new DescriptorFactory().create(signature, store, fieldDescriptor, types);
+      if (type == null && types.containsKey(field.getType())) {
+        entityDescriptor = new UserTypeDescriptor(
+            (JsonType) Instantiator.newInstance(types.get(field.getType())));
+      } else if (type == null) {
+          entityDescriptor =
+              new DescriptorFactory().create(signature, store, fieldDescriptor, types);
       } else {
         entityDescriptor = new UserTypeDescriptor(type);
       }

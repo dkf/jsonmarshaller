@@ -11,7 +11,7 @@ import com.twolattes.json.Value;
 public class EntityRequiringTypeRegistration2 {
 
   @Value(optional = true)
-  Id<EntityRequiringTypeRegistration2> id;
+  Id<Object> id;
 
   @Value
   int[] array;

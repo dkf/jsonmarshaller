@@ -197,7 +197,7 @@ public class TypesTest {
 
     Json.Object o = marshaller
         .marshall(new EntityRequiringTypeRegistration2() {{
-          this.id = new Id<EntityRequiringTypeRegistration2>() {{
+          this.id = new Id<Object>() {{
             this.id = 7;
           }};
         }});
