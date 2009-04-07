@@ -6,10 +6,10 @@ import static com.twolattes.json.Json.string;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * An entity descriptor.
@@ -197,7 +197,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
   * getter/setter will generate a NullPointerException.
   * Using only descriptors for actual fields guarantees that it will be possible to set the field's value.
   *
-  * @return a set of <code>FieldDescriptor</code>s that correspond to actual fields.   
+  * @return a set of <code>FieldDescriptor</code>s that correspond to actual fields.
   */
   private Set<FieldDescriptor> getDescriptorsByFieldName() {
       Map<String, FieldDescriptor> descriptors = new HashMap<String, FieldDescriptor>();
@@ -214,7 +214,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
     if (parent != null) {
       parent.unmarshallFields(jsonObject, entity, view);
     }
-      for (FieldDescriptor d : getDescriptorsByFieldName()) {
+    for (FieldDescriptor d : getDescriptorsByFieldName()) {
       Json.String name = string(d.getJsonName());
       if (jsonObject.containsKey(name)) {
         if (d.isInView(view)) {

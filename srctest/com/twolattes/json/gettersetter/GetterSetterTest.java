@@ -6,7 +6,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.junit.Ignore;
+import java.net.URL;
+
 import org.junit.Test;
 
 import com.twolattes.json.Email;
@@ -98,28 +99,33 @@ public class GetterSetterTest {
   }
 
   @Test
-  @Ignore("TODO(pascal): implement.")
   public void getterSetter4Marshall() throws Exception {
     // entity
     GetterSetter4 e = new GetterSetter4();
+    e.setData(new URL("http://b.org"));
 
     // marshalling
     Json.Object o = TwoLattes.createMarshaller(GetterSetter4.class).marshall(e);
 
     // assertions
-    assertEquals(string("foobar"), o.get(string("email")));
+    assertEquals(string("http://b.org"), o.get(string("data")));
     assertEquals(1, o.size());
   }
 
   @Test
-  @Ignore("TODO(pascal): implement.")
   public void getterSetter4Unmarshall() throws Exception {
     // unmarshalling
     GetterSetter4 e = TwoLattes.createMarshaller(GetterSetter4.class)
-        .unmarshall(object());
+        .unmarshall((Json.Object) Json.fromString("{\"data\":\"http://a.com\"}"));
 
     // assertions
     assertNotNull(e);
-    assertNull(e.data);
+    assertEquals(new URL("http://a.com"), e.data);
   }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void getterSetter5() throws Exception {
+    TwoLattes.createMarshaller(GetterSetter5.class);
+  }
+
 }

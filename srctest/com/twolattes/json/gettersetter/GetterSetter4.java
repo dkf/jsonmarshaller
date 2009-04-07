@@ -11,14 +11,21 @@ public class GetterSetter4 {
 
   URL data;
 
-  void getData(String goo) {
+  @Value(type = URLType.class)
+  public URL getData() {
+    return data;
   }
 
-  void setData() {
+  public URL getData(String s) {
+    return data;
   }
 
-  @Value(type = URLType.class) public URL getData() { return data; }
+  @Value(type = URLType.class)
+  public void setData(URL data) {
+    this.data = data;
+  }
 
-  @Value(type = URLType.class) public void setData(URL data) { this.data = data; }
+  public void setData(String data) {
+  }
 
 }

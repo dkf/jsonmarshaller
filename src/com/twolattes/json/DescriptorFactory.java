@@ -107,12 +107,13 @@ class DescriptorFactory {
         throw new IllegalArgumentException("cannot find bytecode for " + c);
       }
       ClassReader reader = new ClassReader(in);
-      EntityClassVisitor entityClassVisitor =
+      EntityClassVisitor visitor =
         new EntityClassVisitor(c, store, annotation.inline(), types);
-      reader.accept(entityClassVisitor, true);
-      // getting the descriptor
+      reader.accept(visitor, true);
+      visitor.verify();
 
-      EntityDescriptor<?> descriptor = entityClassVisitor.getDescriptor(parent);
+      // getting the descriptor
+      EntityDescriptor<?> descriptor = visitor.getDescriptor(parent);
 
       store.put(c, descriptor);
 
