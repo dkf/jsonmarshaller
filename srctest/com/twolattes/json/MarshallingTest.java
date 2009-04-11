@@ -17,7 +17,6 @@ import java.util.List;
 import org.json.JSONException;
 import org.junit.Test;
 
-import com.twolattes.json.Json.Array;
 import com.twolattes.json.OuterClass.InnerClass;
 
 
@@ -157,6 +156,27 @@ public class MarshallingTest {
     Json.Array a = marshaller.marshallList(list);
     assertEquals(1, a.size());
     assertEquals(string("plperez@stanford.edu"), a.get(0));
+  }
+
+  @Test
+  public void testInlininPolymorphicEntityThatHasOnlyDiscriminator() {
+    Marshaller<InlinePolymorphic> marshaller = TwoLattes.createMarshaller(InlinePolymorphic.class);
+
+    Json.Object notInlined = marshaller.marshall(new InlinePolymorphic() {{
+      doNotInlineMe = new Polymorphic();
+    }});
+
+    assertEquals(
+        object(string("doNotInlineMe"), object(string("foo"), string("bar"))),
+        notInlined);
+
+    Json.Object inlined = marshaller.marshall(new InlinePolymorphic() {{
+      inlineMe = new Polymorphic();
+    }});
+
+    assertEquals(
+        object(string("inlineMe"), string("bar")),
+        inlined);
   }
 
   @Test
@@ -373,7 +393,7 @@ public class MarshallingTest {
     Json.Object o = m.marshall(e);
 
     assertEquals(1, o.size());
-    Json.Array ids = (Array) o.get(string("ids"));
+    Json.Array ids = (Json.Array) o.get(string("ids"));
     assertEquals(3, ids.size());
     assertEquals(number(5), ids.get(0));
     assertEquals(number(1), ids.get(1));
@@ -388,13 +408,13 @@ public class MarshallingTest {
     Json.Object o = TwoLattes.createMarshaller(ArrayOfArray.class).marshall(arrayOfArray);
 
     assertEquals(1, o.size());
-    Json.Array matrix = (Array) o.get(string("matrix"));
+    Json.Array matrix = (Json.Array) o.get(string("matrix"));
     assertEquals(2, matrix.size());
-    Json.Array a0 = (Array) matrix.get(0);
+    Json.Array a0 = (Json.Array) matrix.get(0);
     assertEquals(2, a0.size());
     assertEquals(number(56), a0.get(0));
     assertEquals(number(57), a0.get(1));
-    Json.Array a1 = (Array) matrix.get(1);
+    Json.Array a1 = (Json.Array) matrix.get(1);
     assertEquals(2, a1.size());
     assertEquals(number(58), a1.get(0));
     assertEquals(number(59), a1.get(1));

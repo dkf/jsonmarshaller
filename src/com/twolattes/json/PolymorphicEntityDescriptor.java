@@ -1,5 +1,6 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.object;
 import static com.twolattes.json.Json.string;
 
 import java.util.HashMap;
@@ -54,7 +55,12 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
   }
 
   public boolean isInlineable() {
-    return false;
+    for (EntityDescriptor<?> descriptor : subDescriptorsByClass.values()) {
+      if (!descriptor.getFieldDescriptors().isEmpty()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public boolean shouldInline() {
@@ -87,8 +93,18 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     return jsonObject;
   }
 
-  public Json.Object marshallInline(T entity, String view) {
-    throw new UnsupportedOperationException();
+  @SuppressWarnings("unchecked")
+  public Json.Value marshallInline(T entity, String view) {
+    // null
+    if (entity == null) {
+      return Json.NULL;
+    }
+
+    // null safe
+    EntityDescriptor<Object> descriptor =
+        (EntityDescriptor<Object>) subDescriptorsByClass.get(entity.getClass());
+
+    return string(descriptor.getDiscriminator());
   }
 
   @SuppressWarnings("unchecked")
@@ -112,8 +128,21 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     });
   }
 
-  public T unmarshallInline(Json.Value entity, String view) {
-    throw new UnsupportedOperationException();
+  @SuppressWarnings("unchecked")
+  public T unmarshallInline(Json.Value entity, final String view) {
+    return entity.visit(new JsonVisitor.Empty<T>() {
+      @Override
+      public T caseNull() {
+        return null;
+      }
+      @Override
+      public T caseString(Json.String discriminator) {
+        EntityDescriptor<?> descriptor =
+            subDescriptorsByDisciminator.get(discriminator);
+        return (T) descriptor.unmarshall(
+            object(string(discriminatorName), discriminator), view);
+      }
+    });
   }
 
 }

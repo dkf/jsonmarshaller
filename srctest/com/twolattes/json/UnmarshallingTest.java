@@ -1,5 +1,7 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.object;
+import static com.twolattes.json.Json.string;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -124,6 +126,23 @@ public class UnmarshallingTest {
     assertEquals(1, emails.size());
     assertNotNull(emails.get(0));
     assertEquals("jack.bauer@ctu.gov", emails.get(0).email);
+  }
+
+  @Test
+  public void testInlininPolymorphicEntityThatHasOnlyDiscriminator() {
+    Marshaller<InlinePolymorphic> marshaller = TwoLattes.createMarshaller(InlinePolymorphic.class);
+
+    InlinePolymorphic notInlined = marshaller.unmarshall(
+        object(string("doNotInlineMe"), object(string("foo"), string("bar"))));
+
+    assertNull(notInlined.inlineMe);
+    assertNotNull(notInlined.doNotInlineMe);
+
+    InlinePolymorphic inlined = marshaller.unmarshall(
+        object(string("inlineMe"), string("bar")));
+
+    assertNotNull(inlined.inlineMe);
+    assertNull(inlined.doNotInlineMe);
   }
 
   @Test
