@@ -18,26 +18,38 @@ public class EmbeddingTest {
 
   @Ignore
   @Test(expected = IllegalArgumentException.class)
-  public void embeddingConflict() throws Exception {
+  public void embeddingConflict() {
     TwoLattes.createMarshaller(EmbeddingWithConflict.class);
   }
 
   @Ignore
   @Test(expected = IllegalArgumentException.class)
-  public void embeddingConflictInSubclasses() throws Exception {
+  public void embeddingConflictInSubclasses() {
     TwoLattes.createMarshaller(EmbeddingWithConflictInSubclasses.class);
   }
 
   @Ignore
   @Test(expected = IllegalArgumentException.class)
-  public void embeddingTwoClassesWithConflict() throws Exception {
+  public void embeddingTwoClassesWithConflict() {
     TwoLattes.createMarshaller(EmbeddingTwoClassesWithConflict.class);
   }
 
   @Ignore
   @Test(expected = IllegalArgumentException.class)
-  public void embeddingWithConflictBetweenSubclassesAndEmbedded() throws Exception {
+  public void embeddingWithConflictBetweenSubclassesAndEmbedded() {
     TwoLattes.createMarshaller(EmbeddingWithConflictBetweenSubclassesAndEmbedded.class);
+  }
+
+  @Ignore
+  @Test(expected = IllegalArgumentException.class)
+  public void embeddingNonEntityValue() throws Exception {
+    TwoLattes.createMarshaller(EmbeddingNonEntityValue.class);
+  }
+
+  @Ignore
+  @Test(expected = IllegalArgumentException.class)
+  public void nestedEmbeddingWithConflict() throws Exception {
+    TwoLattes.createMarshaller(NestedEmbeddingWithConflict.class);
   }
 
   @Ignore
