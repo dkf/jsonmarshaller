@@ -53,6 +53,12 @@ public class EmbeddingTest {
   }
 
   @Ignore
+  @Test(expected = IllegalArgumentException.class)
+  public void embeddingWithConflictOnDiscriminator() throws Exception {
+    TwoLattes.createMarshaller(EmbeddingWithConflictOnDiscriminator.class);
+  }
+
+  @Ignore
   @Test
   public void marshallingEmbeddingOnValue() throws Exception {
     EmbeddingOnValue embeddingOnValue = new EmbeddingOnValue();
@@ -126,6 +132,23 @@ public class EmbeddingTest {
 
   @Ignore
   @Test
+  public void marshallingEmbeddingWithInlinedValue() throws Exception {
+    EmbeddingWithInlinedValue embeddingWithInlinedValue = new EmbeddingWithInlinedValue();
+    embeddingWithInlinedValue.a = 6;
+    embeddingWithInlinedValue.b = new EmbeddingWithInlinedValue.JustB();
+    embeddingWithInlinedValue.b.b = new EmbeddingWithInlinedValue.JustA();
+    embeddingWithInlinedValue.b.b.a = 3;
+
+    assertEquals(
+        object(
+            string("a"), number(6),
+            string("b"), number(3)),
+        TwoLattes.createMarshaller(EmbeddingWithInlinedValue.class)
+            .marshall(embeddingWithInlinedValue));
+  }
+
+  @Ignore
+  @Test
   public void unmarshallingEmbeddingOnValue() throws Exception {
     EmbeddingOnValue obj = unmarshall(EmbeddingOnValue.class,
         "{\"a\":1.0,\"b\":2.0,\"c\":3.0}");
@@ -162,6 +185,19 @@ public class EmbeddingTest {
     assertEquals(1, obj.first.a);
     assertEquals(2, obj.second.b);
     assertEquals(3, obj.c);
+  }
+
+  @Ignore
+  @Test
+  public void unmarshallingEmbeddingWithInlinedValue() throws Exception {
+    EmbeddingWithInlinedValue embeddingWithInlinedValue =
+        TwoLattes.createMarshaller(EmbeddingWithInlinedValue.class)
+            .unmarshall(object(
+                string("a"), number(6),
+                string("b"), number(3)));
+
+    assertEquals(6, embeddingWithInlinedValue.a);
+    assertEquals(3, embeddingWithInlinedValue.b.b.a);
   }
 
   private <T> T unmarshall(Class<T> clazz, String json) throws JSONException {
