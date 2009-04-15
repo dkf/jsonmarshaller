@@ -43,4 +43,6 @@ public @interface Entity {
    * entity is mentionned in a parent's {@link #subclasses()} option.
    */
   String discriminator() default "";
+
+  boolean embed() default false;
 }

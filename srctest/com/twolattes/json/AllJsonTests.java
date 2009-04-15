@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.twolattes.json.bugreports.OrderStatusTest;
 import com.twolattes.json.collection.CollectionTest;
+import com.twolattes.json.embed.EmbeddingTest;
 import com.twolattes.json.enumimpl.EnumTest;
 import com.twolattes.json.gettersetter.GetterSetterTest;
 import com.twolattes.json.inheritance1.Inheritance1Test;
@@ -46,6 +47,7 @@ import com.twolattes.json.visibility2.Visibility2Test;
   BigDecimalTest.class,
   UserTypeDescriptorTest.class,
   OrderStatusTest.class,
+  EmbeddingTest.class,
 
   // Json
   JsonTest.class,

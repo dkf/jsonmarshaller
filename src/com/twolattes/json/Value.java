@@ -45,4 +45,6 @@ public @interface Value {
    * is vulnerable to constant reordering.
    */
   boolean ordinal() default false;
+
+  boolean embed() default false;
 }
