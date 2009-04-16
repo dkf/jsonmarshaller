@@ -1286,7 +1286,7 @@ public class JSONObject {
     }
     // o1 is not null, o2 must 'Null'
     if (o2 == null) {
-      return o2.getClass().equals(JSONObject.Null.class);
+      return false;
     }
     // o1, o2 are comparable objects
     if (o1.getClass().equals(o2.getClass())) {
