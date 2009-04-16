@@ -13,7 +13,6 @@ class MarshallerImpl<T> implements Marshaller<T> {
   private final Class<T> clazz;
 
 
-  @SuppressWarnings("unchecked")
   MarshallerImpl(Class<T> clazz, Map<Type, Class<?>> types) {
     try {
       this.clazz = clazz;

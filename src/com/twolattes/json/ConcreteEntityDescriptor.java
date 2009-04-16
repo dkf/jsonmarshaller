@@ -104,7 +104,6 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
     return marshall(entity, null);
   }
 
-  @SuppressWarnings("unchecked")
   public Json.Object marshall(Object entity, String view) {
     if (entity == null) {
       return Json.NULL;
@@ -254,7 +253,6 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public T unmarshallInline(final Json.Value entity, String view) {
     if (NULL.equals(entity)) {

@@ -8,8 +8,8 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.commons.EmptyVisitor;
 
+import com.twolattes.json.AbstractFieldDescriptor.DirectAccessFieldDescriptor;
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
-import com.twolattes.json.FieldDescriptor.DirectAccessFieldDescriptor;
 import com.twolattes.json.types.JsonType;
 
 class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
@@ -19,7 +19,7 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
   private final EntityClassVisitor classVisitor;
   private boolean isJsonValue = false;
   private final EntityDescriptorStore store;
-  private final FieldDescriptor fieldDescriptor;
+  private final AbstractFieldDescriptor fieldDescriptor;
   private final Map<Type, Class<?>> types;
 
   public EntityFieldVisitor(EntityClassVisitor visitor, Field field,

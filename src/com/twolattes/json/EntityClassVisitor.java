@@ -1,7 +1,7 @@
 package com.twolattes.json;
 
-import static com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor.Type.GETTER;
-import static com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor.Type.SETTER;
+import static com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor.Type.GETTER;
+import static com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor.Type.SETTER;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -14,8 +14,8 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.EmptyVisitor;
 
+import com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor;
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
-import com.twolattes.json.FieldDescriptor.GetSetFieldDescriptor;
 import com.twolattes.json.types.JsonType;
 
 class EntityClassVisitor extends EmptyVisitor {

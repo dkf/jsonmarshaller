@@ -48,7 +48,6 @@ class Unification {
         format("%s does not implement %s", subClass, superClass));
   }
 
-  @SuppressWarnings("unchecked")
   private static List<ClassWithType> getLinearHierarchy(
       Class<?> subClass, Class<?> superClass, ParameterizedType type) {
     List<ClassWithType> linearHierarchy;

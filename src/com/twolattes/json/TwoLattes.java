@@ -23,7 +23,6 @@ public final class TwoLattes {
   /**
    * Creates a {@link Marshaller} for the given class.
    */
-  @SuppressWarnings("unchecked")
   public static <T> Marshaller<T> createMarshaller(Class<T> clazz) {
     return new Builder().createMarshaller(clazz);
   }

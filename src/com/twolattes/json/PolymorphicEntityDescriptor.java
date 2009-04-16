@@ -94,7 +94,7 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
   }
 
   @SuppressWarnings("unchecked")
-  public Json.Value marshallInline(T entity, String view) {
+  public Json.String marshallInline(T entity, String view) {
     // null
     if (entity == null) {
       return Json.NULL;

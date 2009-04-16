@@ -17,11 +17,11 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
   private static final String VALUE_ANNOTATION_VIEWS = "views";
   private static final String VALUE_ANNOTATION_ORDINAL = "ordinal";
   private static final String VALUE_ANNOTATION_NAME_DEFAULT = "";
-  private final FieldDescriptor descriptor;
+  private final AbstractFieldDescriptor descriptor;
   private boolean visitingViews = false;
   private Set<String> views = null;
 
-  ValueAnnotationVisitor(FieldDescriptor descriptor) {
+  ValueAnnotationVisitor(AbstractFieldDescriptor descriptor) {
     this.descriptor = descriptor;
   }
 

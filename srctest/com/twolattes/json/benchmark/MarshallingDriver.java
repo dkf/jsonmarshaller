@@ -11,7 +11,6 @@ abstract class MarshallingDriver extends JapexDriverBase {
   private Object entity;
   private Function<Object, String> marshaller;
 
-  @SuppressWarnings("unchecked")
   @Override
   public final void prepare(TestCase testCase) {
     try {
