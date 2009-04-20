@@ -40,6 +40,15 @@ abstract class AbstractDescriptor<T, J extends Json.Value> implements Descriptor
   }
 
   /**
+   * Default implementation.
+   * @return {@code false}
+   */
+  public boolean isEmbeddable() {
+    return false;
+  }
+
+
+  /**
    * Default implementation delegating to
    * {@link AbstractDescriptor#marshallInline(Object, boolean)} after
    * verifying that the entity is inlineable.
@@ -70,5 +79,11 @@ abstract class AbstractDescriptor<T, J extends Json.Value> implements Descriptor
   @Override
   public int hashCode() {
     return this.getReturnedClass().hashCode();
+  }
+
+  public String toString(int pad) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(toString());
+    return builder.toString();
   }
 }

@@ -12,17 +12,18 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
   // TODO: reflect on the Value annotation to find those values... instead of copying them!
   private static final String VALUE_ANNOTATION_NAME = "name";
   private static final String VALUE_ANNOTATION_INLINE = "inline";
+  private static final String VALUE_ANNOTATION_EMBED = "embed";
   private static final String VALUE_ANNOTATION_OPTIONAL = "optional";
   private static final String VALUE_ANNOTATION_TYPE = "type";
   private static final String VALUE_ANNOTATION_VIEWS = "views";
   private static final String VALUE_ANNOTATION_ORDINAL = "ordinal";
   private static final String VALUE_ANNOTATION_NAME_DEFAULT = "";
-  private final AbstractFieldDescriptor descriptor;
   private boolean visitingViews = false;
   private Set<String> views = null;
+  private final EntityFieldVisitor entityFieldVisitor;
 
-  ValueAnnotationVisitor(AbstractFieldDescriptor descriptor) {
-    this.descriptor = descriptor;
+  ValueAnnotationVisitor(EntityFieldVisitor entityFieldVisitor) {
+    this.entityFieldVisitor = entityFieldVisitor;
   }
 
   @SuppressWarnings("unchecked")
@@ -32,17 +33,19 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
       views.add((String) value);
     }
     if (VALUE_ANNOTATION_NAME.equals(name) && !VALUE_ANNOTATION_NAME_DEFAULT.equals(value)) {
-      descriptor.setJsonName((String) value);
+      entityFieldVisitor.fieldDescriptor.setJsonName((String) value);
     } else if (VALUE_ANNOTATION_INLINE.equals(name)) {
-      descriptor.setShouldInline((Boolean) value);
+      entityFieldVisitor.shouldInline = (Boolean) value;
+    } else if (VALUE_ANNOTATION_EMBED.equals(name)) {
+      entityFieldVisitor.shouldEmbed = (Boolean) value;
     } else if (VALUE_ANNOTATION_OPTIONAL.equals(name)) {
-      descriptor.setOptional((Boolean) value);
+      entityFieldVisitor.fieldDescriptor.setOptional((Boolean) value);
     } else if (VALUE_ANNOTATION_ORDINAL.equals(name)) {
-      descriptor.setOrdinal((Boolean) value);
+      entityFieldVisitor.fieldDescriptor.setOrdinal((Boolean) value);
     } else if (VALUE_ANNOTATION_TYPE.equals(name)) {
       String className = ((org.objectweb.asm.Type) value).getClassName();
       try {
-        descriptor.setType(
+        entityFieldVisitor.fieldDescriptor.setType(
             (JsonType) Instantiator.newInstance(Class.forName(className)));
       } catch (ClassNotFoundException e) {
         throw new IllegalStateException("type not found " + className);
@@ -65,7 +68,7 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
   public void visitEnd() {
     if (visitingViews) {
       for (String view : views) {
-        descriptor.addView(view);
+        entityFieldVisitor.fieldDescriptor.addView(view);
       }
       visitingViews = false;
     }

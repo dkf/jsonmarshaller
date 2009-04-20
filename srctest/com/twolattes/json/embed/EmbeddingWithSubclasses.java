@@ -4,12 +4,7 @@ import com.twolattes.json.Entity;
 import com.twolattes.json.Value;
 
 @Entity
-public class EmbeddingWithSubclasses {
-
-  @Value
-  public String c;
-
-  @Value(embed = true)
-  public EmbeddedWithSubclasses embedded;
-
+class EmbeddingWithSubclasses {
+  @Value String c;
+  @Value(embed = true) EmbeddedWithSubclasses embedded;
 }

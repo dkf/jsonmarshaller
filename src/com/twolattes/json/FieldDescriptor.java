@@ -4,6 +4,10 @@ import com.twolattes.json.types.JsonType;
 
 interface FieldDescriptor {
 
+  void marshall(Object entity, String view, Json.Object jsonObject);
+
+  void unmarshall(Object entity, String view, Json.Object jsonObject);
+
   /**
    * Gets the field's descriptor.
    */
@@ -30,15 +34,6 @@ interface FieldDescriptor {
   void setFieldValue(Object entity, Object value);
 
   /**
-   * Returns whether this field should be inlined.
-   *
-   * @return {@code true} if this field should be inline, {@code false} if this
-   *         field should not be inline, {@code null} if the
-   *         {@link Value#inline()} was not set on this field
-   */
-  Boolean getShouldInline();
-
-  /**
    * Whether this field should this field be inlined.
    */
   boolean isOptional();
@@ -61,5 +56,7 @@ interface FieldDescriptor {
    * Tests whether the field is in a specific view.
    */
   boolean isInView(String view);
+
+  String toString(int i);
 
 }

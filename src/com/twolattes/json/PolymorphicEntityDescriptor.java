@@ -54,6 +54,18 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     return new HashSet<FieldDescriptor>();
   }
 
+  public Set<FieldDescriptor> getAllFieldDescriptors() {
+    Set<FieldDescriptor> result = new HashSet<FieldDescriptor>();
+    for (EntityDescriptor entityDescriptor : subDescriptorsByClass.values()) {
+      result.addAll(entityDescriptor.getAllFieldDescriptors());
+    }
+    return result;
+  }
+
+  public boolean isEmbeddable() {
+    return false;
+  }
+
   public boolean isInlineable() {
     for (EntityDescriptor<?> descriptor : subDescriptorsByClass.values()) {
       if (!descriptor.getFieldDescriptors().isEmpty()) {
@@ -69,6 +81,10 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
 
   public Class<?> getReturnedClass() {
     return returnedClass;
+  }
+
+  String getDiscriminatorName() {
+    return discriminatorName;
   }
 
   @SuppressWarnings("unchecked")
@@ -143,6 +159,17 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
             object(string(discriminatorName), discriminator), view);
       }
     });
+  }
+
+  @Override
+  public String toString() {
+    return toString(0);
+  }
+
+  public String toString(int pad) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("PolymorphicEntityDescriptor<" + getReturnedClass().getSimpleName() + ">\n");
+    return builder.toString();
   }
 
 }

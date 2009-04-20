@@ -15,6 +15,7 @@ import com.twolattes.json.Json;
 import com.twolattes.json.TwoLattes;
 
 public class GetterSetterTest {
+
   @Test
   public void getterSetter1Marshall() throws Exception {
     // entity
@@ -126,6 +127,11 @@ public class GetterSetterTest {
   @Test(expected = IllegalArgumentException.class)
   public void getterSetter5() throws Exception {
     TwoLattes.createMarshaller(GetterSetter5.class);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void getterSetter6() throws Exception {
+    TwoLattes.createMarshaller(GetterSetter6.class);
   }
 
 }

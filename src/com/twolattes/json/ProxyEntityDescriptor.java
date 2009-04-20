@@ -22,8 +22,16 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
     return getDescriptor().getFieldDescriptors();
   }
 
+  public Set<FieldDescriptor> getAllFieldDescriptors() {
+    return getDescriptor().getAllFieldDescriptors();
+  }
+
   public Class<?> getReturnedClass() {
     return getDescriptor().getReturnedClass();
+  }
+
+  public boolean isEmbeddable() {
+    return getDescriptor().isEmbeddable();
   }
 
   public boolean isInlineable() {
@@ -37,10 +45,6 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
 
   public Json.Value marshallInline(T entity, String view) {
     return getDescriptor().marshallInline(entity, view);
-  }
-
-  public boolean shouldInline() {
-    return getDescriptor().shouldInline();
   }
 
   public T unmarshall(Json.Value object, String view) {
@@ -61,5 +65,18 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
       descriptor = store.get(klass);
     }
     return descriptor;
+  }
+
+  @Override
+  public String toString() {
+    return toString(0);
+  }
+
+  public String toString(int pad) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("proxy ");
+    EntityDescriptor<T> d = getDescriptor();
+    builder.append(d == null ? null : d.toString(pad));
+    return builder.toString();
   }
 }

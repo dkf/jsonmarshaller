@@ -44,5 +44,8 @@ public @interface Entity {
    */
   String discriminator() default "";
 
+  /**
+   * Whether to embed the value or not.
+   */
   boolean embed() default false;
 }

@@ -20,6 +20,6 @@ public class DescriptorsEqualityTest {
 
   private EntityDescriptor<?> create(Class<BaseTypeEntity> clazz) throws IOException {
     return new DescriptorFactory().create(
-        clazz, new EntityDescriptorStore(), new HashMap<Type, Class<?>>());
+        clazz, new EntityDescriptorStore(), new HashMap<Type, Class<?>>()).left;
   }
 }

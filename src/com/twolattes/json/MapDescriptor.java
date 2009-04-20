@@ -13,22 +13,22 @@ import java.util.Map.Entry;
 final class MapDescriptor extends AbstractDescriptor<Map, Json.Object> {
 
   private final MapType mapType;
-  final Descriptor<Object, Json.Value> mapDescriptor;
+  final Descriptor<Object, Json.Value> valueDescriptor;
 
-  MapDescriptor(MapType mapType, Descriptor<?, ?> mapDescriptor) {
+  MapDescriptor(MapType mapType, Descriptor<?, ?> valueDescriptor) {
     super(Map.class);
     this.mapType = mapType;
-    this.mapDescriptor = (Descriptor<Object, Json.Value>) mapDescriptor;
+    this.valueDescriptor = (Descriptor<Object, Json.Value>) valueDescriptor;
   }
 
   @Override
   public boolean isInlineable() {
-    return mapDescriptor.isInlineable();
+    return valueDescriptor.isInlineable();
   }
 
   @Override
   public String toString() {
-    return "Map<" + mapDescriptor.toString() + ">";
+    return "Map<" + valueDescriptor.toString() + ">";
   }
 
   @Override
@@ -42,18 +42,10 @@ final class MapDescriptor extends AbstractDescriptor<Map, Json.Object> {
     } else {
       Map<String, Object> map = entity;
       Json.Object o = Json.object();
-      if (mapDescriptor.shouldInline()) {
-        for (Entry<String, Object> e : map.entrySet()) {
-          o.put(
-              Json.string(e.getKey()),
-              mapDescriptor.marshallInline(e.getValue(), view));
-        }
-      } else {
-        for (Entry<String, Object> e : map.entrySet()) {
-          o.put(
-              Json.string(e.getKey()),
-              mapDescriptor.marshall(e.getValue(), view));
-        }
+      for (Entry<String, Object> e : map.entrySet()) {
+        o.put(
+            Json.string(e.getKey()),
+            valueDescriptor.marshall(e.getValue(), view));
       }
       return o;
     }
@@ -65,21 +57,17 @@ final class MapDescriptor extends AbstractDescriptor<Map, Json.Object> {
     } else {
       Map<String, Object> map = mapType.newMap();
       Iterator<Json.String> i = object.keySet().iterator();
-      if (mapDescriptor.shouldInline()) {
-        while (i.hasNext()) {
-          Json.String key = i.next();
-          map.put(key.getString(), mapDescriptor.unmarshallInline(
-              object.get(key), view));
-        }
-      } else {
-        while (i.hasNext()) {
-          Json.String key = i.next();
-          map.put(key.getString(), mapDescriptor.unmarshall(
-              object.get(key), view));
-        }
+      while (i.hasNext()) {
+        Json.String key = i.next();
+        map.put(key.getString(), valueDescriptor.unmarshall(
+            object.get(key), view));
       }
       return map;
     }
+  }
+
+  Descriptor<Object, Json.Value> getValueDescriptor() {
+    return valueDescriptor;
   }
 
 }

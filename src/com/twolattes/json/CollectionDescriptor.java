@@ -16,7 +16,6 @@ class CollectionDescriptor extends AbstractDescriptor<Collection, Json.Array> {
   private final CollectionType collectionType;
   private final Descriptor<Object, Json.Value> collectionDescriptor;
 
-  @SuppressWarnings("unchecked")
   CollectionDescriptor(Class<? extends Collection> collectionClass,
       Descriptor<? extends Object, ? extends Object> collectionDescriptor) {
     super(Collection.class);
@@ -34,14 +33,8 @@ class CollectionDescriptor extends AbstractDescriptor<Collection, Json.Array> {
       return Json.NULL;
     } else {
       Json.Array jsonArray = Json.array();
-      if (collectionDescriptor.shouldInline()) {
-        for (Object o : entity) {
-          jsonArray.add(collectionDescriptor.marshallInline(o, view));
-        }
-      } else {
-        for (Object o : entity) {
-          jsonArray.add(collectionDescriptor.marshall(o, view));
-        }
+      for (Object o : entity) {
+        jsonArray.add(collectionDescriptor.marshall(o, view));
       }
       return jsonArray;
     }
@@ -52,14 +45,8 @@ class CollectionDescriptor extends AbstractDescriptor<Collection, Json.Array> {
       return null;
     } else {
       Collection<Object> collection = collectionType.newCollection();
-      if (collectionDescriptor.shouldInline()) {
-        for (int i = 0; i < jsonArray.size(); i++) {
-          collection.add(collectionDescriptor.unmarshallInline(jsonArray.get(i), view));
-        }
-      } else {
-        for (int i = 0; i < jsonArray.size(); i++) {
-          collection.add(collectionDescriptor.unmarshall(jsonArray.get(i), view));
-        }
+      for (int i = 0; i < jsonArray.size(); i++) {
+        collection.add(collectionDescriptor.unmarshall(jsonArray.get(i), view));
       }
       return collection;
     }

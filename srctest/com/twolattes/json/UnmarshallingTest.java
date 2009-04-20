@@ -105,7 +105,9 @@ public class UnmarshallingTest {
 
   @Test
   public void testInlinedEntity() throws Exception {
-    User user = unmarshall(User.class, "{\"email\": \"jack@bauer.net\"}");
+    Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
+    User user = marshaller.unmarshall(
+        (Json.Object) Json.fromString("{\"email\": \"jack@bauer.net\"}"));
 
     assertEquals("jack@bauer.net", user.email.email);
   }
@@ -338,6 +340,7 @@ public class UnmarshallingTest {
     // names.
     assertEquals(unmarshall(Foo.class, "{\"bar\":0.0,\"foo\":42.0}").foo, 0);
     assertEquals(unmarshall(Foo.class, "{\"bar\":42.0,\"foo\":0.0}").foo, 42);
+    // TODO flaky: NPE GetSetFieldDescriptor:57
   }
 
   private <T> T unmarshall(Class<T> clazz, String json) throws JSONException {

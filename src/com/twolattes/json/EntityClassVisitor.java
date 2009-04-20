@@ -2,12 +2,15 @@ package com.twolattes.json;
 
 import static com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor.Type.GETTER;
 import static com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor.Type.SETTER;
+import static java.lang.String.format;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.objectweb.asm.FieldVisitor;
@@ -27,16 +30,14 @@ class EntityClassVisitor extends EmptyVisitor {
   private final Map<String, FieldDescriptor> fieldDescriptors;
   private final Class<?> entityClass;
   private final EntityDescriptorStore store;
-  private final boolean shouldInline;
   private final Map<String, Method> methods;
   private final Map<Type, Class<?>> types;
 
   public EntityClassVisitor(Class<?> entityClass, EntityDescriptorStore store,
-      boolean shouldInline, Map<Type, Class<?>> types) {
+      Map<Type, Class<?>> types) {
     this.fieldDescriptors = new HashMap<String, FieldDescriptor>();
     this.entityClass = entityClass;
     this.store = store;
-    this.shouldInline = shouldInline;
     this.types = types;
     this.methods = new HashMap<String, Method>();
 
@@ -77,7 +78,6 @@ class EntityClassVisitor extends EmptyVisitor {
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public MethodVisitor visitMethod(int access, String name, String desc,
       String signature, String[] exceptions) {
@@ -87,90 +87,137 @@ class EntityClassVisitor extends EmptyVisitor {
     }
 
     signature = (signature != null) ? signature : desc;
-    Value annotation = method.getAnnotation(Value.class);
+
     if (isGetterName(name) && isGetterSignature(signature)) {
-      // creating, checking against discovered descriptors
-      GetSetFieldDescriptor descriptor = new GetSetFieldDescriptor(GETTER, method);
-      FieldDescriptor potentialDescriptor = fieldDescriptors.get(descriptor.getFieldName());
-      if (potentialDescriptor != null) {
-        if (potentialDescriptor instanceof GetSetFieldDescriptor) {
-          descriptor = (GetSetFieldDescriptor) potentialDescriptor;
-          descriptor.setGetter(method);
-        } else {
-          throw new IllegalArgumentException("Value with name "
-              + descriptor.getFieldName() + " is described multiple times.");
-        }
-      } else {
-        fieldDescriptors.put(descriptor.getFieldName(), descriptor);
-      }
-
-      // type
-      Class<? extends JsonType> type = annotation.type();
-      if (!type.equals(com.twolattes.json.types.JsonType.class)) {
-        descriptor.setDescriptor(
-            new UserTypeDescriptor(Instantiator.newInstance(type)));
-      } else if (descriptor.getDescriptor() == null) {
-        descriptor.setDescriptor(
-            new DescriptorFactory().create(
-                signature.substring(2), store, descriptor, types));
-      }
-
-      // using annotation to populate the descriptor
-      descriptor.setJsonName(annotation.name());
-      descriptor.setOptional(annotation.optional());
-      descriptor.setShouldInline(annotation.inline());
-
-      for (String view : annotation.views()) {
-        descriptor.addView(view);
-      }
-
-      methods.remove(name);
+      registerFieldDescriptor(name, method, signature, GETTER);
     } else if (isSetterName(name) && isSetterSignature(signature)) {
-      // creating, checking against discovered descriptors
-      GetSetFieldDescriptor descriptor = new GetSetFieldDescriptor(SETTER, method);
-      FieldDescriptor potentialDescriptor = fieldDescriptors.get(descriptor.getFieldName());
-      if (potentialDescriptor==null) {
-        for (String fieldName : fieldDescriptors.keySet()) {
-          if (descriptor.getFieldName().startsWith(fieldName)) {
-            potentialDescriptor = fieldDescriptors.get(fieldName);
-          }
-        }
-      }
-      if (potentialDescriptor != null) {
-        if (potentialDescriptor instanceof GetSetFieldDescriptor) {
-          descriptor = (GetSetFieldDescriptor) potentialDescriptor;
-          descriptor.setSetter(method);
-        } else {
-          throw new IllegalArgumentException("Value with name "
-              + descriptor.getFieldName() + " is described multiple times.");
-        }
-      } else {
-        fieldDescriptors.put(descriptor.getFieldName(), descriptor);
-      }
-
-      // type
-      if (!annotation.type().equals(com.twolattes.json.types.JsonType.class)) {
-        descriptor.setDescriptor(
-            new UserTypeDescriptor(Instantiator.newInstance(annotation.type())));
-      } else if (descriptor.getDescriptor() == null) {
-        descriptor.setDescriptor(
-            new DescriptorFactory().create(
-                signature.substring(1, signature.length() - 2),
-                store, descriptor, types));
-      }
-
-      // using annotation to populate the descriptor
-      descriptor.setJsonName(annotation.name());
-      descriptor.setOptional(annotation.optional());
-      descriptor.setShouldInline(annotation.inline());
-
-      for (String view : annotation.views()) {
-        descriptor.addView(view);
-      }
-
-      methods.remove(name);
+      registerFieldDescriptor(name, method, signature, SETTER);
     }
     return null;
+  }
+
+  @SuppressWarnings("unchecked")
+  private void registerFieldDescriptor(String name, Method method,
+      String signature, GetSetFieldDescriptor.Type type) {
+    Value annotation = method.getAnnotation(Value.class);
+
+    GetSetFieldDescriptor fieldDescriptor =
+        new GetSetFieldDescriptor(type, method);
+    FieldDescriptor potentialDescriptor = get(fieldDescriptor, annotation.name());
+    if (potentialDescriptor != null) {
+      // we've seen the setter already, get the field descriptor
+      if (potentialDescriptor instanceof GetSetFieldDescriptor) {
+        fieldDescriptor = (GetSetFieldDescriptor) potentialDescriptor;
+      } else if ((potentialDescriptor instanceof EmbeddedFieldDescriptor &&
+          ((EmbeddedFieldDescriptor) potentialDescriptor).getFieldDescriptor()
+          instanceof GetSetFieldDescriptor)) {
+        fieldDescriptor = (GetSetFieldDescriptor)
+            ((EmbeddedFieldDescriptor) potentialDescriptor).getFieldDescriptor();
+      } else {
+        throw new IllegalArgumentException(format(
+            "Value with name %s is described multiple times.",
+            fieldDescriptor.getFieldName()));
+      }
+    }
+
+    Descriptor descriptor = null;
+    Boolean inlineEntity = null;
+    Boolean embedEntity = null;
+    Class<? extends JsonType> jsonType = annotation.type();
+    if (!jsonType.equals(com.twolattes.json.types.JsonType.class)) {
+      descriptor = new UserTypeDescriptor(Instantiator.newInstance(jsonType));
+      inlineEntity = false;
+    } else {
+      Pair<Descriptor, Entity> pair = new DescriptorFactory().create(
+          extractSignature(type, signature), store, fieldDescriptor, types);
+      descriptor = pair.left;
+      inlineEntity = (pair.right != null) ? pair.right.inline() : null;
+      embedEntity = (pair.right != null) ? pair.right.embed() : null;
+    }
+
+    if (fieldDescriptor.getDescriptor() == null) {
+      fieldDescriptor.setDescriptor(descriptor);
+    }
+
+    boolean inline = false;
+    boolean embed = false;
+
+    inline = annotation.inline()
+        || (inlineEntity == null ? false : inlineEntity);
+    embed = annotation.embed()
+        || (embedEntity == null ? false : embedEntity);
+
+    fieldDescriptor.setJsonName(annotation.name());
+    fieldDescriptor.setOptional(annotation.optional());
+    for (String view : annotation.views()) {
+      fieldDescriptor.addView(view);
+    }
+
+    if (potentialDescriptor != null) {
+      // we've seen the setter already
+      if (potentialDescriptor instanceof GetSetFieldDescriptor) {
+        if (inline &&
+            !(((GetSetFieldDescriptor) potentialDescriptor)
+                .getDescriptor() instanceof InlinedEntityDescriptor)) {
+          throw new IllegalArgumentException(format(
+              "The %s for %s is inlined but the %s is not.",
+              type,
+              fieldDescriptor.getFieldName(),
+              type == GETTER ? SETTER : GETTER));
+        } else if (!inline &&
+            (((GetSetFieldDescriptor) potentialDescriptor)
+                .getDescriptor() instanceof InlinedEntityDescriptor)) {
+          throw new IllegalArgumentException(format(
+              "The %s for %s is inlined but the %s is not.",
+              type == GETTER ? SETTER : GETTER,
+              fieldDescriptor.getFieldName(),
+              type));
+        }
+        setGetterOrSetter(fieldDescriptor, method, type);
+      } else if ((potentialDescriptor instanceof EmbeddedFieldDescriptor &&
+          ((EmbeddedFieldDescriptor) potentialDescriptor).getFieldDescriptor()
+          instanceof GetSetFieldDescriptor)) {
+        fieldDescriptor = (GetSetFieldDescriptor)
+            ((EmbeddedFieldDescriptor) potentialDescriptor).getFieldDescriptor();
+        // TODO handle inconsistency between getter and setter
+
+        setGetterOrSetter(fieldDescriptor, method, type);
+      } else {
+        throw new IllegalStateException();
+      }
+    } else {
+      // register the field descriptor
+      if (embed && descriptor instanceof EntityDescriptor) {
+        fieldDescriptor.setDescriptor(descriptor);
+        add(new EmbeddedFieldDescriptor(fieldDescriptor));
+      } else {
+        if (inline && descriptor instanceof EntityDescriptor) {
+          fieldDescriptor.setDescriptor(
+              new InlinedEntityDescriptor((EntityDescriptor) descriptor));
+        }
+        add(fieldDescriptor);
+      }
+    }
+
+    methods.remove(name);
+  }
+
+  private String extractSignature(
+      GetSetFieldDescriptor.Type type, String signature) {
+    if (type.equals(GETTER)) {
+      return signature.substring(2);
+    } else {
+      return signature.substring(1, signature.length() - 2);
+    }
+  }
+
+  void setGetterOrSetter(GetSetFieldDescriptor fieldDescriptor, Method method,
+      GetSetFieldDescriptor.Type type) {
+    if (type.equals(GETTER)) {
+      fieldDescriptor.setGetter(method);
+    } else {
+      fieldDescriptor.setSetter(method);
+    }
   }
 
   void verify() {
@@ -186,11 +233,40 @@ class EntityClassVisitor extends EmptyVisitor {
     }
   }
 
+
+  protected FieldDescriptor get(String name) {
+    Map<String, FieldDescriptor> map = new HashMap<String, FieldDescriptor>();
+    for (Map.Entry<String, FieldDescriptor> entry : fieldDescriptors.entrySet()) {
+      if (entry.getValue() instanceof EmbeddedFieldDescriptor) {
+        Set<FieldDescriptor> set =
+            ((EntityDescriptor) entry.getValue().getDescriptor()).getAllFieldDescriptors();
+        for (FieldDescriptor current : set) {
+          map.put(current.getJsonName().equals("") ?
+              current.getFieldName() : current.getJsonName(), current);
+        }
+      }
+      map.put(entry.getKey(), entry.getValue());
+    }
+
+    return map.get(name);
+  }
+
+  protected FieldDescriptor get(FieldDescriptor fieldDescriptor, String jsonName) {
+    if (jsonName.equals("")) {
+      return get(fieldDescriptor.getFieldName());
+    } else {
+      return get(jsonName);
+    }
+  }
+
   protected void add(FieldDescriptor fieldDescriptor) {
-    // if the annotated name is different than the actual field name, use the annotated name
-    String fieldName = fieldDescriptor.getFieldName();
-    String jsonName = fieldDescriptor.getJsonName();
-    String name = fieldName.equals(jsonName) ? fieldName : jsonName;
+    String name;
+    if (fieldDescriptor.getJsonName().equals("")) {
+      name = fieldDescriptor.getFieldName();
+    } else {
+      name = fieldDescriptor.getJsonName();
+    }
+
     if (fieldDescriptors.containsKey(name)) {
       throw new IllegalArgumentException(
           "Value with name " + name + " is described multiple times.");
@@ -201,8 +277,11 @@ class EntityClassVisitor extends EmptyVisitor {
   @SuppressWarnings("unchecked")
   EntityDescriptor<?> getDescriptor(ConcreteEntityDescriptor<?> parent) {
     return new ConcreteEntityDescriptor(entityClass,
-        new HashSet<FieldDescriptor>(fieldDescriptors.values()),
-        shouldInline, parent);
+        new HashSet<FieldDescriptor>(fieldDescriptors.values()), parent);
+  }
+
+  Collection<FieldDescriptor> getFieldDescriptors() {
+    return fieldDescriptors.values();
   }
 
   boolean isGetterName(String name) {
@@ -219,5 +298,9 @@ class EntityClassVisitor extends EmptyVisitor {
 
   boolean isSetterSignature(String desc) {
     return SETTER_SIGNATURE.matcher(desc).matches();
+  }
+
+  public Class<?> getEntityClass() {
+    return entityClass;
   }
 }

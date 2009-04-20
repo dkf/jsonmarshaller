@@ -15,7 +15,7 @@ public class EntityClassVisitorTest {
   @Before
   public void start() {
     visitor = new EntityClassVisitor(
-        EntityInterface.class, null, false, new HashMap<Type, Class<?>>());
+        EntityInterface.class, null, new HashMap<Type, Class<?>>());
   }
 
   @Test

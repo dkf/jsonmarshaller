@@ -1,10 +1,11 @@
 package com.twolattes.json.embed;
 
+import java.util.List;
+
 import com.twolattes.json.Entity;
 import com.twolattes.json.Value;
 
 @Entity
-public class EmbeddingOnValue {
-  @Value(embed = true) Embedded embedded;
-  @Value int c;
+public class EmbeddingList {
+  @Value(embed = true) List<Embedded> embeddeds;
 }

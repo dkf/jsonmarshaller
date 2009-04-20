@@ -3,7 +3,6 @@ package com.twolattes.json;
 import static com.twolattes.json.StringDescriptor.STRING_DESC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -30,7 +29,6 @@ public class DescriptorFactoryTest {
       assertEquals(f.getFieldName(), f.getJsonName());
       Descriptor<?, ?> fd = f.getDescriptor();
       assertEquals(BaseTypeEntity.fields.get(f.getFieldName()), fd.getReturnedClass());
-      assertNull(f.getShouldInline());
     }
   }
 
@@ -77,7 +75,6 @@ public class DescriptorFactoryTest {
       assertEquals(
           new CollectionDescriptor(Collection.class, STRING_DESC),
           f.getDescriptor());
-      assertNull(f.getShouldInline());
     }
   }
 
@@ -96,17 +93,71 @@ public class DescriptorFactoryTest {
       EntityDescriptor<?> ed = (EntityDescriptor<?>) fd;
       assertEquals(EntityInEntity.INNER_ENTITY, ed.getReturnedClass());
       assertEquals(create(EntityInEntity.INNER_ENTITY), fd);
-      assertNull(f.getShouldInline());
     }
   }
 
   @Test
-  public void testInlinedEntity() throws IOException {
+  public void testInlinedEntity1() throws IOException {
     EntityDescriptor<?> d = create(User.class);
     assertEquals(1, d.getFieldDescriptors().size());
     for (FieldDescriptor f : d.getFieldDescriptors()) {
-      assertTrue(f.getShouldInline());
+      fieldDescriptorIsInline(f);
     }
+  }
+
+  @Test
+  public void testInlinedEntity2() throws IOException {
+    EntityDescriptor<?> d = create(UserInlinedEmail.class);
+    assertEquals(6, d.getFieldDescriptors().size());
+    int visited = 0;
+    for (FieldDescriptor f : d.getFieldDescriptors()) {
+      if (f.getFieldName().equals("email")) {
+        fieldDescriptorIsInline(f);
+        visited++;
+      } else if (f.getFieldName().equals("inlineTwice")) {
+        fieldDescriptorIsInline(f);
+        visited++;
+      }
+    }
+    assertEquals(2, visited);
+  }
+
+  @Test
+  public void testInlinedEntity3() throws IOException {
+    EntityDescriptor<?> d = create(UserInlinedEmail.class);
+    assertEquals(6, d.getFieldDescriptors().size());
+    boolean visited = false;
+    for (FieldDescriptor f : d.getFieldDescriptors()) {
+      if (f.getFieldName().equals("emails")) {
+        assertTrue(f instanceof AbstractFieldDescriptor.DirectAccessFieldDescriptor);
+        assertTrue(f.getDescriptor() instanceof MapDescriptor);
+        assertTrue(((MapDescriptor) f.getDescriptor()).getValueDescriptor() instanceof InlinedEntityDescriptor);
+        visited = true;
+      }
+    }
+    assertTrue(visited);
+  }
+
+  @Test
+  public void testInlinedEntity4() throws IOException {
+    EntityDescriptor<?> d = create(DoublyInlined.class);
+    boolean visited = false;
+    for (FieldDescriptor f : d.getFieldDescriptors()) {
+      if (f.getFieldName().equals("foo")) {
+        fieldDescriptorIsInline(f);
+        visited = true;
+      }
+    }
+    assertTrue(visited);
+  }
+
+  private void fieldDescriptorIsInline(FieldDescriptor f) {
+    assertTrue(f.getFieldName(),
+        f.getDescriptor() instanceof InlinedEntityDescriptor);
+//    assertTrue(f.getFieldName(),
+//        f instanceof InlinedFieldDescriptor);
+//    assertFalse(f.getFieldName(),
+//        ((InlinedFieldDescriptor) f).delegate instanceof InlinedFieldDescriptor);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -126,8 +177,8 @@ public class DescriptorFactoryTest {
     for (FieldDescriptor f : d.getFieldDescriptors()) {
       assertTrue(f.getDescriptor() instanceof MapDescriptor);
       MapDescriptor md = (MapDescriptor) f.getDescriptor();
-      assertTrue(md.mapDescriptor instanceof EntityDescriptor);
-      EntityDescriptor<?> ed = (EntityDescriptor<?>) md.mapDescriptor;
+      assertTrue(md.valueDescriptor instanceof EntityDescriptor);
+      EntityDescriptor<?> ed = (EntityDescriptor<?>) md.valueDescriptor;
       assertEquals(Email.class, ed.getReturnedClass());
     }
   }
@@ -178,6 +229,6 @@ public class DescriptorFactoryTest {
   private EntityDescriptor<?> create(Class<?> clazz) throws IOException {
     return new DescriptorFactory().create(
         clazz, new DescriptorFactory.EntityDescriptorStore(),
-        new HashMap<Type, Class<?>>());
+        new HashMap<Type, Class<?>>()).left;
   }
 }

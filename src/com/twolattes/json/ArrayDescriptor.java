@@ -27,14 +27,8 @@ class ArrayDescriptor extends AbstractDescriptor<Object, Json.Value> {
     }
     Json.Array jsonArray = Json.array();
     int l = Array.getLength(entity);
-    if (elementsDescriptor.shouldInline()) {
-      for (int i = 0; i < l; i++) {
-        jsonArray.add(elementsDescriptor.marshallInline(Array.get(entity, i), view));
-      }
-    } else {
-      for (int i = 0; i < l; i++) {
-        jsonArray.add(elementsDescriptor.marshall(Array.get(entity, i), view));
-      }
+    for (int i = 0; i < l; i++) {
+      jsonArray.add(elementsDescriptor.marshall(Array.get(entity, i), view));
     }
     return jsonArray;
   }
@@ -48,14 +42,8 @@ class ArrayDescriptor extends AbstractDescriptor<Object, Json.Value> {
         elementsDescriptor.getReturnedClass(),
         jsonArray.size());
     int length = Array.getLength(array);
-    if (elementsDescriptor.shouldInline()) {
-      for (int i = 0; i < length; i++) {
-        Array.set(array, i, elementsDescriptor.unmarshallInline(jsonArray.get(i), view));
-      }
-    } else {
-      for (int i = 0; i < length; i++) {
-        Array.set(array, i, elementsDescriptor.unmarshall(jsonArray.get(i), view));
-      }
+    for (int i = 0; i < length; i++) {
+      Array.set(array, i, elementsDescriptor.unmarshall(jsonArray.get(i), view));
     }
     return array;
   }

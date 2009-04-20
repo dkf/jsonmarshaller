@@ -10,14 +10,21 @@ import java.util.Map;
 class MarshallerImpl<T> implements Marshaller<T> {
 
   private final EntityDescriptor<T> descriptor;
+  private final EntityDescriptor<T> collectionDescriptor;
   private final Class<T> clazz;
 
-
+  @SuppressWarnings("unchecked")
   MarshallerImpl(Class<T> clazz, Map<Type, Class<?>> types) {
     try {
       this.clazz = clazz;
-      this.descriptor = new DescriptorFactory().create(
-          clazz, new DescriptorFactory.EntityDescriptorStore(), types);
+      Pair<? extends EntityDescriptor, Entity> pair =
+          new DescriptorFactory().create(
+              clazz, new DescriptorFactory.EntityDescriptorStore(), types);
+      this.descriptor = pair.left;
+      this.collectionDescriptor =
+          pair.right != null && pair.right.inline() ?
+              new InlinedEntityDescriptor<T>(pair.left) :
+              pair.left;
     } catch (IOException e) {
       throw new IllegalArgumentException(clazz + " unreadable");
     }
@@ -37,14 +44,8 @@ class MarshallerImpl<T> implements Marshaller<T> {
 
   public Json.Array marshallList(Collection<? extends T> entities, String view) {
     Json.Array a = Json.array();
-    if (descriptor.shouldInline()) {
-      for (T entity : entities) {
-        a.add(descriptor.marshallInline(entity, view));
-      }
-    } else {
-      for (T entity : entities) {
-        a.add(marshall(entity, view));
-      }
+    for (T entity : entities) {
+      a.add(collectionDescriptor.marshall(entity, view));
     }
     return a;
   }
@@ -64,14 +65,8 @@ class MarshallerImpl<T> implements Marshaller<T> {
   public List<T> unmarshallList(Json.Array array, String view) {
     int length = array.size();
     List<T> list = new ArrayList<T>(length);
-    if (descriptor.shouldInline()) {
-      for (int i = 0; i < length; i++) {
-        list.add(descriptor.unmarshallInline(array.get(i), view));
-      }
-    } else {
-      for (int i = 0; i < length; i++) {
-        list.add(unmarshall((Json.Object) array.get(i), view));
-      }
+    for (int i = 0; i < length; i++) {
+      list.add(clazz.cast(collectionDescriptor.unmarshall(array.get(i), view)));
     }
     return list;
   }

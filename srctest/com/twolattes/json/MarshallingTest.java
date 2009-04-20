@@ -315,7 +315,7 @@ public class MarshallingTest {
 
   	Json.Object o = m.marshall(entity);
   	assertEquals(1, o.size());
-  	assertEquals(string("hello"), o.get(string("foo")));
+  	assertEquals(object(string("foo"), string("hello")), o);
   }
 
   @Test
@@ -344,6 +344,43 @@ public class MarshallingTest {
   	Json.Object o = m.marshall(entity);
   	assertEquals(1, o.size());
   	assertEquals(NULL, o.get(string("foo")));
+  }
+
+  @Test
+  public void testDoublyInlinedWithGetters() throws Exception {
+    Marshaller<DoublyInlinedWithGetters> m =
+        TwoLattes.createMarshaller(DoublyInlinedWithGetters.class);
+
+    // entity
+    DoublyInlinedWithGetters entity = new DoublyInlinedWithGetters();
+    DoublyInlinedWithGetters.Bar bar = new DoublyInlinedWithGetters.Bar();
+    bar.hello = "hello";
+    DoublyInlinedWithGetters.Foo foo = new DoublyInlinedWithGetters.Foo();
+    foo.bar = bar;
+    entity.foo = foo;
+
+    Json.Object o = m.marshall(entity);
+    assertEquals(1, o.size());
+    assertEquals(object(string("foo"), string("hello")), o);
+  }
+
+  @Test
+  public void testTriplyInlined1() throws Exception {
+    Marshaller<TriplyInlined> m = TwoLattes.createMarshaller(TriplyInlined.class);
+
+    // entity
+    TriplyInlined entity = new TriplyInlined();
+    TriplyInlined.Bar bar = new TriplyInlined.Bar();
+    TriplyInlined.Baz baz = new TriplyInlined.Baz();
+    baz.hello = "hello";
+    bar.baz = baz;
+    TriplyInlined.Foo foo = new TriplyInlined.Foo();
+    foo.bar = bar;
+    entity.foo = foo;
+
+    Json.Object o = m.marshall(entity);
+    assertEquals(1, o.size());
+    assertEquals(string("hello"), o.get(string("foo")));
   }
 
   @Test

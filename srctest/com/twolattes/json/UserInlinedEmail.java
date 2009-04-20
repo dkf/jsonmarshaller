@@ -21,4 +21,7 @@ public class UserInlinedEmail {
 
   @Value(views = "5")
   public List<EmailInline> emailsList = new ArrayList<EmailInline>();
+
+  @Value(views = "6", inline = true)
+  public EmailInline inlineTwice;
 }

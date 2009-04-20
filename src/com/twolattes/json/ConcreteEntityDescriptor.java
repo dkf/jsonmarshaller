@@ -19,7 +19,6 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
 
   private final Class<T> entity;
   private final Set<FieldDescriptor> fieldDescriptors;
-  private final boolean shouldInline;
   private final String discriminator;
   private final ConcreteEntityDescriptor<?> parent;
   private final Constructor<T> constructor;
@@ -32,14 +31,12 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
   @SuppressWarnings("unchecked")
   ConcreteEntityDescriptor(Class<T> entity,
       Set<FieldDescriptor> fieldDescriptors,
-      boolean shouldInline,
       ConcreteEntityDescriptor<?> parent) {
     super(entity);
     Entity annotation = entity.getAnnotation(Entity.class);
     this.discriminator = annotation.discriminator();
     this.entity = entity;
     this.fieldDescriptors = fieldDescriptors;
-    this.shouldInline = shouldInline;
     this.parent = parent;
 
     // implementation of the entity
@@ -95,6 +92,21 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
     return fieldDescriptors;
   }
 
+  @SuppressWarnings("unchecked")
+  public Set<FieldDescriptor> getAllFieldDescriptors() {
+    Set<FieldDescriptor> result = new HashSet<FieldDescriptor>();
+    for (FieldDescriptor fieldDescriptor : fieldDescriptors) {
+      if (fieldDescriptor instanceof EmbeddedFieldDescriptor) {
+        result.addAll(
+            ((EntityDescriptor) fieldDescriptor.getDescriptor())
+                .getFieldDescriptors());
+      } else {
+        result.add(fieldDescriptor);
+      }
+    }
+    return result;
+  }
+
   @Override
   public boolean isInlineable() {
     return fieldDescriptors.size() == 1;
@@ -115,32 +127,13 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
     return jsonObject;
   }
 
-  @SuppressWarnings("unchecked")
   private void marshallFields(
       Object entity, String view, Json.Object jsonObject) {
     if (parent != null) {
       parent.marshallFields(entity, view, jsonObject);
     }
     for (FieldDescriptor d : getFieldDescriptors()) {
-      if (d.isInView(view)) {
-        Object fieldValue = d.getFieldValue(entity);
-        if (!(d.isOptional() && fieldValue == null)) {
-          Json.String jsonName = Json.string(d.getJsonName());
-          Descriptor descriptor = d.getDescriptor();
-          if (d.getShouldInline() == null) {
-            if (descriptor.shouldInline()) {
-              jsonObject.put(
-                  jsonName, descriptor.marshallInline(fieldValue, view));
-            } else {
-              jsonObject.put(jsonName, descriptor.marshall(fieldValue, view));
-            }
-          } else if (d.getShouldInline()) {
-            jsonObject.put(jsonName, descriptor.marshallInline(fieldValue, view));
-          } else {
-            jsonObject.put(jsonName, descriptor.marshall(fieldValue, view));
-          }
-        }
-      }
+      d.marshall(entity, view, jsonObject);
     }
   }
 
@@ -152,17 +145,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
     }
     FieldDescriptor d = fieldDescriptors.iterator().next();
     Descriptor descriptor = d.getDescriptor();
-    if (d.getShouldInline() == null) {
-      if (descriptor.shouldInline()) {
-        return descriptor.marshallInline(d.getFieldValue(entity), view);
-      } else {
-        return descriptor.marshall(d.getFieldValue(entity), view);
-      }
-    } else if (d.getShouldInline()) {
-      return descriptor.marshallInline(d.getFieldValue(entity), view);
-    } else {
-      return descriptor.marshall(d.getFieldValue(entity), view);
-    }
+    return descriptor.marshall(d.getFieldValue(entity), view);
   }
 
   public T unmarshall(Json.Value object) {
@@ -208,48 +191,12 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
       return new HashSet<FieldDescriptor>(descriptors.values());
   }
 
-  @SuppressWarnings("unchecked")
   private void unmarshallFields(Json.Object jsonObject, Object entity, String view) {
     if (parent != null) {
       parent.unmarshallFields(jsonObject, entity, view);
     }
     for (FieldDescriptor d : getDescriptorsByFieldName()) {
-      Json.String name = string(d.getJsonName());
-      if (jsonObject.containsKey(name)) {
-        if (d.isInView(view)) {
-          Descriptor descriptor = d.getDescriptor();
-          if (d.getShouldInline() == null) {
-            if (descriptor.shouldInline()) {
-              d.setFieldValue(entity,
-                  descriptor.unmarshallInline(jsonObject.get(name), view));
-            } else {
-              d.setFieldValue(entity,
-                  descriptor.unmarshall(jsonObject.get(name), view));
-            }
-          } else if (d.getShouldInline()) {
-            d.setFieldValue(entity,
-                descriptor.unmarshallInline(jsonObject.get(name), view));
-          } else {
-            d.setFieldValue(entity,
-                descriptor.unmarshall(jsonObject.get(name), view));
-          }
-        }
-      } else {
-        if (d.isInView(view) && !d.isOptional()) {
-          if (view == null) {
-            throw new IllegalStateException("The field " + d.getFieldName() +
-                " whose JSON name is " + name + " has no value. " +
-                "If this field is optional, use the @Value(optional = true)" +
-                " annotations.");
-          } else {
-            throw new IllegalStateException("The field " + d.getFieldName() +
-                " (in the view " + view +") whose JSON" +
-                " name is " + name + " has no value. If this " +
-                "field is optional, use the @Value(optional = true) " +
-                "annotations.");
-          }
-        }
-      }
+      d.unmarshall(entity, view, jsonObject);
     }
   }
 
@@ -288,16 +235,24 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
 
   @Override
   public String toString() {
-    String s = "EntityDescriptor {\n  " + getReturnedClass().getName() + "\n";
-    for (FieldDescriptor f : fieldDescriptors) {
-      s += "  " + f.toString() + "\n";
-    }
-    return s + "}";
+    return toString(0);
   }
 
   @Override
-  public boolean shouldInline() {
-    return shouldInline;
+  public String toString(int pad) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ConcreteEntityDescriptor<" + getReturnedClass().getSimpleName() + "> {\n");
+    for (FieldDescriptor f : fieldDescriptors) {
+      for (int i = 0; i < pad + 2; i++) {
+        builder.append(" ");
+      }
+      builder.append(f.toString(pad + 2) + "\n");
+    }
+    for (int i = 0; i < pad; i++) {
+      builder.append(" ");
+    }
+    builder.append("}");
+    return builder.toString();
   }
 
   public String getDiscriminator() {

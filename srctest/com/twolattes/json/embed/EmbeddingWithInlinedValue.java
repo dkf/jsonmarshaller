@@ -20,10 +20,12 @@ public class EmbeddingWithInlinedValue {
     this.b = b;
   }
 
+  @Entity
   static class JustA {
     @Value int a;
   }
 
+  @Entity
   static class JustB {
     @Value(inline = true) JustA b;
   }

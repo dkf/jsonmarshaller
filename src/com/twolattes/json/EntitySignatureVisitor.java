@@ -86,6 +86,8 @@ class EntitySignatureVisitor implements SignatureVisitor {
 
   private final Map<Type, Class<?>> types;
 
+  private Entity entity;
+
   EntitySignatureVisitor(String signature, EntityDescriptorStore store,
       FieldDescriptor fieldDescriptor, Map<Type, Class<?>> types) {
     this.signature = signature;
@@ -111,7 +113,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
               (JsonType) Instantiator.newInstance(types.get(c)));
         } else if (c.isEnum()) {
           state = State.base;
-          if(fieldDescriptor.useOrdinal()) {
+          if (fieldDescriptor.useOrdinal()) {
             descriptor = new EnumOrdinalDescriptor((Class<? extends Enum>) c);
           } else {
             descriptor = new EnumNameDescriptor((Class<? extends Enum>) c);
@@ -124,10 +126,11 @@ class EntitySignatureVisitor implements SignatureVisitor {
           mapClass = (Class<? extends Map<?, ?>>) c;
         } else {
           state = State.entity;
+          entity = c.getAnnotation(Entity.class);
           if (store.contains(c)) {
             descriptor = new ProxyEntityDescriptor(c, store);
           } else {
-            descriptor = new DescriptorFactory().create(c, store, types);
+            descriptor = new DescriptorFactory().create(c, store, types).left;
           }
         }
       } catch (ClassNotFoundException e) {
@@ -164,7 +167,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
   }
 
   @SuppressWarnings("unchecked")
-  public Descriptor getDescriptor() {
+  public Pair<Descriptor, Entity> getDescriptor() {
     if (descriptor == null) {
       switch (state) {
       case collection:
@@ -173,27 +176,34 @@ class EntitySignatureVisitor implements SignatureVisitor {
               "Collection must be parameterized, e.g. List<String>. "
                   + "Signature " + signature);
         } else {
-          return new CollectionDescriptor(collectionType, next.get(0)
-              .getDescriptor());
+          return Pair.<Descriptor, Entity> of(
+              new CollectionDescriptor(collectionType,
+                  inlineEntityIfNecessary(next.get(0).getDescriptor())),
+                  null);
         }
 
       case array:
-        return new ArrayDescriptor(next.get(0).getDescriptor());
+        return Pair.<Descriptor, Entity> of(
+            new ArrayDescriptor(
+                inlineEntityIfNecessary(next.get(0).getDescriptor())),
+                null);
 
       case map:
         if (next.size() == 2
-            && next.get(0).getDescriptor().getReturnedClass().equals(
+            && next.get(0).getDescriptor().left.getReturnedClass().equals(
                 String.class)) {
-          return new MapDescriptor(
-              MapType.fromClass(mapClass),
-              next.get(1).getDescriptor());
+          return Pair.<Descriptor, Entity> of(
+              new MapDescriptor(
+                  MapType.fromClass(mapClass),
+                  inlineEntityIfNecessary(next.get(1).getDescriptor())),
+              null);
         } else {
           throw new IllegalArgumentException("Map<String, ...> must be used. "
               + "Signature " + signature);
         }
       }
     }
-    return descriptor;
+    return Pair.<Descriptor, Entity> of(descriptor, entity);
   }
 
   public SignatureVisitor visitClassBound() {
@@ -242,6 +252,13 @@ class EntitySignatureVisitor implements SignatureVisitor {
   public void visitTypeVariable(String type) {
     throw new IllegalArgumentException(
         "cannot create a marshaller for parametrized types due to erasure");
+  }
+
+  @SuppressWarnings("unchecked")
+  private Descriptor inlineEntityIfNecessary(Pair<Descriptor, Entity> pair) {
+    return pair.left instanceof EntityDescriptor && pair.right != null && pair.right.inline() ?
+        new InlinedEntityDescriptor((EntityDescriptor) pair.left) :
+        pair.left;
   }
 
 }

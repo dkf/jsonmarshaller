@@ -46,5 +46,8 @@ public @interface Value {
    */
   boolean ordinal() default false;
 
+  /**
+   * Whether to embed the value or not. Only entities can be embedded.
+   */
   boolean embed() default false;
 }

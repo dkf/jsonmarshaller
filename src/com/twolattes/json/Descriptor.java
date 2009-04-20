@@ -1,5 +1,6 @@
 package com.twolattes.json;
 
+
 /**
  * Descriptor used as a synthesis of an object. An object can be an entity,
  * a collection, a map, an array or a user defined type.
@@ -20,12 +21,7 @@ interface Descriptor<E, J extends Json.Value> {
    */
   boolean isInlineable();
 
-  /**
-   * Returns whether this entity should be inlined within its parent.
-   * @return {@code true} if the entity should be inline,
-   *     {@code false} otherwise
-   */
-  boolean shouldInline();
+  boolean isEmbeddable();
 
   /**
    * Marshall the described object.
@@ -47,4 +43,7 @@ interface Descriptor<E, J extends Json.Value> {
   E unmarshall(J marshalled, String view);
 
   E unmarshallInline(J entity, String view);
+
+  String toString(int pad);
+
 }

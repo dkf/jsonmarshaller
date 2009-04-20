@@ -1,7 +1,7 @@
 package com.twolattes.json;
 
 @Entity
-final class DoublyInlined {
+final class TriplyInlined {
   @Value Foo foo;
 
   @Entity(inline = true)
@@ -11,6 +11,11 @@ final class DoublyInlined {
 
   @Entity(inline = true)
   final static class Bar {
+    @Value Baz baz;
+  }
+
+  @Entity(inline = true)
+  final static class Baz {
     @Value String hello;
   }
 }

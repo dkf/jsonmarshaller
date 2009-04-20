@@ -7,22 +7,16 @@ import com.twolattes.json.Value;
     EmbeddedWithSubclasses.FirstEmbeddedSubclass.class,
     EmbeddedWithSubclasses.SecondEmbeddedSubclass.class
 })
-public class EmbeddedWithSubclasses {
+class EmbeddedWithSubclasses {
 
   @Entity(discriminator = "first")
-  static public class FirstEmbeddedSubclass extends EmbeddedWithSubclasses {
-
-    @Value
-    public int a;
-
+  static class FirstEmbeddedSubclass extends EmbeddedWithSubclasses {
+    @Value int a;
   }
 
   @Entity(discriminator = "second")
-  static public class SecondEmbeddedSubclass extends EmbeddedWithSubclasses {
-
-    @Value
-    public int b;
-
+  static class SecondEmbeddedSubclass extends EmbeddedWithSubclasses {
+    @Value int b;
   }
 
 }

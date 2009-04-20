@@ -13,10 +13,13 @@ interface EntityDescriptor<T> extends Descriptor<T, Json.Value> {
    */
   Set<FieldDescriptor> getFieldDescriptors();
 
+  Set<FieldDescriptor> getAllFieldDescriptors();
+
   /**
    * Gets this entitie's discriminator. This is an optional operation which
    * should be defined for entities mentioned in a
    * {@link Entity#subclasses()} list.
    */
   String getDiscriminator();
+
 }

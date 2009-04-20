@@ -20,19 +20,20 @@ class DescriptorFactory {
    * Creates an {@link EntityDescriptor} based on a {@link Class} object.
    */
   @SuppressWarnings("unchecked")
-  <T> EntityDescriptor<T> create(
+  <T> Pair<? extends EntityDescriptor, Entity> create(
       Class<?> c, EntityDescriptorStore store,
       Map<Type, Class<?>> types) throws IOException {
-    // may be creating it already
-    if (store.contains(c)) {
-      return store.get(c);
-    }
 
     // verifying that the class is an entity
     Entity annotation = c.getAnnotation(Entity.class);
     if (annotation == null) {
       throw new IllegalArgumentException(c + " is not an entity. Entities must"
           + " be annotated with @Entity.");
+    }
+
+    // may be creating it already
+    if (store.contains(c)) {
+      return Pair.of(store.get(c), annotation);
     }
 
     // weak reference
@@ -69,14 +70,18 @@ class DescriptorFactory {
         }
       }
 
-      return createPolymorphicEntityDescriptor(c, store,
-          new HashSet<EntityDescriptor<?>>(subclassesDescriptor.values()));
+      return Pair.of(
+          createPolymorphicEntityDescriptor(c, store,
+              new HashSet<EntityDescriptor<?>>(subclassesDescriptor.values())),
+          annotation);
     } else if (discriminatorName != null && discriminatorName.length() > 0) {
       throw new IllegalArgumentException(
           "The subclasses option must be used in conjunction of the " +
           "discriminatorName option: " + c);
     } else {
-      return createConcreteEntityDescriptor(c, store, types);
+      return Pair.of(
+          createConcreteEntityDescriptor(c, store, types),
+          annotation);
     }
   }
 
@@ -108,7 +113,7 @@ class DescriptorFactory {
       }
       ClassReader reader = new ClassReader(in);
       EntityClassVisitor visitor =
-        new EntityClassVisitor(c, store, annotation.inline(), types);
+        new EntityClassVisitor(c, store, types);
       reader.accept(visitor, true);
       visitor.verify();
 
@@ -148,7 +153,7 @@ class DescriptorFactory {
    * {@code Ljava/lang/String;}.
    */
   @SuppressWarnings("unchecked")
-  Descriptor create(String signature, EntityDescriptorStore store,
+  Pair<Descriptor, Entity> create(String signature, EntityDescriptorStore store,
       FieldDescriptor fieldDescriptor, Map<Type, Class<?>> types) {
     SignatureReader r = new SignatureReader(signature);
     EntitySignatureVisitor entitySignatureVisitor =
