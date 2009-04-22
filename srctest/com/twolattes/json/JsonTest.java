@@ -341,6 +341,28 @@ public class JsonTest {
   }
 
   @Test
+  public void objectFromPairs1() {
+    assertEquals(Json.object(), Json.object(new Json.Value[0]));
+  }
+
+  @Test
+  public void objectFromPairs2() {
+    assertEquals(
+        Json.object(Json.string("a"), Json.number(1)),
+        Json.object(new Json.Value[] { Json.string("a"), Json.number(1) }));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void objectFromPairs3() {
+    Json.object(new Json.Value[] { Json.string("a") });
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void objectFromPairs4() {
+    Json.object(new Json.Value[] { Json.number(1), Json.number(1) });
+  }
+
+  @Test
   public void objectEqualsAndHashCode1() throws Exception {
     testEqualsAndHashCode(
         Json.object(),

@@ -844,6 +844,22 @@ public final class Json {
     return o;
   }
 
+  public static Json.Object object(Json.Value... keyValuePairs) {
+    if (keyValuePairs.length % 2 != 0) {
+      throw new IllegalArgumentException("Number of arguments must be even");
+    }
+    Json.Object o = object();
+    for (int i = 0; i < keyValuePairs.length; i += 2) {
+      Json.Value key = keyValuePairs[i];
+      if (key instanceof Json.String) {
+        o.put((Json.String) key, keyValuePairs[i + 1]);
+      } else {
+        throw new IllegalArgumentException("Keys must be JSON strings");
+      }
+    }
+    return o;
+  }
+
   public static Json.Number number(double number) {
     return new Json.NumberImpl(number);
   }
