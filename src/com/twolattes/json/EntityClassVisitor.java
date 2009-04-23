@@ -109,8 +109,7 @@ class EntityClassVisitor extends EmptyVisitor {
       if (potentialDescriptor instanceof GetSetFieldDescriptor) {
         fieldDescriptor = (GetSetFieldDescriptor) potentialDescriptor;
       } else if ((potentialDescriptor instanceof EmbeddedFieldDescriptor &&
-          ((EmbeddedFieldDescriptor) potentialDescriptor).getFieldDescriptor()
-          instanceof GetSetFieldDescriptor)) {
+          ((EmbeddedFieldDescriptor) potentialDescriptor).isGetSetFieldDescriptor())) {
         fieldDescriptor = (GetSetFieldDescriptor)
             ((EmbeddedFieldDescriptor) potentialDescriptor).getFieldDescriptor();
       } else {
@@ -175,8 +174,7 @@ class EntityClassVisitor extends EmptyVisitor {
         }
         setGetterOrSetter(fieldDescriptor, method, type);
       } else if ((potentialDescriptor instanceof EmbeddedFieldDescriptor &&
-          ((EmbeddedFieldDescriptor) potentialDescriptor).getFieldDescriptor()
-          instanceof GetSetFieldDescriptor)) {
+          ((EmbeddedFieldDescriptor) potentialDescriptor).isGetSetFieldDescriptor())) {
         fieldDescriptor = (GetSetFieldDescriptor)
             ((EmbeddedFieldDescriptor) potentialDescriptor).getFieldDescriptor();
         // TODO handle inconsistency between getter and setter

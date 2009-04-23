@@ -57,6 +57,9 @@ interface FieldDescriptor {
    */
   boolean isInView(String view);
 
-  String toString(int i);
+  /**
+   * Pretty prints the descriptor.
+   */
+  String toString(int pad);
 
 }

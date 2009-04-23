@@ -30,10 +30,6 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
     return getDescriptor().getReturnedClass();
   }
 
-  public boolean isEmbeddable() {
-    return getDescriptor().isEmbeddable();
-  }
-
   public boolean isInlineable() {
     return getDescriptor().isInlineable();
   }

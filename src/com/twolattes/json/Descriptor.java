@@ -21,8 +21,6 @@ interface Descriptor<E, J extends Json.Value> {
    */
   boolean isInlineable();
 
-  boolean isEmbeddable();
-
   /**
    * Marshall the described object.
    * @param entity an instance of the described object

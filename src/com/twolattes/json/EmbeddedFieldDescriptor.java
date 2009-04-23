@@ -2,6 +2,7 @@ package com.twolattes.json;
 
 import java.util.Map.Entry;
 
+import com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor;
 import com.twolattes.json.Json.Value;
 import com.twolattes.json.types.JsonType;
 
@@ -79,6 +80,10 @@ class EmbeddedFieldDescriptor implements FieldDescriptor {
 
   FieldDescriptor getFieldDescriptor() {
     return delegate;
+  }
+
+  boolean isGetSetFieldDescriptor() {
+    return delegate instanceof GetSetFieldDescriptor;
   }
 
   @Override

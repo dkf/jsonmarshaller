@@ -40,15 +40,6 @@ abstract class AbstractDescriptor<T, J extends Json.Value> implements Descriptor
   }
 
   /**
-   * Default implementation.
-   * @return {@code false}
-   */
-  public boolean isEmbeddable() {
-    return false;
-  }
-
-
-  /**
    * Default implementation delegating to
    * {@link AbstractDescriptor#marshallInline(Object, boolean)} after
    * verifying that the entity is inlineable.

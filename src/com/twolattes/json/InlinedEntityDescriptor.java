@@ -16,10 +16,6 @@ class InlinedEntityDescriptor<E> implements EntityDescriptor<E> {
     return delegate.getReturnedClass();
   }
 
-  public boolean isEmbeddable() {
-    return delegate.isEmbeddable();
-  }
-
   public boolean isInlineable() {
     return delegate.isInlineable();
   }

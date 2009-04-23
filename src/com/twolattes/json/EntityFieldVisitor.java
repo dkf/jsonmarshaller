@@ -105,10 +105,8 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
             }
           }
         } else {
-          if (!entityDescriptor.isEmbeddable()) {
-            throw new IllegalArgumentException("entity of the field  '"
-                + field.getName() + "' is not embeddable");
-          }
+          throw new IllegalArgumentException("entity of the field  '"
+              + field.getName() + "' is not embeddable");
         }
         // TODO throw exception if
         // - already inlined (add test)

@@ -3,6 +3,7 @@ package com.twolattes.json;
 import static com.twolattes.json.Json.NULL;
 import static com.twolattes.json.Json.object;
 import static com.twolattes.json.Json.string;
+import static java.lang.String.format;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -43,8 +44,9 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
     Class<?> implementedBy = annotation.implementedBy();
     if (!implementedBy.equals(Object.class)) {
       if (!entity.isAssignableFrom(implementedBy)) {
-        throw new IllegalArgumentException(entity.toString() +
-            "'s implementedBy must reference a subclass.");
+        throw new IllegalArgumentException(
+            format("%s's implementedBy must reference a subclass.",
+                entity.toString()));
       }
     } else {
       implementedBy = entity;
@@ -56,10 +58,10 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
       this.constructor.setAccessible(true);
     } catch (SecurityException e) {
       throw new IllegalArgumentException(
-          implementedBy + "'s constructor cannot be accessed.");
+          format("%s's constructor cannot be accessed.", implementedBy));
     } catch (NoSuchMethodException e) {
       throw new IllegalArgumentException(
-          implementedBy + " does not have a no argument constructor.");
+          format("%s does not have a no argument constructor.", implementedBy));
     }
 
     // name conflicts
@@ -69,9 +71,8 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
       for (FieldDescriptor descriptor : parent.fieldDescriptors) {
         if (names.contains(descriptor.getJsonName())) {
           throw new IllegalArgumentException(
-              "Field with JSON name " + descriptor.getJsonName() + " in " +
-              entity + " collides with field in class " +
-              parent.getReturnedClass());
+              format("Field with JSON name %s in %s collides with field in " +
+              		"class %s", descriptor.getJsonName(), entity, parent.getReturnedClass()));
         } else {
           names.add(descriptor.getJsonName());
         }
@@ -241,7 +242,9 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
   @Override
   public String toString(int pad) {
     StringBuilder builder = new StringBuilder();
-    builder.append("ConcreteEntityDescriptor<" + getReturnedClass().getSimpleName() + "> {\n");
+    builder.append(
+        format("ConcreteEntityDescriptor<%s> {\n",
+            getReturnedClass().getSimpleName()));
     for (FieldDescriptor f : fieldDescriptors) {
       for (int i = 0; i < pad + 2; i++) {
         builder.append(" ");
@@ -258,8 +261,8 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
   public String getDiscriminator() {
     if (discriminator == null || discriminator.length() == 0) {
       throw new IllegalArgumentException(
-          "The discriminator option is not defined on this entity: " +
-          getReturnedClass());
+          format("The discriminator option is not defined on this entity: %s",
+              getReturnedClass()));
     } else {
       return discriminator;
     }

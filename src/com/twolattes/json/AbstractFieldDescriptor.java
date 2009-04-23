@@ -61,16 +61,15 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
     } else {
       if (isInView(view) && !isOptional()) {
         if (view == null) {
-          throw new IllegalStateException("The field " + getFieldName() +
-              " whose JSON name is " + name + " has no value. " +
-              "If this field is optional, use the @Value(optional = true)" +
-              " annotations.");
+          throw new IllegalStateException(
+              format("The field %s whose JSON name is %s has no value. " +
+                  "If this field is optional, use the @Value(optional = true) " +
+                  "annotations.", getFieldName(), name));
         } else {
-          throw new IllegalStateException("The field " + getFieldName() +
-              " (in the view " + view +") whose JSON" +
-              " name is " + name + " has no value. If this " +
-              "field is optional, use the @Value(optional = true) " +
-              "annotations.");
+          throw new IllegalStateException(
+              format("The field %s (in the view %s) whose JSON name is %s has " +
+              		"no value. If this field is optional, use the " +
+              		"@Value(optional = true) annotations.", getFieldName(), view, name));
         }
       }
     }
@@ -148,7 +147,8 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
     for (int i = 0; i < pad; i++) {
       builder.append(" ");
     }
-    builder.append(getFieldName() + " as \"" + getJsonName() + "\": ");
+    builder.append(
+        format("%s as \"%s\": ", getFieldName(), getJsonName()));
     builder.append(getDescriptor().toString(pad));
 
     return builder.toString();
@@ -169,8 +169,8 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
       try {
         return field.get(instance);
       } catch (IllegalAccessException e) {
-        throw new IllegalStateException("cannot access " + instance.getClass()
-            + " field");
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
       }
     }
 
@@ -178,8 +178,8 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
       try {
         field.set(instance, value);
       } catch (IllegalAccessException e) {
-        throw new IllegalStateException("cannot access " + instance.getClass()
-            + " field");
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
       }
     }
 
