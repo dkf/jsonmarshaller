@@ -15,6 +15,11 @@ class ShortDescriptor extends NumberDescriptor<Short> {
   }
 
   @Override
+  protected BigDecimal convert(Short entity) {
+    return BigDecimal.valueOf(entity);
+  }
+
+  @Override
   Short convert(BigDecimal entity) {
     return entity.shortValue();
   }

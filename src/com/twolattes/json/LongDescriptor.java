@@ -15,6 +15,11 @@ class LongDescriptor extends NumberDescriptor<Long> {
   }
 
   @Override
+  protected BigDecimal convert(Long entity) {
+    return BigDecimal.valueOf(entity);
+  }
+
+  @Override
   Long convert(BigDecimal entity) {
     return entity.longValue();
   }

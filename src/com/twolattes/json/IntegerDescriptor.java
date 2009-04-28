@@ -15,6 +15,11 @@ class IntegerDescriptor extends NumberDescriptor<Integer> {
   }
 
   @Override
+  protected BigDecimal convert(Integer entity) {
+    return BigDecimal.valueOf(entity);
+  }
+
+  @Override
   Integer convert(BigDecimal entity) {
     return entity.intValue();
   }

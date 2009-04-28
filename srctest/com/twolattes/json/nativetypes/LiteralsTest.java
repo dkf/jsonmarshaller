@@ -37,6 +37,8 @@ public class LiteralsTest {
 
     assertJsonObjectWellFormed(object);
 
+    assertEquals("1", object.get(string("literal")).toString());
+
     Int instance = marshaller.unmarshall(object);
 
     assertEquals(1, instance.literal);
@@ -103,6 +105,8 @@ public class LiteralsTest {
 
     assertJsonObjectWellFormed(object);
 
+    assertEquals("1", object.get(string("literal")).toString());
+
     Short instance = marshaller.unmarshall(object);
 
     assertEquals(1, instance.literal);
@@ -135,6 +139,8 @@ public class LiteralsTest {
     }});
 
     assertJsonObjectWellFormed(object);
+
+    assertEquals("1", object.get(string("literal")).toString());
 
     Long instance = marshaller.unmarshall(object);
 
