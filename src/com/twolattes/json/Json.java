@@ -872,11 +872,11 @@ public final class Json {
     return new Json.StringImpl(string);
   }
 
-  static Json.Boolean booleanValue(boolean b) {
+  public static Json.Boolean booleanValue(boolean b) {
     return new Json.BooleanImpl(b);
   }
 
-  static Json.Null nullValue() {
+  public static Json.Null nullValue() {
     return new Json.NullImpl();
   }
 
