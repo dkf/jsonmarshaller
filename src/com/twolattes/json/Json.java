@@ -872,11 +872,13 @@ public final class Json {
     return new Json.StringImpl(string);
   }
 
-  public static Json.Boolean booleanValue(boolean b) {
+  /** See {@link #TRUE}, {@link #FALSE}. */
+  static Json.Boolean booleanValue(boolean b) {
     return new Json.BooleanImpl(b);
   }
 
-  public static Json.Null nullValue() {
+  /** See {@link #NULL}. */
+  static Json.Null nullValue() {
     return new Json.NullImpl();
   }
 
