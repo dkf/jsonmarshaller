@@ -1,10 +1,12 @@
 package com.twolattes.json.nativetypes;
 
 import static com.twolattes.json.Json.FALSE;
+import static com.twolattes.json.Json.NULL;
 import static com.twolattes.json.Json.TRUE;
 import static com.twolattes.json.Json.number;
 import static com.twolattes.json.Json.string;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -254,6 +256,40 @@ public class LiteralsTest {
     assertEquals(2, instance.objectArray.length);
     assertEquals(true, instance.objectArray[0]);
     assertEquals(false, instance.objectArray[1]);
+  }
+
+  @Entity
+  static class Bytes {
+    @Value byte literal;
+    @Value Byte object;
+    @Value byte[] nativeArray;
+    @Value Byte[] objectArray;
+  }
+
+  @Test
+  public void testBytes() throws Exception {
+    Marshaller<Bytes> marshaller = TwoLattes.createMarshaller(Bytes.class);
+
+    Json.Object object = marshaller.marshall(new Bytes() {{
+      this.literal = 8;
+      this.object = 5;
+      this.nativeArray = new byte[] { 0, -128 };
+      this.objectArray = new Byte[] { 127, null };
+    }});
+
+    assertJsonObjectWellFormed(object,
+        number(8), number(5), number(0), number(-128), number(127), NULL);
+
+    Bytes instance = marshaller.unmarshall(object);
+
+    assertEquals((byte) 8, instance.literal);
+    assertEquals(Byte.valueOf((byte) 5), instance.object);
+    assertEquals(2, instance.nativeArray.length);
+    assertEquals((byte) 0, instance.nativeArray[0]);
+    assertEquals((byte) -128, instance.nativeArray[1]);
+    assertEquals(2, instance.objectArray.length);
+    assertEquals(Byte.valueOf((byte) 127), instance.objectArray[0]);
+    assertNull(instance.objectArray[1]);
   }
 
   private void assertJsonObjectWellFormed(Json.Object object) {

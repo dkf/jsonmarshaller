@@ -3,6 +3,8 @@ package com.twolattes.json;
 import static com.twolattes.json.BigDecimalDescriptor.BIG_DECIMAL_DESC;
 import static com.twolattes.json.BooleanDescriptor.BOOLEAN_DESC;
 import static com.twolattes.json.BooleanDescriptor.BOOLEAN_LITERAL_DESC;
+import static com.twolattes.json.ByteDescriptor.BYTE_DESC;
+import static com.twolattes.json.ByteDescriptor.BYTE_LITERAL_DESC;
 import static com.twolattes.json.CharacterDescriptor.CHARARACTER_DESC;
 import static com.twolattes.json.CharacterDescriptor.CHAR_DESC;
 import static com.twolattes.json.DoubleDescriptor.DOUBLE_DESC;
@@ -51,6 +53,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
     baseTypes.put('J', LONG_LITERAL_DESC);
     baseTypes.put('Z', BOOLEAN_LITERAL_DESC);
     baseTypes.put('F', FLOAT_LITERAL_DESC);
+    baseTypes.put('B', BYTE_LITERAL_DESC);
 
     putBaseObjectTypes(String.class, STRING_DESC);
     putBaseObjectTypes(Integer.class, INTEGER_DESC);
@@ -60,6 +63,7 @@ class EntitySignatureVisitor implements SignatureVisitor {
     putBaseObjectTypes(Long.class, LONG_DESC);
     putBaseObjectTypes(Boolean.class, BOOLEAN_DESC);
     putBaseObjectTypes(Float.class, FLOAT_DESC);
+    putBaseObjectTypes(Byte.class, BYTE_DESC);
     putBaseObjectTypes(BigDecimal.class, BIG_DECIMAL_DESC);
   }
 
