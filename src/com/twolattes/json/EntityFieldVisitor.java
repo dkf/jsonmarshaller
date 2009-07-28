@@ -1,6 +1,7 @@
 package com.twolattes.json;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,8 +38,10 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
     this.fieldDescriptor = new DirectAccessFieldDescriptor(field);
 
     // accessibility of the field
-    if (!field.isAccessible()) {
-      field.setAccessible(true);
+    if (field.getAnnotation(Value.class) != null) {
+      if (!Modifier.isPublic(field.getModifiers())) {
+        field.setAccessible(true);
+      }
     }
   }
 
