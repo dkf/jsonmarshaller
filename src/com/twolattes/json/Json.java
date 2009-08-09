@@ -366,7 +366,8 @@ public final class Json {
     }
 
     public void write(Writer writer) throws IOException {
-      writer.append('"');
+      StringBuilder builder = new StringBuilder(string.length() << 1);
+      builder.append('"');
       int length = string.length();
       char c;
       boolean safe = true;
@@ -375,24 +376,25 @@ public final class Json {
         safe = c != '"' && c != '\\' && c != '\b' && c != '\n' && c != '\f' && c != '\r' && c != '\t';
       }
       if (safe) {
-        writer.append(string);
+        builder.append(string);
       } else {
         for (int i = 0; i < length; i++) {
           switch (c = string.charAt(i)) {
-            case '\b': writer.append("\\b"); break;
-            case '\n': writer.append("\\n"); break;
-            case '\f': writer.append("\\f"); break;
-            case '\r': writer.append("\\r"); break;
-            case '\t': writer.append("\\t"); break;
+            case '\b': builder.append("\\b"); break;
+            case '\n': builder.append("\\n"); break;
+            case '\f': builder.append("\\f"); break;
+            case '\r': builder.append("\\r"); break;
+            case '\t': builder.append("\\t"); break;
             case '"':
             case '\\':
-              writer.append('\\');
+              builder.append('\\');
             default:
-              writer.append(c);
+              builder.append(c);
           }
         }
       }
-      writer.append('"');
+      builder.append('"');
+      writer.append(builder.toString());
     }
 
     public <T> T visit(JsonVisitor<T> visitor) {
