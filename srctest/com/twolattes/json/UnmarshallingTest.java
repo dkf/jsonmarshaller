@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.json.JSONException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -145,13 +144,6 @@ public class UnmarshallingTest {
 
     assertNotNull(inlined.inlineMe);
     assertNull(inlined.doNotInlineMe);
-  }
-
-  @Test
-  public void testOptionalValue() throws Exception {
-    OptionalValue v = unmarshall(OptionalValue.class, "{}");
-
-    assertEquals(new OptionalValue().getOptional(), v.getOptional());
   }
 
   @Test
@@ -343,20 +335,20 @@ public class UnmarshallingTest {
     // TODO flaky: NPE GetSetFieldDescriptor:57
   }
 
-  private <T> T unmarshall(Class<T> clazz, String json) throws JSONException {
+  public static <T> T unmarshall(Class<T> clazz, String json) {
     return unmarshall(clazz, json, false, null);
   }
 
-  private <T> T unmarshall(Class<T> clazz, String json, boolean cyclic) throws JSONException {
+  public static <T> T unmarshall(Class<T> clazz, String json, boolean cyclic) {
     return unmarshall(clazz, json, cyclic, null);
   }
 
-  private <T> T unmarshall(Class<T> clazz, String json, boolean cyclic, String view) throws JSONException {
+  public static <T> T unmarshall(Class<T> clazz, String json, boolean cyclic, String view) {
     Marshaller<T> marshaller = TwoLattes.createMarshaller(clazz);
     return marshaller.unmarshall((Json.Object) Json.fromString(json), view);
   }
 
-  private <T> List<T> unmarshallList(Class<T> clazz, String json) throws JSONException {
+  public static <T> List<T> unmarshallList(Class<T> clazz, String json) {
     Marshaller<T> marshaller = TwoLattes.createMarshaller(clazz);
     return marshaller.unmarshallList((Json.Array) Json.fromString(json));
   }
