@@ -22,8 +22,6 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
   // fields with a default value
   private Set<String> views = null;
 
-  private boolean optional = false;
-
   private String jsonName = null;
 
   private boolean ordinal = false;
@@ -41,11 +39,9 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
   public void marshall(Object entity, String view, Json.Object jsonObject) {
     if (isInView(view)) {
       Object fieldValue = getFieldValue(entity);
-      if (!(isOptional() && fieldValue == null)) {
-        Descriptor descriptor = getDescriptor();
-        jsonObject.put(
-            string(getJsonName()), descriptor.marshall(fieldValue, view));
-      }
+      Descriptor descriptor = getDescriptor();
+      jsonObject.put(
+          string(getJsonName()), descriptor.marshall(fieldValue, view));
     }
   }
 
@@ -59,7 +55,7 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
             descriptor.unmarshall(jsonObject.get(name), view));
       }
     } else {
-      if (isInView(view) && !isOptional()) {
+      if (isInView(view)) {
         if (view == null) {
           throw new IllegalStateException(
               format("The field %s whose JSON name is %s has no value. " +
@@ -81,10 +77,6 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
 
   public final String getJsonName() {
     return (jsonName == null) ? fieldName : jsonName;
-  }
-
-  public final boolean isOptional() {
-    return optional;
   }
 
   public final boolean useOrdinal() {
@@ -119,10 +111,6 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
     } else {
       this.jsonName = null;
     }
-  }
-
-  void setOptional(boolean optional) {
-    this.optional = optional;
   }
 
   void setOrdinal(boolean ordinal) {

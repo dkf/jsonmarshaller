@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,10 +23,11 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
   private final EntityClassVisitor classVisitor;
   private boolean isJsonValue = false;
   private final EntityDescriptorStore store;
-  final AbstractFieldDescriptor fieldDescriptor;
   private final Map<Type, Class<?>> types;
+  final AbstractFieldDescriptor fieldDescriptor;
   Boolean shouldInline;
   Boolean shouldEmbed;
+  Boolean isOptional;
 
   public EntityFieldVisitor(EntityClassVisitor visitor, Field field,
       String signature, EntityDescriptorStore store,
@@ -119,23 +121,33 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
           && entityDescriptor instanceof EntityDescriptor) {
         fieldDescriptor.setDescriptor(
             new InlinedEntityDescriptor((EntityDescriptor) entityDescriptor));
-      } else if (shouldEmbed != null && shouldEmbed
-            && entityDescriptor instanceof EntityDescriptor) {
-        fieldDescriptor.setDescriptor(entityDescriptor);
-        classVisitor.add(new EmbeddedFieldDescriptor(fieldDescriptor));
-        Set<FieldDescriptor> fieldDescriptors =
-            ((EntityDescriptor) entityDescriptor).getFieldDescriptors();
-        for (FieldDescriptor fieldDescriptor : fieldDescriptors) {
-          if (fieldDescriptor instanceof AbstractFieldDescriptor) {
-            ((AbstractFieldDescriptor) fieldDescriptor).setOptional(true);
-          }
-        }
-        return;
       } else {
         fieldDescriptor.setDescriptor(entityDescriptor);
       }
 
-      classVisitor.add(fieldDescriptor);
+      if (shouldEmbed != null && shouldEmbed
+            && entityDescriptor instanceof EntityDescriptor) {
+        Set<FieldDescriptor> fieldDescriptors =
+            ((EntityDescriptor) entityDescriptor).getFieldDescriptors();
+        Set<FieldDescriptor> newFieldDescriptors = new HashSet<FieldDescriptor>();
+        Iterator<FieldDescriptor> iterator = fieldDescriptors.iterator();
+        while (iterator.hasNext()) {
+          FieldDescriptor fd = iterator.next();
+          if (fd instanceof AbstractFieldDescriptor) {
+            iterator.remove();
+            newFieldDescriptors.add(new OptionalFieldDescriptor(fd));
+          }
+        }
+        fieldDescriptors.addAll(newFieldDescriptors);
+        classVisitor.add((isOptional != null && isOptional) ?
+            new OptionalFieldDescriptor(new EmbeddedFieldDescriptor(fieldDescriptor)) :
+            new EmbeddedFieldDescriptor(fieldDescriptor));
+        return;
+      }
+
+      classVisitor.add((isOptional != null && isOptional) ?
+          new OptionalFieldDescriptor(fieldDescriptor) :
+          fieldDescriptor);
     }
   }
 }

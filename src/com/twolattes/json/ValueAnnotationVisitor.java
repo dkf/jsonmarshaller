@@ -9,6 +9,7 @@ import org.objectweb.asm.commons.EmptyVisitor;
 import com.twolattes.json.types.JsonType;
 
 class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
+
   // TODO: reflect on the Value annotation to find those values... instead of copying them!
   private static final String VALUE_ANNOTATION_NAME = "name";
   private static final String VALUE_ANNOTATION_INLINE = "inline";
@@ -39,7 +40,7 @@ class ValueAnnotationVisitor extends EmptyVisitor implements AnnotationVisitor {
     } else if (VALUE_ANNOTATION_EMBED.equals(name)) {
       entityFieldVisitor.shouldEmbed = (Boolean) value;
     } else if (VALUE_ANNOTATION_OPTIONAL.equals(name)) {
-      entityFieldVisitor.fieldDescriptor.setOptional((Boolean) value);
+      entityFieldVisitor.isOptional = (Boolean) value;
     } else if (VALUE_ANNOTATION_ORDINAL.equals(name)) {
       entityFieldVisitor.fieldDescriptor.setOrdinal((Boolean) value);
     } else if (VALUE_ANNOTATION_TYPE.equals(name)) {

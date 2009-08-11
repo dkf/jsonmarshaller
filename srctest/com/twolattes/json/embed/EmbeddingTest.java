@@ -474,9 +474,8 @@ public class EmbeddingTest {
         TwoLattes.createMarshaller(EmbeddingOptionalNull.class).unmarshall(
             object(string("c"), number(3)));
 
-    assertEquals(0, embedding.embedded.a);
-    assertEquals(0, embedding.embedded.b);
     assertEquals(3, embedding.c);
+    assertNull(embedding.embedded);
   }
 
   private <T> T unmarshall(Class<T> clazz, String json) throws JSONException {

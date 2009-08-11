@@ -106,12 +106,18 @@ class EntityClassVisitor extends EmptyVisitor {
     FieldDescriptor potentialDescriptor = get(fieldDescriptor, annotation.name());
     if (potentialDescriptor != null) {
       // we've seen the setter already, get the field descriptor
+      // TODO(pascal): refactor this crap. Remove all instanceof, we should not
+      // need those!
       if (potentialDescriptor instanceof GetSetFieldDescriptor) {
         fieldDescriptor = (GetSetFieldDescriptor) potentialDescriptor;
       } else if ((potentialDescriptor instanceof EmbeddedFieldDescriptor &&
           ((EmbeddedFieldDescriptor) potentialDescriptor).isGetSetFieldDescriptor())) {
         fieldDescriptor = (GetSetFieldDescriptor)
             ((EmbeddedFieldDescriptor) potentialDescriptor).getFieldDescriptor();
+      } else if ((potentialDescriptor instanceof OptionalFieldDescriptor &&
+          ((OptionalFieldDescriptor) potentialDescriptor).delegate instanceof GetSetFieldDescriptor)) {
+        fieldDescriptor = (GetSetFieldDescriptor)
+            ((OptionalFieldDescriptor) potentialDescriptor).delegate;
       } else {
         throw new IllegalArgumentException(format(
             "Value with name %s is described multiple times.",
@@ -140,14 +146,15 @@ class EntityClassVisitor extends EmptyVisitor {
 
     boolean inline = false;
     boolean embed = false;
+    boolean optional = false;
 
     inline = annotation.inline()
         || (inlineEntity == null ? false : inlineEntity);
     embed = annotation.embed()
         || (embedEntity == null ? false : embedEntity);
+    optional = annotation.optional();
 
     fieldDescriptor.setJsonName(annotation.name());
-    fieldDescriptor.setOptional(annotation.optional());
     for (String view : annotation.views()) {
       fieldDescriptor.addView(view);
     }
@@ -180,6 +187,11 @@ class EntityClassVisitor extends EmptyVisitor {
         // TODO handle inconsistency between getter and setter
 
         setGetterOrSetter(fieldDescriptor, method, type);
+      } else if ((potentialDescriptor instanceof OptionalFieldDescriptor &&
+          ((OptionalFieldDescriptor) potentialDescriptor).delegate instanceof GetSetFieldDescriptor)) {
+        // TODO handle inconsistency between getter and setter
+
+        setGetterOrSetter(fieldDescriptor, method, type);
       } else {
         throw new IllegalStateException();
       }
@@ -193,7 +205,8 @@ class EntityClassVisitor extends EmptyVisitor {
           fieldDescriptor.setDescriptor(
               new InlinedEntityDescriptor((EntityDescriptor) descriptor));
         }
-        add(fieldDescriptor);
+        add(optional ?
+            new OptionalFieldDescriptor(fieldDescriptor) : fieldDescriptor);
       }
     }
 

@@ -3,7 +3,6 @@ package com.twolattes.json;
 import java.util.Map.Entry;
 
 import com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor;
-import com.twolattes.json.Json.Value;
 import com.twolattes.json.types.JsonType;
 
 class EmbeddedFieldDescriptor implements FieldDescriptor {
@@ -18,15 +17,13 @@ class EmbeddedFieldDescriptor implements FieldDescriptor {
   public void marshall(Object entity, String view, Json.Object jsonObject) {
     if (isInView(view)) {
       Object fieldValue = getFieldValue(entity);
-      if (!(isOptional() && fieldValue == null)) {
-        Descriptor descriptor = getDescriptor();
-        Value value = descriptor.marshall(fieldValue, view);
-        if (!value.equals(Json.NULL)) {
-          if (value instanceof Json.Object) {
-            Json.Object object = (Json.Object) value;
-            for (Entry<Json.String, Value> entry : object.entrySet()) {
-              jsonObject.put(entry.getKey(), entry.getValue());
-            }
+      Descriptor descriptor = getDescriptor();
+      Json.Value value = descriptor.marshall(fieldValue, view);
+      if (!value.equals(Json.NULL)) {
+        if (value instanceof Json.Object) {
+          Json.Object object = (Json.Object) value;
+          for (Entry<Json.String, Json.Value> entry : object.entrySet()) {
+            jsonObject.put(entry.getKey(), entry.getValue());
           }
         }
       }
@@ -64,10 +61,6 @@ class EmbeddedFieldDescriptor implements FieldDescriptor {
 
   public boolean isInView(String view) {
     return delegate.isInView(view);
-  }
-
-  public boolean isOptional() {
-    return delegate.isOptional();
   }
 
   public void setFieldValue(Object entity, Object value) {

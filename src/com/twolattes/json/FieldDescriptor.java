@@ -34,11 +34,6 @@ interface FieldDescriptor {
   void setFieldValue(Object entity, Object value);
 
   /**
-   * Whether this field should this field be inlined.
-   */
-  boolean isOptional();
-
-  /**
    * Whether or not to use the {@link Enum#ordinal()} value to represent enum
    * constants if the field is of type {@link Enum}.
    *
