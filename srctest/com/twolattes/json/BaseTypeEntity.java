@@ -1,20 +1,22 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.string;
+
 import java.util.HashMap;
 import java.util.Map;
 
 @Entity
 public class BaseTypeEntity {
-  public static final Map<String, Class<?>> fields = new HashMap<String, Class<?>>();
+  public static final Map<Json.String, Class<?>> fields = new HashMap<Json.String, Class<?>>();
   static {
-    fields.put("_0", Integer.TYPE);
-    fields.put("_1", Character.TYPE);
-    fields.put("_2", Long.TYPE);
-    fields.put("_3", Float.TYPE);
-    fields.put("_4", Short.TYPE);
-    fields.put("_5", String.class);
-    fields.put("_6", Boolean.TYPE);
-    fields.put("_7", Double.TYPE);
+    fields.put(string("_0"), Integer.TYPE);
+    fields.put(string("_1"), Character.TYPE);
+    fields.put(string("_2"), Long.TYPE);
+    fields.put(string("_3"), Float.TYPE);
+    fields.put(string("_4"), Short.TYPE);
+    fields.put(string("_5"), String.class);
+    fields.put(string("_6"), Boolean.TYPE);
+    fields.put(string("_7"), Double.TYPE);
   }
 
   @Value

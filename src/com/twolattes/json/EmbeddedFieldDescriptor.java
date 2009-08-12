@@ -43,7 +43,7 @@ class EmbeddedFieldDescriptor implements FieldDescriptor {
     return delegate.getDescriptor();
   }
 
-  public String getFieldName() {
+  public Json.String getFieldName() {
     return delegate.getFieldName();
   }
 
@@ -51,7 +51,7 @@ class EmbeddedFieldDescriptor implements FieldDescriptor {
     return delegate.getFieldValue(entity);
   }
 
-  public String getJsonName() {
+  public Json.String getJsonName() {
     return delegate.getJsonName();
   }
 

@@ -1,7 +1,5 @@
 package com.twolattes.json;
 
-import static com.twolattes.json.Json.string;
-
 import com.twolattes.json.types.JsonType;
 
 class OptionalFieldDescriptor implements FieldDescriptor {
@@ -19,15 +17,14 @@ class OptionalFieldDescriptor implements FieldDescriptor {
       Object fieldValue = getFieldValue(entity);
       if (fieldValue != null) {
         Descriptor descriptor = getDescriptor();
-        jsonObject.put(
-            string(getJsonName()), descriptor.marshall(fieldValue, view));
+        jsonObject.put(getJsonName(), descriptor.marshall(fieldValue, view));
       }
     }
   }
 
   public void unmarshall(Object entity, String view,
       com.twolattes.json.Json.Object jsonObject) {
-    if (jsonObject.containsKey(string(getJsonName()))) {
+    if (jsonObject.containsKey(getJsonName())) {
       delegate.unmarshall(entity, view, jsonObject);
     }
   }
@@ -36,7 +33,7 @@ class OptionalFieldDescriptor implements FieldDescriptor {
     return delegate.getDescriptor();
   }
 
-  public String getFieldName() {
+  public Json.String getFieldName() {
     return delegate.getFieldName();
   }
 
@@ -44,7 +41,7 @@ class OptionalFieldDescriptor implements FieldDescriptor {
     return delegate.getFieldValue(entity);
   }
 
-  public String getJsonName() {
+  public Json.String getJsonName() {
     return delegate.getJsonName();
   }
 

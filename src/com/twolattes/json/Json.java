@@ -81,6 +81,8 @@ public final class Json {
 
     java.lang.String getString();
 
+    boolean isEmpty();
+
   }
 
   /**
@@ -423,6 +425,10 @@ public final class Json {
 
     public java.lang.String getString() {
       return string;
+    }
+
+    public boolean isEmpty() {
+      return string.length() == 0; // 1.5 compatible
     }
 
   }

@@ -2,6 +2,7 @@ package com.twolattes.json;
 
 import static com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor.Type.GETTER;
 import static com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor.Type.SETTER;
+import static com.twolattes.json.Json.string;
 import static java.lang.String.format;
 
 import java.lang.reflect.Method;
@@ -27,7 +28,7 @@ class EntityClassVisitor extends EmptyVisitor {
   private static final Pattern SETTER_PATTERN = Pattern.compile("^set[A-Z0-9_].*$");
   private static final Pattern SETTER_SIGNATURE = Pattern.compile("^\\([^\\)]+\\)V$");
 
-  private final Map<String, FieldDescriptor> fieldDescriptors;
+  private final Map<Json.String, FieldDescriptor> fieldDescriptors;
   private final Class<?> entityClass;
   private final EntityDescriptorStore store;
   private final Map<String, Method> methods;
@@ -35,7 +36,7 @@ class EntityClassVisitor extends EmptyVisitor {
 
   public EntityClassVisitor(Class<?> entityClass, EntityDescriptorStore store,
       Map<Type, Class<?>> types) {
-    this.fieldDescriptors = new HashMap<String, FieldDescriptor>();
+    this.fieldDescriptors = new HashMap<Json.String, FieldDescriptor>();
     this.entityClass = entityClass;
     this.store = store;
     this.types = types;
@@ -103,7 +104,8 @@ class EntityClassVisitor extends EmptyVisitor {
 
     GetSetFieldDescriptor fieldDescriptor =
         new GetSetFieldDescriptor(type, method);
-    FieldDescriptor potentialDescriptor = get(fieldDescriptor, annotation.name());
+    FieldDescriptor potentialDescriptor =
+        get(fieldDescriptor, string(annotation.name()));
     if (potentialDescriptor != null) {
       // we've seen the setter already, get the field descriptor
       // TODO(pascal): refactor this crap. Remove all instanceof, we should not
@@ -245,39 +247,34 @@ class EntityClassVisitor extends EmptyVisitor {
   }
 
 
-  protected FieldDescriptor get(String name) {
-    Map<String, FieldDescriptor> map = new HashMap<String, FieldDescriptor>();
-    for (Map.Entry<String, FieldDescriptor> entry : fieldDescriptors.entrySet()) {
+  @SuppressWarnings("unchecked")
+  protected FieldDescriptor get(Json.String name) {
+    for (Map.Entry<Json.String, FieldDescriptor> entry : fieldDescriptors.entrySet()) {
+      if (name.equals(entry.getKey())) {
+        return entry.getValue();
+      }
       if (entry.getValue() instanceof EmbeddedFieldDescriptor) {
         Set<FieldDescriptor> set =
             ((EntityDescriptor) entry.getValue().getDescriptor()).getAllFieldDescriptors();
         for (FieldDescriptor current : set) {
-          map.put(current.getJsonName().equals("") ?
-              current.getFieldName() : current.getJsonName(), current);
+          Json.String fieldDescriptorName = current.getJsonName().isEmpty() ?
+              current.getFieldName() : current.getJsonName();
+          if (name.equals(fieldDescriptorName)) {
+            return current;
+          }
         }
       }
-      map.put(entry.getKey(), entry.getValue());
     }
-
-    return map.get(name);
+    return null;
   }
 
-  protected FieldDescriptor get(FieldDescriptor fieldDescriptor, String jsonName) {
-    if (jsonName.equals("")) {
-      return get(fieldDescriptor.getFieldName());
-    } else {
-      return get(jsonName);
-    }
+  protected FieldDescriptor get(FieldDescriptor fieldDescriptor, Json.String jsonName) {
+    return get(jsonName.isEmpty() ? fieldDescriptor.getFieldName() : jsonName);
   }
 
   protected void add(FieldDescriptor fieldDescriptor) {
-    String name;
-    if (fieldDescriptor.getJsonName().equals("")) {
-      name = fieldDescriptor.getFieldName();
-    } else {
-      name = fieldDescriptor.getJsonName();
-    }
-
+    Json.String name = fieldDescriptor.getJsonName().isEmpty() ?
+        fieldDescriptor.getFieldName() : fieldDescriptor.getJsonName();
     if (fieldDescriptors.containsKey(name)) {
       throw new IllegalArgumentException(
           "Value with name " + name + " is described multiple times.");

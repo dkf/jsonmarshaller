@@ -16,12 +16,12 @@ interface FieldDescriptor {
   /**
    * Gets the field's Java name.
    */
-  String getFieldName();
+  Json.String getFieldName();
 
   /**
    * Gets the field's JSON name.
    */
-  String getJsonName();
+  Json.String getJsonName();
 
   /**
    * Gets the described field's value.

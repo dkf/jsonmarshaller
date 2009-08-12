@@ -1,5 +1,7 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.string;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -94,7 +96,8 @@ class EntityFieldVisitor extends EmptyVisitor implements FieldVisitor {
               ((EntityDescriptor) entityDescriptor).getAllFieldDescriptors());
 
           if (entityDescriptor instanceof PolymorphicEntityDescriptor) {
-            String discriminatorName = ((PolymorphicEntityDescriptor) entityDescriptor).getDiscriminatorName();
+            Json.String discriminatorName = string(
+                ((PolymorphicEntityDescriptor) entityDescriptor).getDiscriminatorName());
             if (classVisitor.get(discriminatorName) != null) {
               throw new IllegalArgumentException(
                   "entity of the field  '" + field.getName() + "' is not embeddable "

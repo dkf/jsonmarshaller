@@ -1,5 +1,6 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.string;
 import static com.twolattes.json.StringDescriptor.STRING_DESC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,8 +39,8 @@ public class DescriptorFactoryTest {
     assertEquals(GetterSetterEntity.class, d.getReturnedClass());
     assertEquals(1, d.getFieldDescriptors().size());
     for (FieldDescriptor f : d.getFieldDescriptors()) {
-      assertEquals("name", f.getJsonName());
-      assertEquals("name", f.getFieldName());
+      assertEquals(string("name"), f.getJsonName());
+      assertEquals(string("name"), f.getFieldName());
     }
   }
 
@@ -49,8 +50,8 @@ public class DescriptorFactoryTest {
     assertEquals(EntityInterface.class, d.getReturnedClass());
     assertEquals(1, d.getFieldDescriptors().size());
     for (FieldDescriptor f : d.getFieldDescriptors()) {
-      assertEquals("whatever", f.getJsonName());
-      assertEquals("whatever", f.getFieldName());
+      assertEquals(string("whatever"), f.getJsonName());
+      assertEquals(string("whatever"), f.getFieldName());
     }
   }
 
@@ -70,8 +71,8 @@ public class DescriptorFactoryTest {
     assertEquals(CollectionEntity.class, d.getReturnedClass());
     assertEquals(1, d.getFieldDescriptors().size());
     for (FieldDescriptor f : d.getFieldDescriptors()) {
-      assertEquals("buddies", f.getFieldName());
-      assertEquals("friends", f.getJsonName());
+      assertEquals(string("buddies"), f.getFieldName());
+      assertEquals(string("friends"), f.getJsonName());
       assertEquals(
           new CollectionDescriptor(Collection.class, STRING_DESC),
           f.getDescriptor());
@@ -111,10 +112,10 @@ public class DescriptorFactoryTest {
     assertEquals(6, d.getFieldDescriptors().size());
     int visited = 0;
     for (FieldDescriptor f : d.getFieldDescriptors()) {
-      if (f.getFieldName().equals("email")) {
+      if (f.getFieldName().equals(string("email"))) {
         fieldDescriptorIsInline(f);
         visited++;
-      } else if (f.getFieldName().equals("inlineTwice")) {
+      } else if (f.getFieldName().equals(string("inlineTwice"))) {
         fieldDescriptorIsInline(f);
         visited++;
       }
@@ -128,7 +129,7 @@ public class DescriptorFactoryTest {
     assertEquals(6, d.getFieldDescriptors().size());
     boolean visited = false;
     for (FieldDescriptor f : d.getFieldDescriptors()) {
-      if (f.getFieldName().equals("emails")) {
+      if (f.getFieldName().equals(string("emails"))) {
         assertTrue(f instanceof AbstractFieldDescriptor.DirectAccessFieldDescriptor);
         assertTrue(f.getDescriptor() instanceof MapDescriptor);
         assertTrue(((MapDescriptor) f.getDescriptor()).getValueDescriptor() instanceof InlinedEntityDescriptor);
@@ -143,7 +144,7 @@ public class DescriptorFactoryTest {
     EntityDescriptor<?> d = create(DoublyInlined.class);
     boolean visited = false;
     for (FieldDescriptor f : d.getFieldDescriptors()) {
-      if (f.getFieldName().equals("foo")) {
+      if (f.getFieldName().equals(string("foo"))) {
         fieldDescriptorIsInline(f);
         visited = true;
       }
@@ -152,7 +153,7 @@ public class DescriptorFactoryTest {
   }
 
   private void fieldDescriptorIsInline(FieldDescriptor f) {
-    assertTrue(f.getFieldName(),
+    assertTrue(f.getFieldName().getString(),
         f.getDescriptor() instanceof InlinedEntityDescriptor);
 //    assertTrue(f.getFieldName(),
 //        f instanceof InlinedFieldDescriptor);

@@ -17,12 +17,12 @@ import com.twolattes.json.types.JsonType;
  */
 abstract class AbstractFieldDescriptor implements FieldDescriptor {
 
-  private final String fieldName;
+  private final Json.String fieldName;
 
   // fields with a default value
   private Set<String> views = null;
 
-  private String jsonName = null;
+  private Json.String jsonName = null;
 
   private boolean ordinal = false;
 
@@ -32,7 +32,7 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
   private JsonType<?, ?> type;
 
   AbstractFieldDescriptor(String fieldName) {
-    this.fieldName = fieldName;
+    this.fieldName = string(fieldName);
   }
 
   @SuppressWarnings("unchecked")
@@ -41,13 +41,13 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
       Object fieldValue = getFieldValue(entity);
       Descriptor descriptor = getDescriptor();
       jsonObject.put(
-          string(getJsonName()), descriptor.marshall(fieldValue, view));
+          getJsonName(), descriptor.marshall(fieldValue, view));
     }
   }
 
   @SuppressWarnings("unchecked")
   public void unmarshall(Object entity, String view, Json.Object jsonObject) {
-    Json.String name = string(getJsonName());
+    Json.String name = getJsonName();
     if (jsonObject.containsKey(name)) {
       if (isInView(view)) {
         Descriptor descriptor = getDescriptor();
@@ -71,12 +71,12 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
     }
   }
 
-  public final String getFieldName() {
+  public final Json.String getFieldName() {
     return fieldName;
   }
 
-  public final String getJsonName() {
-    return (jsonName == null) ? fieldName : jsonName;
+  public final Json.String getJsonName() {
+    return jsonName == null ? fieldName : jsonName;
   }
 
   public final boolean useOrdinal() {
@@ -107,7 +107,7 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
 
   void setJsonName(String jsonName) {
     if (jsonName != null && jsonName.length() > 0) {
-      this.jsonName = jsonName;
+      this.jsonName = string(jsonName);
     } else {
       this.jsonName = null;
     }

@@ -2,7 +2,6 @@ package com.twolattes.json;
 
 import static com.twolattes.json.Json.NULL;
 import static com.twolattes.json.Json.object;
-import static com.twolattes.json.Json.string;
 import static java.lang.String.format;
 
 import java.lang.reflect.Constructor;
@@ -67,7 +66,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
       constructor.setAccessible(true);
     }
     // name conflicts
-    Set<String> names = new HashSet<String>();
+    Set<Json.String> names = new HashSet<Json.String>();
     parent = this;
     while (parent != null) {
       for (FieldDescriptor descriptor : parent.fieldDescriptors) {
@@ -185,7 +184,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
   * @return a set of <code>FieldDescriptor</code>s that correspond to actual fields.
   */
   private Set<FieldDescriptor> getDescriptorsByFieldName() {
-      Map<String, FieldDescriptor> descriptors = new HashMap<String, FieldDescriptor>();
+      Map<Json.String, FieldDescriptor> descriptors = new HashMap<Json.String, FieldDescriptor>();
       for (FieldDescriptor d : getFieldDescriptors()) {
           if (!descriptors.containsKey(d.getFieldName()) ) {
               descriptors.put(d.getFieldName(), d);
@@ -210,7 +209,7 @@ final class ConcreteEntityDescriptor<T> extends AbstractDescriptor<T, Json.Value
     } else {
       Json.Object jsonObject = object();
     	FieldDescriptor d = fieldDescriptors.iterator().next();
-      jsonObject.put(string(d.getJsonName()), entity);
+      jsonObject.put(d.getJsonName(), entity);
       return unmarshall(jsonObject);
     }
   }
