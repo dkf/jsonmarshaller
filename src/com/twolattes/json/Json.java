@@ -319,21 +319,7 @@ public final class Json {
 
   }
 
-  private static class NumberImpl extends BaseValue implements Json.Number {
-
-    private final BigDecimal number;
-
-    public NumberImpl(double number) {
-      this(BigDecimal.valueOf(number));
-    }
-
-    public NumberImpl(BigDecimal number) {
-      this.number = number;
-    }
-
-    public void write(Writer writer) throws IOException {
-      writer.append(number.toPlainString());
-    }
+  private static abstract class NumberImpl extends BaseValue implements Json.Number {
 
     public <T> T visit(JsonVisitor<T> visitor) {
       return visitor.caseNumber(this);
@@ -341,17 +327,132 @@ public final class Json {
 
     @Override
     public boolean equals(java.lang.Object obj) {
-      if (!(obj instanceof NumberImpl)) {
-        return false;
-      } else {
-        return this.number.compareTo(((NumberImpl) obj).number) == 0;
+      if (this == obj) {
+        return true;
       }
+      if (!(obj instanceof Json.Number)) {
+        return false;
+      }
+      if (obj.equals(NULL)) {
+        return false;
+      }
+      return this.getNumber().compareTo(((Json.Number) obj).getNumber()) == 0;
     }
 
     @Override
     public int hashCode() {
-      return (int) number.doubleValue();
+      return (int) getNumber().doubleValue();
     }
+
+  }
+
+  private static class NumberImplShort extends NumberImpl {
+
+    private final short number;
+
+    public NumberImplShort(short number) {
+      this.number = number;
+    }
+
+    public void write(Writer writer) throws IOException {
+      writer.append(Short.toString(number));
+    }
+
+
+    public BigDecimal getNumber() {
+      return BigDecimal.valueOf(number);
+    }
+
+  }
+
+  private static class NumberImplInt extends NumberImpl {
+
+    private final int number;
+
+    public NumberImplInt(int number) {
+      this.number = number;
+    }
+
+    public void write(Writer writer) throws IOException {
+      writer.append(Integer.toString(number));
+    }
+
+
+    public BigDecimal getNumber() {
+      return BigDecimal.valueOf(number);
+    }
+
+  }
+
+  private static class NumberImplLong extends NumberImpl {
+
+    private final long number;
+
+    public NumberImplLong(long number) {
+      this.number = number;
+    }
+
+    public void write(Writer writer) throws IOException {
+      writer.append(Long.toString(number));
+    }
+
+
+    public BigDecimal getNumber() {
+      return BigDecimal.valueOf(number);
+    }
+
+  }
+
+  private static class NumberImplFloat extends NumberImpl {
+
+    private final float number;
+
+    public NumberImplFloat(float number) {
+      this.number = number;
+    }
+
+    public void write(Writer writer) throws IOException {
+      writer.append(Float.toString(number));
+    }
+
+
+    public BigDecimal getNumber() {
+      return BigDecimal.valueOf(number);
+    }
+
+  }
+
+  private static class NumberImplDouble extends NumberImpl {
+
+    private final double number;
+
+    public NumberImplDouble(double number) {
+      this.number = number;
+    }
+
+    public void write(Writer writer) throws IOException {
+      writer.append(Double.toString(number));
+    }
+
+
+    public BigDecimal getNumber() {
+      return BigDecimal.valueOf(number);
+    }
+
+  }
+
+  private static class NumberImplBigDecimal extends NumberImpl {
+
+    private final BigDecimal number;
+
+    public NumberImplBigDecimal(BigDecimal number) {
+      this.number = number;
+    }
+
+    public void write(Writer writer) throws IOException {
+      writer.append(number.toPlainString());
+    }
+
 
     public BigDecimal getNumber() {
       return number;
@@ -705,20 +806,20 @@ public final class Json {
           case 'E':
             if (c != 'e' && c != 'E') {
               reader.unread(c);
-              return new Json.NumberImpl(new BigDecimal(sb.toString()));
+              return new Json.NumberImplBigDecimal(new BigDecimal(sb.toString()));
             }
             sb.append((char) c);
             c = reader.read();
             if (c != '+' && c != '-' && c < '0' && '9' < c) {
               reader.unread(c);
-              return new Json.NumberImpl(new BigDecimal(sb.toString()));
+              return new Json.NumberImplBigDecimal(new BigDecimal(sb.toString()));
             }
             do {
               sb.append((char) c);
             } while ((c = reader.read()) <= '9' && '0' <= c);
           default:
             reader.unread(c);
-            return new Json.NumberImpl(new BigDecimal(sb.toString()));
+            return new Json.NumberImplBigDecimal(new BigDecimal(sb.toString()));
         }
 
       // error
@@ -868,12 +969,28 @@ public final class Json {
     return o;
   }
 
+  public static Json.Number number(short number) {
+    return new Json.NumberImplShort(number);
+  }
+
+  public static Json.Number number(int number) {
+    return new Json.NumberImplInt(number);
+  }
+
+  public static Json.Number number(long number) {
+    return new Json.NumberImplLong(number);
+  }
+
+  public static Json.Number number(float number) {
+    return new Json.NumberImplFloat(number);
+  }
+
   public static Json.Number number(double number) {
-    return new Json.NumberImpl(number);
+    return new Json.NumberImplDouble(number);
   }
 
   public static Json.Number number(BigDecimal number) {
-    return new Json.NumberImpl(number);
+    return new Json.NumberImplBigDecimal(number);
   }
 
   public static Json.String string(java.lang.String string) {

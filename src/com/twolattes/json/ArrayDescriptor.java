@@ -4,8 +4,6 @@ import java.lang.reflect.Array;
 
 /**
  * A descriptor for arrays.
- *
- * @author pascallouis
  */
 class ArrayDescriptor extends AbstractDescriptor<Object, Json.Value> {
   private final Descriptor<Object, Json.Value> elementsDescriptor;

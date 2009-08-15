@@ -1,5 +1,6 @@
 package com.twolattes.json;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.twolattes.json.Json.FALSE;
 import static com.twolattes.json.Json.NULL;
 import static com.twolattes.json.Json.TRUE;
@@ -423,6 +424,30 @@ public class JsonTest {
     testNotEquals(NULL, FALSE);
     testNotEquals(NULL, array());
     testNotEquals(NULL, object());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void numbersEquality1() {
+    Congruence.check(
+        newArrayList(
+            number((short) 3),
+            number(3),
+            number(3L),
+            number(3F),
+            number(3.0),
+            number(BigDecimal.valueOf(3))),
+        newArrayList(
+            number((short) 5),
+            number(5),
+            number(5L),
+            number(5F),
+            number(5.0),
+            number(BigDecimal.valueOf(5))),
+        newArrayList(
+            number(10.5F),
+            number(10.5),
+            number(new BigDecimal("10.5000"))));
   }
 
   private void testEqualsAndHashCode(Json.Value v1, Json.Value v2) {
