@@ -65,7 +65,7 @@ public class PrettyPrinterTest {
     assertEquals(
         "[\n" +
         "  [\n" +
-        "    5.0,\n" +
+        "    5,\n" +
         "    true,\n" +
         "    {\n" +
         "      \"a\":\"b\"\n" +
