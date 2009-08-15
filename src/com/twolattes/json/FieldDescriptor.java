@@ -28,6 +28,22 @@ interface FieldDescriptor {
    */
   Object getFieldValue(Object entity);
 
+  byte getFieldValueByte(Object entity);
+
+  char getFieldValueChar(Object entity);
+
+  boolean getFieldValueBoolean(Object entity);
+
+  short getFieldValueShort(Object entity);
+
+  int getFieldValueInt(Object entity);
+
+  long getFieldValueLong(Object entity);
+
+  float getFieldValueFloat(Object entity);
+
+  double getFieldValueDouble(Object entity);
+
   /**
    * Sets the described field's value.
    */

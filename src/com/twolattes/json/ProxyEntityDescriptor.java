@@ -1,5 +1,6 @@
 package com.twolattes.json;
 
+import java.lang.reflect.Array;
 import java.util.Set;
 
 import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
@@ -8,12 +9,12 @@ import com.twolattes.json.DescriptorFactory.EntityDescriptorStore;
  * A proxy to an entity descriptor creating lazily the
  * {@link ConcreteEntityDescriptor} it delegates to.
  */
-final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
-  private final Class<T> klass;
+final class ProxyEntityDescriptor<E> implements EntityDescriptor<E> {
+  private final Class<E> klass;
   private final EntityDescriptorStore store;
-  private EntityDescriptor<T> descriptor = null;
+  private EntityDescriptor<E> descriptor = null;
 
-  ProxyEntityDescriptor(Class<T> klass, EntityDescriptorStore store) {
+  ProxyEntityDescriptor(Class<E> klass, EntityDescriptorStore store) {
     this.klass = klass;
     this.store = store;
   }
@@ -36,18 +37,28 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
 
   @SuppressWarnings("unchecked")
   public Json.Object marshall(Object entity, String view) {
-    return (Json.Object) getDescriptor().marshall((T) entity, view);
+    return (Json.Object) getDescriptor().marshall((E) entity, view);
   }
 
-  public Json.Value marshallInline(T entity, String view) {
+  public Json.Object marshall(
+      FieldDescriptor fieldDescriptor, Object entity, String view) {
+    return (Json.Object) getDescriptor().marshall(fieldDescriptor, entity, view);
+  }
+
+  @SuppressWarnings("unchecked")
+  public Json.Value marshallArray(Object array, int index, String view) {
+    return marshall(Array.get(array, index), view);
+  }
+
+  public Json.Value marshallInline(E entity, String view) {
     return getDescriptor().marshallInline(entity, view);
   }
 
-  public T unmarshall(Json.Value object, String view) {
+  public E unmarshall(Json.Value object, String view) {
     return getDescriptor().unmarshall(object, view);
   }
 
-  public T unmarshallInline(Json.Value entity, String view) {
+  public E unmarshallInline(Json.Value entity, String view) {
     return getDescriptor().unmarshallInline(entity, view);
   }
 
@@ -56,7 +67,7 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
   }
 
   @SuppressWarnings("unchecked")
-  private EntityDescriptor<T> getDescriptor() {
+  private EntityDescriptor<E> getDescriptor() {
     if (descriptor == null) {
       descriptor = store.get(klass);
     }
@@ -71,7 +82,7 @@ final class ProxyEntityDescriptor<T> implements EntityDescriptor<T> {
   public String toString(int pad) {
     StringBuilder builder = new StringBuilder();
     builder.append("proxy ");
-    EntityDescriptor<T> d = getDescriptor();
+    EntityDescriptor<E> d = getDescriptor();
     builder.append(d == null ? null : d.toString(pad));
     return builder.toString();
   }

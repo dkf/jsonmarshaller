@@ -26,7 +26,8 @@ class ArrayDescriptor extends AbstractDescriptor<Object, Json.Value> {
     Json.Array jsonArray = Json.array();
     int l = Array.getLength(entity);
     for (int i = 0; i < l; i++) {
-      jsonArray.add(elementsDescriptor.marshall(Array.get(entity, i), view));
+      jsonArray.add(elementsDescriptor.marshallArray(entity, i, view));
+//      jsonArray.add(elementsDescriptor.marshall(Array.get(entity, i), view));
     }
     return jsonArray;
   }

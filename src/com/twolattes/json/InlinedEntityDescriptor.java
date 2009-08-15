@@ -1,8 +1,7 @@
 package com.twolattes.json;
 
+import java.lang.reflect.Array;
 import java.util.Set;
-
-import com.twolattes.json.Json.Value;
 
 class InlinedEntityDescriptor<E> implements EntityDescriptor<E> {
 
@@ -20,19 +19,30 @@ class InlinedEntityDescriptor<E> implements EntityDescriptor<E> {
     return delegate.isInlineable();
   }
 
-  public Value marshall(E entity, String view) {
+  public Json.Value marshall(E entity, String view) {
     return delegate.marshallInline(entity, view);
   }
 
-  public Value marshallInline(E entity, String view) {
+  @SuppressWarnings("unchecked")
+  public Json.Value marshall(
+      FieldDescriptor fieldDescriptor, Object entity, String view) {
+    return delegate.marshallInline((E) fieldDescriptor.getFieldValue(entity), view);
+  }
+
+  @SuppressWarnings("unchecked")
+  public Json.Value marshallArray(Object array, int index, String view) {
+    return marshall((E) Array.get(array, index), view);
+  }
+
+  public Json.Value marshallInline(E entity, String view) {
     return delegate.marshallInline(entity, view);
   }
 
-  public E unmarshall(Value marshalled, String view) {
+  public E unmarshall(Json.Value marshalled, String view) {
     return delegate.unmarshallInline(marshalled, view);
   }
 
-  public E unmarshallInline(Value entity, String view) {
+  public E unmarshallInline(Json.Value entity, String view) {
     return delegate.unmarshallInline(entity, view);
   }
 

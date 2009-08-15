@@ -1,13 +1,11 @@
 package com.twolattes.json;
 
-
 /**
  * Descriptor used as a synthesis of an object. An object can be an entity,
  * a collection, a map, an array or a user defined type.
  *
  * @param <E> the type of the entity being described
  * @param <J> the type of the marsahlled entity
- * @author pascal
  */
 interface Descriptor<E, J extends Json.Value> {
   /**
@@ -29,6 +27,11 @@ interface Descriptor<E, J extends Json.Value> {
    * @return the marshalled object
    */
   J marshall(E entity, String view);
+
+  J marshallArray(Object array, int index, String view);
+
+  Json.Value marshall(
+      FieldDescriptor fieldDescriptor, Object entity, String view);
 
   J marshallInline(E entity, String view);
 

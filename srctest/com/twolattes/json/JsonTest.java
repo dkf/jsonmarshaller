@@ -450,6 +450,21 @@ public class JsonTest {
             number(new BigDecimal("10.5000"))));
   }
 
+  @Test
+  @SuppressWarnings("unchecked")
+  public void numbersEquality2() {
+    Congruence.check(
+        newArrayList(
+            number(89),
+            number(89L)),
+        newArrayList(
+            number(3.2f),
+            number(3.2)),
+        newArrayList(
+            number(16),
+            number((short) 16)));
+  }
+
   private void testEqualsAndHashCode(Json.Value v1, Json.Value v2) {
     assertEquals(v1, v2);
     assertEquals(v2, v1);

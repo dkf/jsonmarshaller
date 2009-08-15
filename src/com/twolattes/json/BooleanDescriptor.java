@@ -4,6 +4,7 @@ import static com.twolattes.json.Json.FALSE;
 import static com.twolattes.json.Json.NULL;
 import static com.twolattes.json.Json.TRUE;
 
+import java.lang.reflect.Array;
 
 /**
  * Descriptor for the {@link Boolean} type.
@@ -11,7 +12,17 @@ import static com.twolattes.json.Json.TRUE;
 class BooleanDescriptor extends AbstractDescriptor<Boolean, Json.Boolean> {
 
   final static BooleanDescriptor BOOLEAN_DESC = new BooleanDescriptor(Boolean.class);
-  final static BooleanDescriptor BOOLEAN_LITERAL_DESC = new BooleanDescriptor(Boolean.TYPE);
+  final static BooleanDescriptor BOOLEAN_LITERAL_DESC = new BooleanDescriptor(Boolean.TYPE) {
+    @Override
+    public Json.Value marshall(
+        FieldDescriptor fieldDescriptor, Object parentEntity, String view) {
+      return fieldDescriptor.getFieldValueBoolean(parentEntity) ? TRUE : FALSE;
+    }
+    @Override
+    public Json.Boolean marshallArray(Object array, int index, String view) {
+      return Array.getBoolean(array, index) ? TRUE : FALSE;
+    }
+  };
 
   private BooleanDescriptor(Class<Boolean> klass) {
     super(klass);

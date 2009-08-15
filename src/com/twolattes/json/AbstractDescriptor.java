@@ -1,13 +1,12 @@
 package com.twolattes.json;
 
+import java.lang.reflect.Array;
 
 /**
  * Abstract implementation of {@link Descriptor} providing common
  * functionality.
- *
- * @author pascal
  */
-abstract class AbstractDescriptor<T, J extends Json.Value> implements Descriptor<T, J> {
+abstract class AbstractDescriptor<E, J extends Json.Value> implements Descriptor<E, J> {
   private final Class<?> klass;
 
   /**
@@ -15,7 +14,7 @@ abstract class AbstractDescriptor<T, J extends Json.Value> implements Descriptor
    * @param klass the returned class of this descriptor, see
    *     {@link #getReturnedClass()}
    */
-  AbstractDescriptor(Class<? extends T> klass) {
+  AbstractDescriptor(Class<? extends E> klass) {
     this.klass = klass;
   }
 
@@ -39,12 +38,23 @@ abstract class AbstractDescriptor<T, J extends Json.Value> implements Descriptor
     return false;
   }
 
+  @SuppressWarnings("unchecked")
+  public Json.Value marshall(
+      FieldDescriptor fieldDescriptor, Object parentEntity, String view) {
+    return marshall((E) fieldDescriptor.getFieldValue(parentEntity), view);
+  }
+
+  @SuppressWarnings("unchecked")
+  public J marshallArray(Object array, int index, String view) {
+    return marshall((E) Array.get(array, index), view);
+  }
+
   /**
    * Default implementation delegating to
    * {@link AbstractDescriptor#marshallInline(Object, boolean)} after
    * verifying that the entity is inlineable.
    */
-  public J marshallInline(T entity, String view) {
+  public J marshallInline(E entity, String view) {
     return marshall(entity, view);
   }
 
@@ -53,7 +63,7 @@ abstract class AbstractDescriptor<T, J extends Json.Value> implements Descriptor
    * {@link AbstractDescriptor#unmarshallInline(Object, boolean)} after
    * verifying that the entity is inlineable.
    */
-  public T unmarshallInline(J entity, String view) {
+  public E unmarshallInline(J entity, String view) {
     return unmarshall(entity, view);
   }
 

@@ -417,7 +417,7 @@ public final class Json {
 
 
     public BigDecimal getNumber() {
-      return BigDecimal.valueOf(number);
+      return new BigDecimal(Float.toString(number));
     }
 
   }

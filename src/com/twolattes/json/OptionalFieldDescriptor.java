@@ -2,7 +2,7 @@ package com.twolattes.json;
 
 import com.twolattes.json.types.JsonType;
 
-class OptionalFieldDescriptor implements FieldDescriptor {
+class OptionalFieldDescriptor extends DefaultBoxingFieldDescriptor {
 
   final FieldDescriptor delegate;
 

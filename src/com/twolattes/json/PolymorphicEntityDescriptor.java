@@ -3,12 +3,13 @@ package com.twolattes.json;
 import static com.twolattes.json.Json.object;
 import static com.twolattes.json.Json.string;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
+class PolymorphicEntityDescriptor<E> implements EntityDescriptor<E> {
   /**
    * Subclasses' descriptors used if the described entity is a polymorphic
    * entity. The keys are discriminators values.
@@ -54,6 +55,7 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
     return new HashSet<FieldDescriptor>();
   }
 
+  @SuppressWarnings("unchecked")
   public Set<FieldDescriptor> getAllFieldDescriptors() {
     Set<FieldDescriptor> result = new HashSet<FieldDescriptor>();
     for (EntityDescriptor entityDescriptor : subDescriptorsByClass.values()) {
@@ -88,7 +90,7 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
   }
 
   @SuppressWarnings("unchecked")
-  public Json.Object marshall(T entity, String view) {
+  public Json.Object marshall(E entity, String view) {
     // null
     if (entity == null) {
       return Json.NULL;
@@ -110,7 +112,18 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
   }
 
   @SuppressWarnings("unchecked")
-  public Json.String marshallInline(T entity, String view) {
+  public Json.Value marshall(
+      FieldDescriptor fieldDescriptor, Object entity, String view) {
+    return marshall((E) fieldDescriptor.getFieldValue(entity), view);
+  }
+
+  @SuppressWarnings("unchecked")
+  public Json.Value marshallArray(Object array, int index, String view) {
+    return marshall((E) Array.get(array, index), view);
+  }
+
+  @SuppressWarnings("unchecked")
+  public Json.String marshallInline(E entity, String view) {
     // null
     if (entity == null) {
       return Json.NULL;
@@ -124,14 +137,14 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
   }
 
   @SuppressWarnings("unchecked")
-  public T unmarshall(Json.Value value, final String view) {
-    return value.visit(new JsonVisitor.Empty<T>() {
+  public E unmarshall(Json.Value value, final String view) {
+    return value.visit(new JsonVisitor.Empty<E>() {
       @Override
-      public T caseNull() {
+      public E caseNull() {
         return null;
       }
       @Override
-      public T caseObject(Json.Object object) {
+      public E caseObject(Json.Object object) {
         if (!object.containsKey(string(discriminatorName))) {
           throw new IllegalArgumentException(
               "Unmarhsalling polymorphic entity which does not contain the " +
@@ -139,23 +152,23 @@ class PolymorphicEntityDescriptor<T> implements EntityDescriptor<T> {
         }
         EntityDescriptor<?> descriptor =
             subDescriptorsByDisciminator.get(object.get(string(discriminatorName)));
-        return (T) descriptor.unmarshall(object, view);
+        return (E) descriptor.unmarshall(object, view);
       }
     });
   }
 
   @SuppressWarnings("unchecked")
-  public T unmarshallInline(Json.Value entity, final String view) {
-    return entity.visit(new JsonVisitor.Empty<T>() {
+  public E unmarshallInline(Json.Value entity, final String view) {
+    return entity.visit(new JsonVisitor.Empty<E>() {
       @Override
-      public T caseNull() {
+      public E caseNull() {
         return null;
       }
       @Override
-      public T caseString(Json.String discriminator) {
+      public E caseString(Json.String discriminator) {
         EntityDescriptor<?> descriptor =
             subDescriptorsByDisciminator.get(discriminator);
-        return (T) descriptor.unmarshall(
+        return (E) descriptor.unmarshall(
             object(string(discriminatorName), discriminator), view);
       }
     });

@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import com.twolattes.json.AbstractFieldDescriptor.GetSetFieldDescriptor;
 import com.twolattes.json.types.JsonType;
 
-class EmbeddedFieldDescriptor implements FieldDescriptor {
+class EmbeddedFieldDescriptor extends DefaultBoxingFieldDescriptor {
 
   final FieldDescriptor delegate;
 

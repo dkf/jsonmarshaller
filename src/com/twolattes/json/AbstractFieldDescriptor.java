@@ -15,7 +15,7 @@ import com.twolattes.json.types.JsonType;
  * An entity's field descriptor.
  *
  */
-abstract class AbstractFieldDescriptor implements FieldDescriptor {
+abstract class AbstractFieldDescriptor extends DefaultBoxingFieldDescriptor {
 
   private final Json.String fieldName;
 
@@ -38,10 +38,8 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
   @SuppressWarnings("unchecked")
   public void marshall(Object entity, String view, Json.Object jsonObject) {
     if (isInView(view)) {
-      Object fieldValue = getFieldValue(entity);
-      Descriptor descriptor = getDescriptor();
       jsonObject.put(
-          getJsonName(), descriptor.marshall(fieldValue, view));
+          getJsonName(), getDescriptor().marshall(this, entity, view));
     }
   }
 
@@ -156,6 +154,86 @@ abstract class AbstractFieldDescriptor implements FieldDescriptor {
     public Object getFieldValue(Object instance) {
       try {
         return field.get(instance);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public byte getFieldValueByte(Object instance) {
+      try {
+        return field.getByte(instance);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public char getFieldValueChar(Object instance) {
+      try {
+        return field.getChar(instance);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public boolean getFieldValueBoolean(Object instance) {
+      try {
+        return field.getBoolean(instance);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public short getFieldValueShort(Object instance) {
+      try {
+        return field.getShort(instance);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public int getFieldValueInt(Object instance) {
+      try {
+        return field.getInt(instance);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public long getFieldValueLong(Object instance) {
+      try {
+        return field.getLong(instance);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public float getFieldValueFloat(Object instance) {
+      try {
+        return field.getFloat(instance);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public double getFieldValueDouble(Object instance) {
+      try {
+        return field.getDouble(instance);
       } catch (IllegalAccessException e) {
         throw new IllegalStateException(
             format("cannot access %s field", instance.getClass()));
