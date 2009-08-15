@@ -18,8 +18,20 @@ class FloatDescriptor extends NumberDescriptor<Float> {
       return number(fieldDescriptor.getFieldValueFloat(parentEntity));
     }
     @Override
+    public void unmarshall(Object entity,
+        FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+      fieldDescriptor.setFieldValueFloat(
+          entity, ((Json.Number) marshalled).getNumber().floatValue());
+    }
+    @Override
     public Json.Number marshallArray(Object array, int index, String view) {
       return number(Array.getFloat(array, index));
+    }
+    @Override
+    public void unmarshallArray(Object array,
+        Json.Value value, int index, String view) {
+      Array.setFloat(array, index,
+          ((Json.Number) value).getNumber().floatValue());
     }
   };
 

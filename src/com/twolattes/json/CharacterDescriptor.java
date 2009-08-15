@@ -18,8 +18,29 @@ class CharacterDescriptor extends AbstractDescriptor<Character, Json.String> {
       return string(Character.toString(fieldDescriptor.getFieldValueChar(parentEntity)));
     }
     @Override
+    public void unmarshall(Object entity,
+        FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+      Json.String string = (Json.String) marshalled;
+      if (string.getString().length() == 1) {
+        fieldDescriptor.setFieldValueChar(
+            entity, string.getString().charAt(0));
+      } else {
+        throw new RuntimeException("character expected");
+      }
+    }
+    @Override
     public Json.String marshallArray(Object array, int index, String view) {
       return string(Character.toString(Array.getChar(array, index)));
+    }
+    @Override
+    public void unmarshallArray(Object array,
+        Json.Value value, int index, String view) {
+      Json.String string = (Json.String) value;
+      if (string.getString().length() == 1) {
+        Array.setChar(array, index, string.getString().charAt(0));
+      } else {
+        throw new RuntimeException("character expected");
+      }
     }
   };
 

@@ -18,8 +18,20 @@ class LongDescriptor extends NumberDescriptor<Long> {
       return number(fieldDescriptor.getFieldValueLong(parentEntity));
     }
     @Override
+    public void unmarshall(Object entity,
+        FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+      fieldDescriptor.setFieldValueLong(
+          entity, ((Json.Number) marshalled).getNumber().longValueExact());
+    }
+    @Override
     public Json.Number marshallArray(Object array, int index, String view) {
       return number(Array.getLong(array, index));
+    }
+    @Override
+    public void unmarshallArray(Object array,
+        Json.Value value, int index, String view) {
+      Array.setLong(array, index,
+          ((Json.Number) value).getNumber().longValueExact());
     }
   };
 

@@ -18,8 +18,20 @@ class ShortDescriptor extends NumberDescriptor<Short> {
       return number(fieldDescriptor.getFieldValueShort(parentEntity));
     }
     @Override
+    public void unmarshall(Object entity,
+        FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+      fieldDescriptor.setFieldValueShort(
+          entity, ((Json.Number) marshalled).getNumber().shortValueExact());
+    }
+    @Override
     public Json.Number marshallArray(Object array, int index, String view) {
       return number(Array.getShort(array, index));
+    }
+    @Override
+    public void unmarshallArray(Object array,
+        Json.Value value, int index, String view) {
+      Array.setShort(array, index,
+          ((Json.Number) value).getNumber().shortValueExact());
     }
   };
 

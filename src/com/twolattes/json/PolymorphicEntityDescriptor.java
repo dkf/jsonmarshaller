@@ -123,6 +123,12 @@ class PolymorphicEntityDescriptor<E> implements EntityDescriptor<E> {
   }
 
   @SuppressWarnings("unchecked")
+  public void unmarshallArray(
+      Object array, Json.Value value, int index, String view) {
+    Array.set(array, index, unmarshall(value, view));
+  }
+
+  @SuppressWarnings("unchecked")
   public Json.String marshallInline(E entity, String view) {
     // null
     if (entity == null) {
@@ -155,6 +161,13 @@ class PolymorphicEntityDescriptor<E> implements EntityDescriptor<E> {
         return (E) descriptor.unmarshall(object, view);
       }
     });
+  }
+
+  @SuppressWarnings("unchecked")
+  public void unmarshall(Object entity,
+      FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+    fieldDescriptor.setFieldValue(
+        entity, unmarshall(marshalled, view));
   }
 
   @SuppressWarnings("unchecked")

@@ -49,6 +49,12 @@ abstract class AbstractDescriptor<E, J extends Json.Value> implements Descriptor
     return marshall((E) Array.get(array, index), view);
   }
 
+  @SuppressWarnings("unchecked")
+  public void unmarshallArray(
+      Object array, Json.Value value, int index, String view) {
+    Array.set(array, index, unmarshall((J) value, view));
+  }
+
   /**
    * Default implementation delegating to
    * {@link AbstractDescriptor#marshallInline(Object, boolean)} after
@@ -56,6 +62,13 @@ abstract class AbstractDescriptor<E, J extends Json.Value> implements Descriptor
    */
   public J marshallInline(E entity, String view) {
     return marshall(entity, view);
+  }
+
+  @SuppressWarnings("unchecked")
+  public void unmarshall(Object entity,
+      FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+    fieldDescriptor.setFieldValue(
+        entity, unmarshall((J) marshalled, view));
   }
 
   /**

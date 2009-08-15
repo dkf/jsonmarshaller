@@ -34,12 +34,25 @@ class InlinedEntityDescriptor<E> implements EntityDescriptor<E> {
     return marshall((E) Array.get(array, index), view);
   }
 
+  @SuppressWarnings("unchecked")
+  public void unmarshallArray(
+      Object array, Json.Value value, int index, String view) {
+    Array.set(array, index, unmarshall(value, view));
+  }
+
   public Json.Value marshallInline(E entity, String view) {
     return delegate.marshallInline(entity, view);
   }
 
   public E unmarshall(Json.Value marshalled, String view) {
     return delegate.unmarshallInline(marshalled, view);
+  }
+
+  @SuppressWarnings("unchecked")
+  public void unmarshall(Object entity,
+      FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+    fieldDescriptor.setFieldValue(
+        entity, unmarshall(marshalled, view));
   }
 
   public E unmarshallInline(Json.Value entity, String view) {

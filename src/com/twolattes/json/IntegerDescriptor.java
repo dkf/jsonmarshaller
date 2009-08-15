@@ -18,8 +18,20 @@ class IntegerDescriptor extends NumberDescriptor<Integer> {
       return number(fieldDescriptor.getFieldValueInt(parentEntity));
     }
     @Override
+    public void unmarshall(Object entity,
+        FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+      fieldDescriptor.setFieldValueInt(
+          entity, ((Json.Number) marshalled).getNumber().intValueExact());
+    }
+    @Override
     public Json.Number marshallArray(Object array, int index, String view) {
       return number(Array.getInt(array, index));
+    }
+    @Override
+    public void unmarshallArray(Object array,
+        Json.Value value, int index, String view) {
+      Array.setInt(array, index,
+          ((Json.Number) value).getNumber().intValueExact());
     }
   };
 

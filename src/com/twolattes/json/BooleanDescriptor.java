@@ -19,8 +19,19 @@ class BooleanDescriptor extends AbstractDescriptor<Boolean, Json.Boolean> {
       return fieldDescriptor.getFieldValueBoolean(parentEntity) ? TRUE : FALSE;
     }
     @Override
+    public void unmarshall(Object entity,
+        FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+      fieldDescriptor.setFieldValueBoolean(
+          entity, ((Json.Boolean) marshalled).getBoolean());
+    }
+    @Override
     public Json.Boolean marshallArray(Object array, int index, String view) {
       return Array.getBoolean(array, index) ? TRUE : FALSE;
+    }
+    @Override
+    public void unmarshallArray(Object array,
+        Json.Value value, int index, String view) {
+      Array.setBoolean(array, index, ((Json.Boolean) value).getBoolean());
     }
   };
 

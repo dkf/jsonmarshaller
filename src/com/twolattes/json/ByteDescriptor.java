@@ -18,8 +18,20 @@ class ByteDescriptor extends NumberDescriptor<Byte> {
       return number(fieldDescriptor.getFieldValueByte(parentEntity));
     }
     @Override
+    public void unmarshall(Object entity,
+        FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+      fieldDescriptor.setFieldValueByte(
+          entity, ((Json.Number) marshalled).getNumber().byteValueExact());
+    }
+    @Override
     public Json.Number marshallArray(Object array, int index, String view) {
       return number(Array.getByte(array, index));
+    }
+    @Override
+    public void unmarshallArray(Object array,
+        Json.Value value, int index, String view) {
+      Array.setByte(array, index,
+          ((Json.Number) value).getNumber().byteValueExact());
     }
   };
 

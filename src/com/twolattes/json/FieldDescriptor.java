@@ -49,6 +49,22 @@ interface FieldDescriptor {
    */
   void setFieldValue(Object entity, Object value);
 
+  void setFieldValueByte(Object entity, byte value);
+
+  void setFieldValueChar(Object entity, char value);
+
+  void setFieldValueBoolean(Object entity, boolean value);
+
+  void setFieldValueShort(Object entity, short value);
+
+  void setFieldValueInt(Object entity, int value);
+
+  void setFieldValueLong(Object entity, long value);
+
+  void setFieldValueFloat(Object entity, float value);
+
+  void setFieldValueDouble(Object entity, double value);
+
   /**
    * Whether or not to use the {@link Enum#ordinal()} value to represent enum
    * constants if the field is of type {@link Enum}.

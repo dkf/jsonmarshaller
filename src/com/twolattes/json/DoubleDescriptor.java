@@ -19,8 +19,20 @@ class DoubleDescriptor extends NumberDescriptor<Double> {
       return number(fieldDescriptor.getFieldValueDouble(parentEntity));
     }
     @Override
+    public void unmarshall(Object entity,
+        FieldDescriptor fieldDescriptor, Json.Value marshalled, String view) {
+      fieldDescriptor.setFieldValueDouble(
+          entity, ((Json.Number) marshalled).getNumber().doubleValue());
+    }
+    @Override
     public Json.Number marshallArray(Object array, int index, String view) {
       return number(Array.getDouble(array, index));
+    }
+    @Override
+    public void unmarshallArray(Object array,
+        Json.Value value, int index, String view) {
+      Array.setDouble(array, index,
+          ((Json.Number) value).getNumber().doubleValue());
     }
   };
 

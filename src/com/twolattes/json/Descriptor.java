@@ -43,6 +43,12 @@ interface Descriptor<E, J extends Json.Value> {
    */
   E unmarshall(J marshalled, String view);
 
+  void unmarshallArray(
+      Object array, Json.Value value, int index, String view);
+
+  void unmarshall(Object entity,
+      FieldDescriptor fieldDescriptor, Json.Value marshalled, String view);
+
   E unmarshallInline(J entity, String view);
 
   String toString(int pad);

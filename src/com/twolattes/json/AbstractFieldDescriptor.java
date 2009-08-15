@@ -48,9 +48,7 @@ abstract class AbstractFieldDescriptor extends DefaultBoxingFieldDescriptor {
     Json.String name = getJsonName();
     if (jsonObject.containsKey(name)) {
       if (isInView(view)) {
-        Descriptor descriptor = getDescriptor();
-        setFieldValue(entity,
-            descriptor.unmarshall(jsonObject.get(name), view));
+        getDescriptor().unmarshall(entity, this, jsonObject.get(name), view);
       }
     } else {
       if (isInView(view)) {
@@ -241,6 +239,86 @@ abstract class AbstractFieldDescriptor extends DefaultBoxingFieldDescriptor {
     }
 
     public void setFieldValue(Object instance, Object value) {
+      try {
+        field.set(instance, value);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public void setFieldValueByte(Object instance, byte value) {
+      try {
+        field.setByte(instance, value);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public void setFieldValueChar(Object instance, char value) {
+      try {
+        field.setChar(instance, value);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public void setFieldValueBoolean(Object instance, boolean value) {
+      try {
+        field.setBoolean(instance, value);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public void setFieldValueShort(Object instance, short value) {
+      try {
+        field.setShort(instance, value);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public void setFieldValueInt(Object instance, int value) {
+      try {
+        field.setInt(instance, value);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public void setFieldValueLong(Object instance, long value) {
+      try {
+        field.setLong(instance, value);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public void setFieldValueFloat(Object instance, float value) {
+      try {
+        field.setFloat(instance, value);
+      } catch (IllegalAccessException e) {
+        throw new IllegalStateException(
+            format("cannot access %s field", instance.getClass()));
+      }
+    }
+
+    @Override
+    public void setFieldValueDouble(Object instance, double value) {
       try {
         field.set(instance, value);
       } catch (IllegalAccessException e) {
