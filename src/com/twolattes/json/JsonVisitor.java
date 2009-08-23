@@ -51,4 +51,38 @@ public interface JsonVisitor<T> {
 
   }
 
+  public static class Default<T> implements JsonVisitor<T> {
+
+    private final T defaultValue;
+
+    public Default(T defaultValue) {
+      this.defaultValue = defaultValue;
+    }
+
+    public T caseArray(Json.Array array) {
+      return defaultValue;
+    }
+
+    public T caseBoolean(Json.Boolean bool) {
+      return defaultValue;
+    }
+
+    public T caseNull() {
+      return defaultValue;
+    }
+
+    public T caseNumber(Json.Number number) {
+      return defaultValue;
+    }
+
+    public T caseObject(Json.Object object) {
+      return defaultValue;
+    }
+
+    public T caseString(Json.String string) {
+      return defaultValue;
+    }
+
+  }
+
 }
