@@ -90,11 +90,21 @@ public class JsonTest {
 
   @Test
   public void writeString4() throws Exception {
-    assertEquals("\"\\b\"", string("\b").toString());
-    assertEquals("\"\\f\"", string("\f").toString());
+    // Unicode C0 and C1 control codes
+    assertEquals("\"\\u0000\"", string("\u0000").toString());
+    assertEquals("\"\\u0007\"", string("\u0007").toString());
+    assertEquals("\"\\b\"", string("\u0008").toString());
+    assertEquals("\"\\t\"", string("\u0009").toString());
     assertEquals("\"\\n\"", string("\n").toString());
+    assertEquals("\"\\f\"", string("\u000c").toString());
     assertEquals("\"\\r\"", string("\r").toString());
-    assertEquals("\"\\t\"", string("\t").toString());
+    assertEquals("\"\\u0014\"", string("\u0014").toString());
+    assertEquals("\"\\u0019\"", string("\u0019").toString());
+    assertEquals("\" \"", string("\u0020").toString());
+    assertEquals("\"~\"", string("\u007e").toString());
+    assertEquals("\"\\u007f\"", string("\u007f").toString());
+    assertEquals("\"\\u009f\"", string("\u009f").toString());
+    assertEquals("\"\u00a0\"", string("\u00a0").toString());
   }
 
   @Test

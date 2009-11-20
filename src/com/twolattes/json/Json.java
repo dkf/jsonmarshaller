@@ -476,7 +476,7 @@ public final class Json {
       boolean safe = true;
       for (int i = 0; safe && i < length; i++) {
         c = string.charAt(i);
-        safe = c != '"' && c != '\\' && c != '\b' && c != '\n' && c != '\f' && c != '\r' && c != '\t';
+        safe = c != '"' && c != '\\' && c >= 0x20 && (c < 0x7f || c >= 0xa0);
       }
       if (safe) {
         builder.append(string);
@@ -488,11 +488,15 @@ public final class Json {
             case '\f': builder.append("\\f"); break;
             case '\r': builder.append("\\r"); break;
             case '\t': builder.append("\\t"); break;
-            case '"':
-            case '\\':
-              builder.append('\\');
+            case '"': builder.append("\\\""); break;
+            case '\\': builder.append("\\\\"); break;
             default:
-              builder.append(c);
+              if (c < 0x20 || (c >= 0x7f && c < 0xa0)) {
+                builder.append(java.lang.String.format("\\u%04x", Integer.valueOf(c)));
+              } else {
+                builder.append(c);
+              }
+              break;
           }
         }
       }
