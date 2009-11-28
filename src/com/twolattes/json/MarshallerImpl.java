@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +52,18 @@ class MarshallerImpl<T> implements Marshaller<T> {
     return a;
   }
 
+  public Json.Object marshallMap(Map<String, ? extends T> map) {
+    return marshallMap(map, null);
+  }
+
+  public Json.Object marshallMap(Map<String, ? extends T> map, String view) {
+    Json.Object o = Json.object();
+    for (String key : map.keySet()) {
+      o.put(Json.string(key), collectionDescriptor.marshall(map.get(key), view));
+    }
+    return o;
+  }
+
   public T unmarshall(Json.Object entity) {
     return unmarshall(entity, null);
   }
@@ -63,12 +77,31 @@ class MarshallerImpl<T> implements Marshaller<T> {
   }
 
   public List<T> unmarshallList(Json.Array array, String view) {
-    int length = array.size();
-    List<T> list = new ArrayList<T>(length);
-    for (int i = 0; i < length; i++) {
-      list.add(clazz.cast(collectionDescriptor.unmarshall(array.get(i), view)));
+    if (array.isEmpty()) {
+      return Collections.emptyList();
+    }
+    List<T> list = new ArrayList<T>(array.size());
+    for (Json.Value value : array) {
+      list.add(clazz.cast(collectionDescriptor.unmarshall(value, view)));
     }
     return list;
+  }
+
+  public Map<String, T> unmarshallMap(Json.Object object) {
+    return unmarshallMap(object, null);
+  }
+
+  public Map<String, T> unmarshallMap(Json.Object object, String view) {
+    if (object.isEmpty()) {
+      return Collections.emptyMap();
+    }
+    Map<String, T> map = new HashMap<String, T>(object.size());
+    for (Json.String key : object.keySet()) {
+      map.put(
+          key.getString(),
+          clazz.cast(collectionDescriptor.unmarshall(object.get(key), view)));
+    }
+    return map;
   }
 
 }

@@ -12,7 +12,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.junit.Test;
@@ -188,10 +191,8 @@ public class MarshallingTest {
 
     Email e2 = new Email(); e2.email = "dalia_ma@hotmail.com";
     User u2 = new User(); u2.email = e2;
-    List<User> users = new ArrayList<User>(2);
-    users.add(u1); users.add(u2);
 
-    Json.Array array = marshaller.marshallList(users);
+    Json.Array array = marshaller.marshallList(Arrays.asList(u1, u2));
     assertEquals(
         string("plperez@stanford.edu"),
         ((Json.Object) array.get(0)).get(string("email")));
@@ -202,6 +203,42 @@ public class MarshallingTest {
 
   @Test
   public void testMapOfEntities() throws Exception {
+    Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
+
+    Email e1 = new Email(); e1.email = "jmjacobs@cs.stanford.edu";
+    User u1 = new User(); u1.email = e1;
+    Map<String, User> map = Collections.singletonMap("1", u1);
+
+    assertEquals(
+        object(
+            string("1"),
+            object(
+                string("email"),
+                string("jmjacobs@stanford.edu"))),
+        marshaller.marshallMap(map));
+  }
+
+  @Test
+  public void testEmptyMapOfEntities() throws Exception {
+    Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
+
+    assertEquals(
+        object(),
+        marshaller.marshallMap(Collections.<String, User>emptyMap()));
+  }
+
+  @Test
+  public void testMapOfEntitiesWithNullValue() throws Exception {
+    Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
+    Map<String, User> map = Collections.singletonMap("1", null);
+
+    assertEquals(
+        object(string("1"), Json.NULL),
+        marshaller.marshallMap(map));
+  }
+
+  @Test
+  public void testEmbeddedMapOfEntities() throws Exception {
     Marshaller<EntityMap> marshaller = TwoLattes.createMarshaller(EntityMap.class);
 
     EntityMap em = new EntityMap();

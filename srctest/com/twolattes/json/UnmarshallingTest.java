@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Ignore;
@@ -130,7 +131,7 @@ public class UnmarshallingTest {
   }
 
   @Test
-  public void testInlininPolymorphicEntityThatHasOnlyDiscriminator() {
+  public void testInliningPolymorphicEntityThatHasOnlyDiscriminator() {
     Marshaller<InlinePolymorphic> marshaller = TwoLattes.createMarshaller(InlinePolymorphic.class);
 
     InlinePolymorphic notInlined = marshaller.unmarshall(
@@ -157,8 +158,34 @@ public class UnmarshallingTest {
   }
 
   @Test
-  public void testMap() throws Exception {
+  public void testTopLevelMap() throws Exception {
+    Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
+    Map<String, User> map = marshaller.unmarshallMap(
+        (Json.Object) Json.fromString("{\"1\":{\"email\":\"jack@bauer.net\"}}"));
 
+    assertEquals(1, map.size());
+    assertEquals("jack@bauer.net", map.get("1").email.email);
+  }
+
+  @Test
+  public void testTopLevelEmptyMap() throws Exception {
+    Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
+    Map<String, User> map = marshaller.unmarshallMap(Json.object());
+    assertEquals(0, map.size());
+  }
+
+  @Test
+  public void testTopLevelMapWithNullValue() throws Exception {
+    Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
+    Map<String, User> map = marshaller.unmarshallMap(
+        (Json.Object) Json.fromString("{\"1\":null}"));
+
+    assertEquals(1, map.size());
+    assertNull(map.get("1"));
+  }
+
+  @Test
+  public void testEmbeddedMap() throws Exception {
     EntityMap base = unmarshall(EntityMap.class,
         "{\"emails\": {\"a\": {\"email\": \"plperez@stanford.edu\"}, \"b\": {\"email\": \"nonono@yesyesyes.com\"}}}");
 
@@ -168,7 +195,7 @@ public class UnmarshallingTest {
   }
 
   @Test
-  public void testMapWithNull() throws Exception {
+  public void testEmbeddedNullMap() throws Exception {
     EntityMap base = unmarshall(EntityMap.class, "{\"emails\": null}");
 
     assertEquals(null, base.getEmails());

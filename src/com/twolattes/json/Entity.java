@@ -13,14 +13,14 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.TYPE})
 public @interface Entity {
   /**
-   * Whether this entity should be inlines or not. An entity can be inline
+   * Whether this entity should be inline or not. An entity can be inline
    * only if it has a single {@link Value}.
    */
   boolean inline() default false;
 
   /**
    * Specifies the implementation class of an annotated interface. This is used
-   * by the unmarshaller to create an instance of an object implementing the
+   * during unmarshalling to create an instance of an object implementing the
    * annotated interface.
    */
   Class<?> implementedBy() default Object.class;
@@ -28,7 +28,6 @@ public @interface Entity {
   /**
    * List of subclasses of an entity. All the subclasses will be marshallable.
    * This option must be used in conjunction with {@link #discriminatorName()}.
-   * @return
    */
   Class<?>[] subclasses() default {};
 
