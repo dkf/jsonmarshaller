@@ -205,7 +205,7 @@ public class MarshallingTest {
   public void testMapOfEntities() throws Exception {
     Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
 
-    Email e1 = new Email(); e1.email = "jmjacobs@cs.stanford.edu";
+    Email e1 = new Email(); e1.email = "jmjacobs@stanford.edu";
     User u1 = new User(); u1.email = e1;
     Map<String, User> map = Collections.singletonMap("1", u1);
 
