@@ -7,7 +7,7 @@ import static com.twolattes.json.Unification.getActualTypeArgument;
 import com.twolattes.json.types.JsonType;
 
 /**
- * Descriptor wrapping used defined {@link JsonType}s.
+ * Descriptor wrapping user-defined {@link JsonType}s.
  */
 class UserTypeDescriptor<E, J extends Json.Value> extends AbstractDescriptor<E, J> {
 
