@@ -1,10 +1,10 @@
 package com.twolattes.json.nativetypes;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.immutableMap;
 import static com.twolattes.json.Json.number;
 import static com.twolattes.json.Json.string;
 import static java.math.BigDecimal.valueOf;
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -16,19 +16,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.twolattes.json.Entity;
+import com.twolattes.json.EntityMarshaller;
 import com.twolattes.json.Json;
-import com.twolattes.json.Marshaller;
 import com.twolattes.json.TwoLattes;
 import com.twolattes.json.Value;
 
 public class BigDecimalTest {
 
-
-  private Marshaller<BigDecimals> marshaller;
+  private EntityMarshaller<BigDecimals> marshaller;
 
   @Before
   public void setUp() throws Exception {
-    marshaller = TwoLattes.createMarshaller(BigDecimals.class);
+    marshaller = TwoLattes.createEntityMarshaller(BigDecimals.class);
   }
 
   @Test
@@ -48,8 +47,7 @@ public class BigDecimalTest {
   @Test
   public void nativeBigDecimalSuppot2() throws Exception {
     Json.Object object = marshaller.marshall(new BigDecimals() {{
-      this.list = newArrayList(
-          valueOf(6.906), valueOf(-7));
+      this.list = asList(valueOf(6.906), valueOf(-7));
     }});
 
     assertEquals(1, object.size());

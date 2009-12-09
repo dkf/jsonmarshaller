@@ -1,5 +1,7 @@
 package com.twolattes.json;
 
+import static com.twolattes.json.Json.NULL;
+
 import com.twolattes.json.Json.Array;
 import com.twolattes.json.Json.Boolean;
 import com.twolattes.json.Json.Number;
@@ -84,5 +86,66 @@ public interface JsonVisitor<T> {
     }
 
   }
+
+  public static class Illegal<T> implements JsonVisitor<T> {
+
+    public T caseArray(Json.Array array) {
+      throw new IllegalArgumentException();
+    }
+
+    public T caseBoolean(Json.Boolean bool) {
+      throw new IllegalArgumentException();
+    }
+
+    public T caseNull() {
+      throw new IllegalArgumentException();
+    }
+
+    public T caseNumber(Json.Number number) {
+      throw new IllegalArgumentException();
+    }
+
+    public T caseObject(Json.Object object) {
+      throw new IllegalArgumentException();
+    }
+
+    public T caseString(Json.String string) {
+      throw new IllegalArgumentException();
+    }
+
+  }
+
+  static final JsonVisitor<Json.String> STRINGS_ONLY = new Illegal<Json.String>() {
+    @Override
+    public Json.String caseNull() {
+      return NULL;
+    }
+    @Override
+    public Json.String caseString(Json.String string) {
+      return string;
+    }
+  };
+
+  static final JsonVisitor<Json.Number> NUMBERS_ONLY = new Illegal<Json.Number>() {
+    @Override
+    public Json.Number caseNull() {
+      return NULL;
+    }
+    @Override
+    public Json.Number caseNumber(Json.Number number) {
+      return number;
+    }
+  };
+
+  static final JsonVisitor<Json.Boolean> BOOLEANS_ONLY = new Illegal<Json.Boolean>() {
+    @Override
+    public Json.Boolean caseNull() {
+      return NULL;
+    }
+    @Override
+    public Json.Boolean caseBoolean(Json.Boolean bool) {
+      return bool;
+    }
+  };
 
 }

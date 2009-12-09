@@ -20,11 +20,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.twolattes.json.OuterClass.InnerClass;
 
-public class UnmarshallingTest {
+public class EntityUnmarshallingTest {
   @Test
   public void testBaseTypeEntity() throws Exception {
     BaseTypeEntity base = unmarshall(BaseTypeEntity.class,
-        "{\"_0\":5,\"_1\":\"h\",\"_2\":89,\"_3\":3.2,\"_4\":16,\"_5\":\"ya\",\"_6\":true,\"_7\":6218.687231}");
+        "{\"_0\":5,\"_1\":\"h\",\"_2\":89,\"_3\":3.2,\"_4\":16," +
+        "\"_5\":\"ya\",\"_6\":true,\"_7\":6218.687231}");
 
     assertEquals(5, base.get_0());
     assertEquals('h', base.get_1());
@@ -107,7 +108,7 @@ public class UnmarshallingTest {
   public void testInlinedEntity() throws Exception {
     Marshaller<User> marshaller = TwoLattes.createMarshaller(User.class);
     User user = marshaller.unmarshall(
-        (Json.Object) Json.fromString("{\"email\": \"jack@bauer.net\"}"));
+        Json.fromString("{\"email\": \"jack@bauer.net\"}"));
 
     assertEquals("jack@bauer.net", user.email.email);
   }
@@ -372,7 +373,7 @@ public class UnmarshallingTest {
 
   public static <T> T unmarshall(Class<T> clazz, String json, boolean cyclic, String view) {
     Marshaller<T> marshaller = TwoLattes.createMarshaller(clazz);
-    return marshaller.unmarshall((Json.Object) Json.fromString(json), view);
+    return marshaller.unmarshall(Json.fromString(json), view);
   }
 
   public static <T> List<T> unmarshallList(Class<T> clazz, String json) {

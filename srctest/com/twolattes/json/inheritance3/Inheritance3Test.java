@@ -1,15 +1,15 @@
 package com.twolattes.json.inheritance3;
 
 import static com.twolattes.json.Json.string;
+import static com.twolattes.json.TwoLattes.createEntityMarshaller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.twolattes.json.EntityMarshaller;
 import com.twolattes.json.Json;
-import com.twolattes.json.Marshaller;
-import com.twolattes.json.TwoLattes;
 
 /**
  * Tests marshalling and unmarshalling for the inheritance of entities defined
@@ -17,11 +17,11 @@ import com.twolattes.json.TwoLattes;
  * @author Pascal
  */
 public class Inheritance3Test {
-  private Marshaller<A> marshaller;
+  private EntityMarshaller<A> marshaller;
 
   @Before
   public void start() {
-    marshaller =  TwoLattes.createMarshaller(A.class);
+    marshaller =  createEntityMarshaller(A.class);
   }
 
   @Test
@@ -46,7 +46,7 @@ public class Inheritance3Test {
 
   @Test
   public void testUnmarshallC1() throws Exception {
-    A a = marshaller.unmarshall((Json.Object) Json.fromString(
+    A a = marshaller.unmarshall(Json.fromString(
         "{\"discriminator\":\"1\", \"a\":\"changed A\", \"b\":\"changed B\", \"c1\":\"changed C1\"}"));
 
     assertTrue(a instanceof C1);
@@ -58,7 +58,7 @@ public class Inheritance3Test {
 
   @Test
   public void testUnmarshallC2() throws Exception {
-    A a = marshaller.unmarshall((Json.Object) Json.fromString(
+    A a = marshaller.unmarshall(Json.fromString(
         "{\"discriminator\":\"2\", \"a\":\"changed A\", \"b\":\"changed B\", \"c2\":\"changed C2\"}"));
 
     assertTrue(a instanceof C2);

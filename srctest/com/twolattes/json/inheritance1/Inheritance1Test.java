@@ -11,8 +11,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.twolattes.json.EntityMarshaller;
 import com.twolattes.json.Json;
-import com.twolattes.json.Marshaller;
 import com.twolattes.json.TwoLattes;
 import com.twolattes.json.Json.Object;
 
@@ -22,11 +22,11 @@ import com.twolattes.json.Json.Object;
  * @author Pascal
  */
 public class Inheritance1Test {
-  private Marshaller<A> marshaller;
+  private EntityMarshaller<A> marshaller;
 
   @Before
   public void start() {
-    marshaller =  TwoLattes.createMarshaller(A.class);
+    marshaller = TwoLattes.createEntityMarshaller(A.class);
   }
 
   @Test
@@ -77,7 +77,7 @@ public class Inheritance1Test {
   @Test
   public void testUnmarshallB() throws Exception {
     A a = marshaller.unmarshall(
-        (Json.Object) Json.fromString("{\"type\":\"b\", \"name\":\"John\"}"));
+        Json.fromString("{\"type\":\"b\", \"name\":\"John\"}"));
 
     assertTrue(a instanceof B);
     B b = (B) a;
@@ -87,7 +87,7 @@ public class Inheritance1Test {
   @Test
   public void testUnmarshallC() throws Exception {
     A a = marshaller.unmarshall(
-        (Json.Object) Json.fromString("{\"type\":\"c\", \"age\":5}"));
+        Json.fromString("{\"type\":\"c\", \"age\":5}"));
 
     assertTrue(a instanceof C);
     C c = (C) a;

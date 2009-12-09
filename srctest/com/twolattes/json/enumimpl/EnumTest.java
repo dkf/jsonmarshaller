@@ -2,6 +2,8 @@ package com.twolattes.json.enumimpl;
 
 import static com.twolattes.json.Json.number;
 import static com.twolattes.json.Json.string;
+import static com.twolattes.json.TwoLattes.createEntityMarshaller;
+import static com.twolattes.json.TwoLattes.createMarshaller;
 import static java.lang.String.format;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,7 +16,6 @@ import java.util.List;
 import org.junit.Test;
 
 import com.twolattes.json.Json;
-import com.twolattes.json.TwoLattes;
 
 public class EnumTest {
 
@@ -25,7 +26,7 @@ public class EnumTest {
     e.abc = Abc.B;
 
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(HasEnum1.class).marshall(e);
+    Json.Object o = createEntityMarshaller(HasEnum1.class).marshall(e);
 
     // assertions
     assertEquals(1, o.size());
@@ -35,8 +36,8 @@ public class EnumTest {
   @Test
   public void hasEnum1Unmarshall() throws Exception {
     // unmarshalling
-    HasEnum1 e = TwoLattes.createMarshaller(HasEnum1.class).unmarshall(
-        (Json.Object) Json.fromString(format("{\"abc\":\"%s\"}", Abc.B.name())));
+    HasEnum1 e = createMarshaller(HasEnum1.class)
+      .unmarshall(Json.fromString(format("{\"abc\":\"%s\"}", Abc.B.name())));
 
     // assertions
     assertNotNull(e);
@@ -51,7 +52,7 @@ public class EnumTest {
     HasEnum2 e = new HasEnum2();
     e.abc = Abc.B;
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(HasEnum2.class).marshall(e);
+    Json.Object o = createEntityMarshaller(HasEnum2.class).marshall(e);
 
     // assertions
     assertEquals(1, o.size());
@@ -61,8 +62,8 @@ public class EnumTest {
   @Test
   public void hasEnumOrdinalTrueUnmarshall() throws Exception {
     // unmarshalling
-    HasEnum2 e = TwoLattes.createMarshaller(HasEnum2.class).unmarshall(
-        (Json.Object) Json.fromString(format("{\"abc\":%s}", Abc.B.ordinal())));
+    HasEnum2 e = createMarshaller(HasEnum2.class)
+      .unmarshall(Json.fromString(format("{\"abc\":%s}", Abc.B.ordinal())));
 
     // assertions
     assertNotNull(e);
@@ -78,7 +79,7 @@ public class EnumTest {
     e.abc = Abc.B;
 
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(HasEnum3.class).marshall(e);
+    Json.Object o = createEntityMarshaller(HasEnum3.class).marshall(e);
 
     // assertions
     assertEquals(1, o.size());
@@ -88,10 +89,8 @@ public class EnumTest {
   @Test
   public void hasEnum3Unmarshall() throws Exception {
     // unmarshalling
-    HasEnum3 e = TwoLattes.createMarshaller(HasEnum3.class)
-        .unmarshall(
-            (Json.Object) Json.fromString("{\"my_enum\":\"" + Abc.B.name()
-                + "\"}"));
+    HasEnum3 e = createMarshaller(HasEnum3.class)
+      .unmarshall(Json.fromString("{\"my_enum\":\"" + Abc.B.name() + "\"}"));
 
     // assertions
     assertNotNull(e);
@@ -106,7 +105,7 @@ public class EnumTest {
     HasEnum1 e = new HasEnum1();
     e.abc = null;
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(HasEnum1.class).marshall(e);
+    Json.Object o = createEntityMarshaller(HasEnum1.class).marshall(e);
 
     // assertions
     assertEquals(1, o.size());
@@ -116,8 +115,8 @@ public class EnumTest {
   @Test
   public void hasEnum1NullUnmarshall() throws Exception {
     // unmarshalling
-    HasEnum1 e = TwoLattes.createMarshaller(HasEnum1.class).unmarshall(
-        (Json.Object) Json.fromString("{\"abc\":null}"));
+    HasEnum1 e = createMarshaller(HasEnum1.class)
+      .unmarshall(Json.fromString("{\"abc\":null}"));
 
     // assertions
     assertNotNull(e);
@@ -136,7 +135,7 @@ public class EnumTest {
     e.abcs = list;
 
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(HasEnumList1.class).marshall(e);
+    Json.Object o = createEntityMarshaller(HasEnumList1.class).marshall(e);
 
     // assertions
     assertEquals(1, o.size());
@@ -150,8 +149,8 @@ public class EnumTest {
   @Test
   public void hasEnumList1Unmarshall() throws Exception {
     // unmarshalling
-    HasEnumList1 e = TwoLattes.createMarshaller(HasEnumList1.class).unmarshall(
-        (Json.Object) Json.fromString("{\"abcs\":[\"A\",\"B\",\"C\"]}"));
+    HasEnumList1 e = createMarshaller(HasEnumList1.class)
+      .unmarshall(Json.fromString("{\"abcs\":[\"A\",\"B\",\"C\"]}"));
 
     // assertions
     assertNotNull(e);
@@ -174,7 +173,7 @@ public class EnumTest {
     e.abcs = list;
 
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(HasEnumList2.class).marshall(e);
+    Json.Object o = createEntityMarshaller(HasEnumList2.class).marshall(e);
 
     // assertions
     assertEquals(1, o.size());
@@ -188,8 +187,8 @@ public class EnumTest {
   @Test
   public void hasEnumList2Unmarshall() throws Exception {
     // unmarshalling
-    HasEnumList2 e = TwoLattes.createMarshaller(HasEnumList2.class).unmarshall(
-        (Json.Object) Json.fromString("{\"abcs\":[0,1,2]}"));
+    HasEnumList2 e = createMarshaller(HasEnumList2.class)
+      .unmarshall(Json.fromString("{\"abcs\":[0,1,2]}"));
 
     // assertions
     assertNotNull(e);
@@ -204,15 +203,14 @@ public class EnumTest {
   @Test(expected = IllegalArgumentException.class)
   public void testInvalidConstantUnmarshall() throws Exception {
     // unmarshalling
-    TwoLattes.createMarshaller(HasEnum1.class).unmarshall(
-        (Json.Object) Json.fromString("{\"abc\":\"INVALID_CONSTANT\"}"));
+    createMarshaller(HasEnum1.class)
+      .unmarshall(Json.fromString("{\"abc\":\"INVALID_CONSTANT\"}"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testInvalidOrdinalUnmarshall() throws Exception {
     // unmarshalling
-    TwoLattes.createMarshaller(HasEnum2.class).unmarshall(
-        (Json.Object) Json.fromString("{\"abc\":-1}"));
+    createMarshaller(HasEnum2.class).unmarshall(Json.fromString("{\"abc\":-1}"));
   }
 
   @Test
@@ -222,7 +220,7 @@ public class EnumTest {
     e.abc = Abc.B;
 
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(HasEnum4.class).marshall(e);
+    Json.Object o = createEntityMarshaller(HasEnum4.class).marshall(e);
 
     // assertions
     assertEquals(1, o.size());
@@ -232,8 +230,8 @@ public class EnumTest {
   @Test
   public void hasEnum4Unmarshall() throws Exception {
     // unmarshalling
-    HasEnum4 e = TwoLattes.createMarshaller(HasEnum4.class).unmarshall(
-        (Json.Object) Json.fromString("{\"abc\":\"doesnotmatter\"}"));
+    HasEnum4 e = createMarshaller(HasEnum4.class).unmarshall(
+        Json.fromString("{\"abc\":\"doesnotmatter\"}"));
 
     // assertions
     assertNotNull(e);

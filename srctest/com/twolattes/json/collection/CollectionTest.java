@@ -1,7 +1,7 @@
 package com.twolattes.json.collection;
 
 import static com.twolattes.json.Json.string;
-import static com.twolattes.json.TwoLattes.createMarshaller;
+import static com.twolattes.json.TwoLattes.createEntityMarshaller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -13,8 +13,8 @@ import java.util.TreeSet;
 
 import org.junit.Test;
 
+import com.twolattes.json.EntityMarshaller;
 import com.twolattes.json.Json;
-import com.twolattes.json.Marshaller;
 import com.twolattes.json.TwoLattes;
 
 public class CollectionTest {
@@ -22,7 +22,7 @@ public class CollectionTest {
   @Test
   public void sortedSet1() throws Exception {
     EntityWithSortedSet1 e = TwoLattes.createMarshaller(EntityWithSortedSet1.class)
-        .unmarshall((Json.Object) Json.fromString("{\"names\":[\"a\",\"c\",\"b\"]}"));
+        .unmarshall(Json.fromString("{\"names\":[\"a\",\"c\",\"b\"]}"));
 
     assertNotNull(e.names);
     assertEquals(3, e.names.size());
@@ -39,7 +39,7 @@ public class CollectionTest {
     entityWithSortedSet2.entities = new TreeSet<PolymorphicEntity>();
     entityWithSortedSet2.entities.add(new ChildPolymorphicEntity());
 
-    Json.Object o = TwoLattes.createMarshaller(EntityWithSortedSet2.class)
+    Json.Object o = createEntityMarshaller(EntityWithSortedSet2.class)
         .marshall(entityWithSortedSet2);
 
     assertEquals(1, o.size());
@@ -56,7 +56,7 @@ public class CollectionTest {
     entityWithSortedSet3.entities = new TreeSet<PolymorphicEntity>();
     entityWithSortedSet3.entities.add(new ChildPolymorphicEntity());
 
-    Json.Object o = TwoLattes.createMarshaller(EntityWithSortedSet3.class)
+    Json.Object o = createEntityMarshaller(EntityWithSortedSet3.class)
         .marshall(entityWithSortedSet3);
 
     assertEquals(1, o.size());
@@ -69,8 +69,8 @@ public class CollectionTest {
 
   @Test
   public void maps() throws Exception {
-    Marshaller<NormalAndSortedMaps> marshaller = createMarshaller(
-        NormalAndSortedMaps.class);
+    EntityMarshaller<NormalAndSortedMaps> marshaller =
+      createEntityMarshaller(NormalAndSortedMaps.class);
 
     Json.Object o = marshaller.marshall(new NormalAndSortedMaps() {{
           this.map1 = new HashMap<String, Double>();

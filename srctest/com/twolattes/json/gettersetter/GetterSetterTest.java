@@ -2,6 +2,8 @@ package com.twolattes.json.gettersetter;
 
 import static com.twolattes.json.Json.object;
 import static com.twolattes.json.Json.string;
+import static com.twolattes.json.TwoLattes.createEntityMarshaller;
+import static com.twolattes.json.TwoLattes.createMarshaller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -12,7 +14,6 @@ import org.junit.Test;
 
 import com.twolattes.json.Email;
 import com.twolattes.json.Json;
-import com.twolattes.json.TwoLattes;
 
 public class GetterSetterTest {
 
@@ -25,7 +26,7 @@ public class GetterSetterTest {
     e.setEmail(email);
 
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(GetterSetter1.class).marshall(e);
+    Json.Object o = createEntityMarshaller(GetterSetter1.class).marshall(e);
 
     // assertions
     assertEquals(1, o.size());
@@ -35,8 +36,8 @@ public class GetterSetterTest {
   @Test
   public void getterSetter1Unmarshall() throws Exception {
     // unmarshalling
-    GetterSetter1 e = TwoLattes.createMarshaller(GetterSetter1.class).unmarshall(
-        (Json.Object) Json.fromString("{\"email\":\"any\"}"));
+    GetterSetter1 e = createMarshaller(GetterSetter1.class)
+      .unmarshall(Json.fromString("{\"email\":\"any\"}"));
 
     // assertions
     assertNotNull(e);
@@ -54,7 +55,7 @@ public class GetterSetterTest {
     e.setEmail(email);
 
     // marshalling
-    Json.Object o1 = TwoLattes.createMarshaller(GetterSetter2.class).marshall(e);
+    Json.Object o1 = createEntityMarshaller(GetterSetter2.class).marshall(e);
 
     // assertions
     assertEquals(1, o1.size());
@@ -66,8 +67,8 @@ public class GetterSetterTest {
   @Test
   public void getterSetter2Unmarshall() throws Exception {
     // unmarshalling
-    GetterSetter2 e = TwoLattes.createMarshaller(GetterSetter2.class).unmarshall(
-        (Json.Object) Json.fromString("{\"foobar\":{\"email\":\"any\"}}"));
+    GetterSetter2 e = createMarshaller(GetterSetter2.class)
+      .unmarshall(Json.fromString("{\"foobar\":{\"email\":\"any\"}}"));
 
     // assertions
     assertNotNull(e);
@@ -82,7 +83,7 @@ public class GetterSetterTest {
     GetterSetter3 e = new GetterSetter3();
 
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(GetterSetter3.class).marshall(e);
+    Json.Object o = createEntityMarshaller(GetterSetter3.class).marshall(e);
 
     // assertions
     assertEquals(0, o.size());
@@ -91,8 +92,7 @@ public class GetterSetterTest {
   @Test
   public void getterSetter3Unmarshall() throws Exception {
     // unmarshalling
-    GetterSetter3 e = TwoLattes.createMarshaller(GetterSetter3.class).unmarshall(
-        object());
+    GetterSetter3 e = createMarshaller(GetterSetter3.class).unmarshall(object());
 
     // assertions
     assertNotNull(e);
@@ -106,7 +106,7 @@ public class GetterSetterTest {
     e.setData(new URL("http://b.org"));
 
     // marshalling
-    Json.Object o = TwoLattes.createMarshaller(GetterSetter4.class).marshall(e);
+    Json.Object o = createEntityMarshaller(GetterSetter4.class).marshall(e);
 
     // assertions
     assertEquals(string("http://b.org"), o.get(string("data")));
@@ -116,8 +116,8 @@ public class GetterSetterTest {
   @Test
   public void getterSetter4Unmarshall() throws Exception {
     // unmarshalling
-    GetterSetter4 e = TwoLattes.createMarshaller(GetterSetter4.class)
-        .unmarshall((Json.Object) Json.fromString("{\"data\":\"http://a.com\"}"));
+    GetterSetter4 e = createMarshaller(GetterSetter4.class)
+      .unmarshall(Json.fromString("{\"data\":\"http://a.com\"}"));
 
     // assertions
     assertNotNull(e);
@@ -126,12 +126,12 @@ public class GetterSetterTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void getterSetter5() throws Exception {
-    TwoLattes.createMarshaller(GetterSetter5.class);
+    createMarshaller(GetterSetter5.class);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void getterSetter6() throws Exception {
-    TwoLattes.createMarshaller(GetterSetter6.class);
+    createMarshaller(GetterSetter6.class);
   }
 
 }

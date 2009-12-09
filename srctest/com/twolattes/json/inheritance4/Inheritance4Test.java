@@ -1,21 +1,21 @@
 package com.twolattes.json.inheritance4;
 
 import static com.twolattes.json.Json.string;
+import static com.twolattes.json.TwoLattes.createEntityMarshaller;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.twolattes.json.EntityMarshaller;
 import com.twolattes.json.Json;
-import com.twolattes.json.Marshaller;
-import com.twolattes.json.TwoLattes;
 
 public class Inheritance4Test {
-  private Marshaller<Shape> marshaller;
+  private EntityMarshaller<Shape> marshaller;
 
   @Before
   public void start() {
-    marshaller =  TwoLattes.createMarshaller(Shape.class);
+    marshaller = createEntityMarshaller(Shape.class);
   }
 
   @Test

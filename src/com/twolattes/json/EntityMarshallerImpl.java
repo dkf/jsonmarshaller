@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class MarshallerImpl<T> implements Marshaller<T> {
+class EntityMarshallerImpl<T> implements EntityMarshaller<T> {
 
   private final EntityDescriptor<T> descriptor;
   private final EntityDescriptor<T> collectionDescriptor;
   private final Class<T> clazz;
 
   @SuppressWarnings("unchecked")
-  MarshallerImpl(Class<T> clazz, Map<Type, Class<?>> types) {
+  EntityMarshallerImpl(Class<T> clazz, Map<Type, Class<?>> types) {
     try {
       this.clazz = clazz;
       Pair<? extends EntityDescriptor, Entity> pair =
@@ -64,11 +64,11 @@ class MarshallerImpl<T> implements Marshaller<T> {
     return o;
   }
 
-  public T unmarshall(Json.Object entity) {
+  public T unmarshall(Json.Value entity) {
     return unmarshall(entity, null);
   }
 
-  public T unmarshall(Json.Object entity, String view) {
+  public T unmarshall(Json.Value entity, String view) {
     return clazz.cast(descriptor.unmarshall(entity, view));
   }
 

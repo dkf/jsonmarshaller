@@ -5,15 +5,15 @@ import static com.twolattes.json.Json.NULL;
 import static com.twolattes.json.Json.TRUE;
 import static com.twolattes.json.Json.number;
 import static com.twolattes.json.Json.string;
+import static com.twolattes.json.TwoLattes.createEntityMarshaller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
 import com.twolattes.json.Entity;
+import com.twolattes.json.EntityMarshaller;
 import com.twolattes.json.Json;
-import com.twolattes.json.Marshaller;
-import com.twolattes.json.TwoLattes;
 import com.twolattes.json.Value;
 
 public class LiteralsTest {
@@ -28,7 +28,7 @@ public class LiteralsTest {
 
   @Test
   public void testInt() throws Exception {
-    Marshaller<Int> marshaller = TwoLattes.createMarshaller(Int.class);
+    EntityMarshaller<Int> marshaller = createEntityMarshaller(Int.class);
 
     Json.Object object = marshaller.marshall(new Int() {{
       this.literal = 1;
@@ -63,7 +63,7 @@ public class LiteralsTest {
 
   @Test
   public void testDouble() throws Exception {
-    Marshaller<Double> marshaller = TwoLattes.createMarshaller(Double.class);
+    EntityMarshaller<Double> marshaller = createEntityMarshaller(Double.class);
 
     Json.Object object = marshaller.marshall(new Double() {{
       this.literal = 1.0;
@@ -96,7 +96,7 @@ public class LiteralsTest {
 
   @Test
   public void testShort() throws Exception {
-    Marshaller<Short> marshaller = TwoLattes.createMarshaller(Short.class);
+    EntityMarshaller<Short> marshaller = createEntityMarshaller(Short.class);
 
     Json.Object object = marshaller.marshall(new Short() {{
       this.literal = 1;
@@ -131,7 +131,7 @@ public class LiteralsTest {
 
   @Test
   public void testLong() throws Exception {
-    Marshaller<Long> marshaller = TwoLattes.createMarshaller(Long.class);
+    EntityMarshaller<Long> marshaller = createEntityMarshaller(Long.class);
 
     Json.Object object = marshaller.marshall(new Long() {{
       this.literal = 1L;
@@ -166,7 +166,7 @@ public class LiteralsTest {
 
   @Test
   public void testFloat() throws Exception {
-    Marshaller<Float> marshaller = TwoLattes.createMarshaller(Float.class);
+    EntityMarshaller<Float> marshaller = createEntityMarshaller(Float.class);
 
     Json.Object object = marshaller.marshall(new Float() {{
       this.literal = 1f;
@@ -199,7 +199,7 @@ public class LiteralsTest {
 
   @Test
   public void testChar() throws Exception {
-    Marshaller<Char> marshaller = TwoLattes.createMarshaller(Char.class);
+    EntityMarshaller<Char> marshaller = createEntityMarshaller(Char.class);
 
     Json.Object object = marshaller.marshall(new Char() {{
       this.literal = 'a';
@@ -234,7 +234,7 @@ public class LiteralsTest {
 
   @Test
   public void testBool() throws Exception {
-    Marshaller<Bool> marshaller = TwoLattes.createMarshaller(Bool.class);
+    EntityMarshaller<Bool> marshaller = createEntityMarshaller(Bool.class);
 
     Json.Object object = marshaller.marshall(new Bool() {{
       this.literal = true;
@@ -268,7 +268,7 @@ public class LiteralsTest {
 
   @Test
   public void testBytes() throws Exception {
-    Marshaller<Bytes> marshaller = TwoLattes.createMarshaller(Bytes.class);
+    EntityMarshaller<Bytes> marshaller = createEntityMarshaller(Bytes.class);
 
     Json.Object object = marshaller.marshall(new Bytes() {{
       this.literal = 8;
