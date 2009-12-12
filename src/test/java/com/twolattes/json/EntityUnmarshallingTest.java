@@ -16,8 +16,8 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.twolattes.json.OuterClass.InnerClass;
 
 public class EntityUnmarshallingTest {
@@ -99,8 +99,8 @@ public class EntityUnmarshallingTest {
         "{\"data\": [[\"C\"], [\"A\", \"B\"], []]}");
 
     assertEquals(3, base.getData().size());
-    assertTrue(base.getData().get(0).containsAll(Sets.immutableSet("C")));
-    assertTrue(base.getData().get(1).containsAll(Sets.immutableSet("A", "B")));
+    assertTrue(base.getData().get(0).containsAll(ImmutableSet.of("C")));
+    assertTrue(base.getData().get(1).containsAll(ImmutableSet.of("A", "B")));
     assertTrue(base.getData().get(2).isEmpty());
   }
 
@@ -243,9 +243,9 @@ public class EntityUnmarshallingTest {
 
     assertNotNull(e.weird);
     assertEquals(3, e.weird.length);
-    assertEquals(Lists.immutableList(5.0, 6.0, 0.9), e.weird[0]);
-    assertEquals(Lists.immutableList(2.3), e.weird[1]);
-    assertEquals(Lists.immutableList(12.45,78.0), e.weird[2]);
+    assertEquals(ImmutableList.of(5.0, 6.0, 0.9), e.weird[0]);
+    assertEquals(ImmutableList.of(2.3), e.weird[1]);
+    assertEquals(ImmutableList.of(12.45,78.0), e.weird[2]);
   }
 
   @Test
@@ -299,7 +299,7 @@ public class EntityUnmarshallingTest {
   public void testCyclicStructure() throws Exception {
     Node n = unmarshall(Node.class, "{\"neighbors\":[{\"id\":0}],\"id\":0}", true);
 
-    assertEquals(Sets.immutableSet(n), n.neighbors());
+    assertEquals(ImmutableSet.of(n), n.neighbors());
   }
 
   @Test

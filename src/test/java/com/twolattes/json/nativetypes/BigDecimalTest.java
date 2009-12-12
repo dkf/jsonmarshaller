@@ -1,6 +1,5 @@
 package com.twolattes.json.nativetypes;
 
-import static com.google.common.collect.Maps.immutableMap;
 import static com.twolattes.json.Json.number;
 import static com.twolattes.json.Json.string;
 import static java.math.BigDecimal.valueOf;
@@ -15,6 +14,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.twolattes.json.Entity;
 import com.twolattes.json.EntityMarshaller;
 import com.twolattes.json.Json;
@@ -66,7 +66,7 @@ public class BigDecimalTest {
   @Test
   public void nativeBigDecimalSuppot3() throws Exception {
     Json.Object object = marshaller.marshall(new BigDecimals() {{
-      this.map = immutableMap("hello", valueOf(90));
+      this.map = ImmutableMap.of("hello", valueOf(90));
     }});
 
     assertEquals(1, object.size());

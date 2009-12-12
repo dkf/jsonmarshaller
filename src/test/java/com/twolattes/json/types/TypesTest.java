@@ -1,7 +1,6 @@
 package com.twolattes.json.types;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.immutableMap;
 import static com.twolattes.json.Json.NULL;
 import static com.twolattes.json.Json.array;
 import static com.twolattes.json.Json.number;
@@ -18,6 +17,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.twolattes.json.Json;
 import com.twolattes.json.Marshaller;
 import com.twolattes.json.TwoLattes;
@@ -171,7 +171,7 @@ public class TypesTest {
 
   @Test
   public void typesRegistration2() throws Exception {
-    Json.Object o = (Json.Object) TwoLattes.withType(WeirdJsonType.class)
+    Json.Object o = TwoLattes.withType(WeirdJsonType.class)
         .createMarshaller(EntityRequiringTypeRegistration1.class)
         .marshall(new EntityRequiringTypeRegistration1() {{
           this.list = newArrayList(new Weird("yo"));
@@ -183,10 +183,10 @@ public class TypesTest {
 
   @Test
   public void typesRegistration3() throws Exception {
-    Json.Object o = (Json.Object) TwoLattes.withType(WeirdJsonType.class)
+    Json.Object o = TwoLattes.withType(WeirdJsonType.class)
         .createMarshaller(EntityRequiringTypeRegistration1.class)
         .marshall(new EntityRequiringTypeRegistration1() {{
-          this.map = immutableMap("foo", new Weird("bar"));
+          this.map = ImmutableMap.of("foo", new Weird("bar"));
         }});
 
     assertEquals(object(string("foo"), string("bar")), o.get(string("map")));

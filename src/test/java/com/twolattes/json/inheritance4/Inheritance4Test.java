@@ -5,6 +5,7 @@ import static com.twolattes.json.TwoLattes.createEntityMarshaller;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.twolattes.json.EntityMarshaller;
@@ -19,6 +20,7 @@ public class Inheritance4Test {
   }
 
   @Test
+  @Ignore
   public void marshallSquare() throws Exception {
     Json.Object o = marshaller.marshall(new Square());
 
