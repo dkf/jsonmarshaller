@@ -1,3 +1,9 @@
+mavenization of jsonmarshaller:
+mvn package # to build jars
+mvn -P benchmark integration-test # to run japex benchmarks
+
+original README:
+
 JSON 0.2, from TwoLattes - http://code.twolattes.com
 
 * required Jars

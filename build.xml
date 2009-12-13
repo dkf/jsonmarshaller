@@ -1,99 +1,21 @@
-<project name="JsonMarshaller" default="continuous-build" basedir=".">
-  <!-- tasks -->
-  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
-    <classpath>
-      <pathelement location="lib/ant-contrib-1.0b3.jar" />
-    </classpath>
-  </taskdef>
-  <taskdef classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" name="junit">
-    <classpath>
-      <pathelement location="lib-test/ant/ant-junit-1.7.0.jar" />
-      <pathelement location="lib-test/junit/junit-4.3.1.jar" />
-    </classpath>
-  </taskdef>
+<project name="JsonMarshaller Japex" default="run" basedir=".">
+     <property name="japexConfig" value="src/conf/japex-config.xml" />
+     <!-- create class.path -->
+     <path id="class.path">
+         <pathelement location="target/classes" />
+         <pathelement location="target/test-classes" />
+         <!-- when running ant from the command line this location provides the ant.jar-->
+         <pathelement location="${ant.core.lib}"/>
+         <!-- when running from maven this path provides the ant.jar-->
+         <pathelement path="${maven.plugin.classpath}"/>
+     	 <fileset dir="target/dependency/" includes="*.jar" />
+     </path>
 
-  <!-- project properties -->
-  <property name="author" value="Pascal-Louis Perez (pascallouisperez@gmail.com)" />
-  <property name="version" value="0.19" />
-  
-  <!-- initialize the build  -->
-  <target name="init">
-    <antclipse produce="classpath" idcontainer="eclipse.cp" />
-    <property name="cp" refid="eclipse.cp" />
-    <delete dir="target" />
-    <mkdir dir="target/bin" />
-    <mkdir dir="target/bintest" />
-    <mkdir dir="target/dist" />
-    <mkdir dir="target/reports" />
-  </target>
-
-  <!-- compile -->
-  <target name="compile" depends="init">
-    <javac destdir="target/bin" srcdir="src" classpath="${cp}" source="1.5"
-        target="1.5" debug="true" debuglevel="source,lines" />
-  </target>
-
-  <!-- compile tests -->
-  <target name="compile-test" depends="init,compile">
-    <javac destdir="target/bintest" srcdir="srctest" classpath="${cp}" source="1.5"
-        target="1.5" debug="true" debuglevel="source,lines">
-      <classpath path="target/bin" />
-    </javac>
-    <copy todir="target/bintest">
-      <fileset dir="srctest">
-        <exclude name="**/*.java"/>
-      </fileset>
-    </copy>
-  </target>
-
-  <!-- run the tests -->
-  <target name="test" depends="compile,compile-test">
-    <junit printsummary="yes" haltonfailure="yes" fork="true">
-      <classpath path="${cp}" />
-      <classpath path="target/bin" />
-      <classpath path="target/bintest" />
-      <formatter type="xml" usefile="true" />
-      <test name="com.twolattes.json.AllJsonTests" todir="target/reports" />
-    </junit>
-  </target>
-
-  <!-- compile benchmark
-  <target name="benchmark" depends="init">
-    <javac destdir="${bin}" classpath="${cp}" source="1.5" debug="true" debuglevel="source,lines">
-      <src refid="src_benchmark.id" />
-    </javac>
-  </target>-->
-
-  <!-- dist -->
-  <target name="dist" depends="init,compile">
-    <jar destfile="target/dist/json-${version}.jar" basedir="target/bin">
-      <manifest>
-        <attribute name="Built-By" value="${author}" />
-      </manifest>
-    </jar>
-    <zip destfile="target/dist/json-dist-${version}.zip">
-      <zipfileset file="target/dist/json-${version}.jar" />
-      <zipfileset file="build.xml" />
-      <zipfileset file="license.txt" />
-      <zipfileset file="README.txt" />
-      <zipfileset file=".classpath" />
-      <zipfileset dir="lib" prefix="lib" />
-      <zipfileset dir="src" prefix="src" />
-      <zipfileset dir="srctest" prefix="srctest" />
-    </zip>
-    <tar destfile="target/dist/json-dist-${version}.tar">
-      <tarfileset file="target/dist/json-${version}.jar" />
-      <tarfileset file="license.txt" />
-      <tarfileset file="build.xml" />
-      <tarfileset file="README.txt" />
-      <tarfileset file=".classpath" />
-      <tarfileset dir="lib" prefix="lib" />
-      <tarfileset dir="src" prefix="src" />
-      <tarfileset dir="srctest" prefix="srctest" />
-    </tar>
-    <gzip zipfile="target/dist/json-dist-${version}.tar.gz" src="target/dist/json-dist-${version}.tar" />
-    <delete file="target/dist/json-dist-${version}.tar" />
-  </target>
-  
-  <target name="continuous-build" depends="test,dist" />
+     <target name="run">
+     	<echo>running...</echo>
+         <java dir="." fork="true" classname="com.sun.japex.Japex">
+             <classpath refid="class.path" />
+             <arg line="-last -line -merge ${japexConfig}/" />
+         </java>
+     </target>
 </project>
