@@ -1,4 +1,5 @@
 mavenization of jsonmarshaller:
+mvn eclipse:eclipse # generate eclipse project
 mvn package # to build jars
 mvn -P benchmark integration-test # to run japex benchmarks
 
